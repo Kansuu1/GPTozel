@@ -414,6 +414,28 @@ body {
   font-size: 1.1rem;
 }
 
+.signal-row.tp {
+  background: #d4edda;
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.signal-row.sl {
+  background: #f8d7da;
+  padding: 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.tp-value {
+  color: #155724 !important;
+}
+
+.sl-value {
+  color: #721c24 !important;
+}
+
 .signal-time {
   margin-top: 8px;
   padding-top: 8px;
