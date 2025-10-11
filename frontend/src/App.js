@@ -54,6 +54,7 @@ function App() {
       await axios.post(`${API}/config`, {
         threshold: parseInt(config.threshold),
         selected_coins: config.selected_coins,
+        timeframe: config.timeframe,
         max_concurrent_coins: parseInt(config.max_concurrent_coins)
       }, {
         headers: { "x-admin-token": adminToken }
