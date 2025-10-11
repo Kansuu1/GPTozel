@@ -318,7 +318,7 @@ function App() {
       </div>
 
       <footer className="footer">
-        <p>🤖 Kripto Bot v1.0 | CoinMarketCap & Telegram</p>
+        <p>📊 MM TRADING BOT PRO v1.0 | CoinMarketCap & Telegram</p>
       </footer>
     </div>
   );
