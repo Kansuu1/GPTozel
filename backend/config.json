@@ -1,5 +1,5 @@
 {
-  "threshold": 3,
+  "threshold": 1,
   "selected_coins": [
     "BTC",
     "ETH",
@@ -11,5 +11,5 @@
   "telegram_chat_id": "-1003097160408",
   "allowed_user_ids": "",
   "max_concurrent_coins": 20,
-  "timeframe": "7d"
+  "timeframe": "15m"
 }
