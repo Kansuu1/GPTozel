@@ -11,5 +11,5 @@
   "telegram_chat_id": "-1003097160408",
   "allowed_user_ids": "",
   "max_concurrent_coins": 20,
-  "timeframe": "15m"
+  "timeframe": "30d"
 }
