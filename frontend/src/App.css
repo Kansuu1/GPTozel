@@ -482,6 +482,14 @@ body {
     align-items: flex-start;
     gap: 8px;
   }
+
+  .add-coin-input {
+    flex-direction: column;
+  }
+
+  .btn-add {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
