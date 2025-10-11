@@ -1,5 +1,5 @@
 {
-  "threshold": 1,
+  "threshold": 60,
   "selected_coins": [
     "BTC",
     "ETH",
