@@ -189,6 +189,7 @@ function App() {
                   <option value="12h">12 Saat (12h)</option>
                   <option value="24h">24 Saat (1 Gün)</option>
                   <option value="7d">7 Gün (1 Hafta)</option>
+                  <option value="30d">30 Gün (1 Ay)</option>
                 </select>
                 <small>Seçilen zaman dilimine göre analiz yapılır</small>
               </div>
