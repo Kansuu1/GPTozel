@@ -16,8 +16,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState("panel");
+  const [newCoin, setNewCoin] = useState("");
   
-  // Available coins
+  // Available coins - now dynamic
   const availableCoins = ["BTC", "ETH", "BNB", "SOL", "ADA", "XRP", "DOGE", "DOT", "MATIC", "AVAX", "LINK", "UNI", "ARB", "OP", "SUI"];
 
   useEffect(() => {
