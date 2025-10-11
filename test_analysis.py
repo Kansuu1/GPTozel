@@ -59,6 +59,7 @@ async def test_analysis():
                 signal_type, probability, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
                 
                 print(f"   🎯 Skor: {probability:.2f}%")
+                print(f"   ⚙️ Algoritma: {weight_desc}")
                 
                 if signal_type and probability >= threshold:
                     print(f"   ✅ SİNYAL: {signal_type} (Güvenilirlik: {probability:.2f}%)")
