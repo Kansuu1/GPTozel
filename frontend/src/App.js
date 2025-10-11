@@ -300,8 +300,20 @@ function App() {
                         </div>
                         {signal.features?.price && (
                           <div className="signal-row">
-                            <span>Fiyat:</span>
+                            <span>Giriş Fiyatı:</span>
                             <strong>${signal.features.price?.toFixed(4)}</strong>
+                          </div>
+                        )}
+                        {signal.tp && (
+                          <div className="signal-row tp">
+                            <span>🎯 Take Profit:</span>
+                            <strong className="tp-value">${signal.tp?.toFixed(4)}</strong>
+                          </div>
+                        )}
+                        {signal.stop_loss && (
+                          <div className="signal-row sl">
+                            <span>🛡 Stop Loss:</span>
+                            <strong className="sl-value">${signal.stop_loss?.toFixed(4)}</strong>
                           </div>
                         )}
                         <div className="signal-time">
