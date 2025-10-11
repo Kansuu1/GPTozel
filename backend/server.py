@@ -156,7 +156,9 @@ async def get_signals(limit: int = 50):
             "threshold_used": r.threshold_used,
             "timeframe": r.timeframe,
             "created_at": r.created_at.isoformat() if r.created_at else None,
-            "features": r.features
+            "features": r.features,
+            "tp": r.tp,
+            "stop_loss": r.stop_loss
         })
     return {"signals": out}
 
