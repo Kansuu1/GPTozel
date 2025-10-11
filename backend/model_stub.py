@@ -43,18 +43,58 @@ def calculate_tp_sl(signal_type: str, current_price: float, probability: float):
     return round(take_profit, 8), round(stop_loss, 8)
 
 
-def predict_signal_from_features(features):
+def predict_signal_from_features(features, timeframe="24h"):
     """
-    Return tuple (signal_type:str or None, probability:float)
-    probability scale: 0..100 (percentage)
+    Seçilen timeframe'e göre sinyal üretir
+    
+    Parametreler:
+    - features: CoinMarketCap'ten gelen özellikler
+    - timeframe: Analiz zaman dilimi (15m, 1h, 4h, 12h, 24h, 7d)
+    
+    Return: (signal_type, probability, tp, sl)
     """
-    # Simple rule:
-    pc24 = features.get("percent_change_24h") or 0.0
-    pc1h = features.get("percent_change_1h") or 0.0
-    score = pc24 * 0.5 + pc1h * 0.5  # naive blend
+    
+    # Timeframe'e göre doğru değişim oranını seç
+    timeframe_mapping = {
+        "15m": "percent_change_1h",    # 15m için 1h kullan (en yakın)
+        "1h": "percent_change_1h",
+        "4h": "percent_change_24h",     # 4h için 24h kullan
+        "12h": "percent_change_24h",    # 12h için 24h kullan
+        "24h": "percent_change_24h",
+        "1d": "percent_change_24h",     # Alternatif gösterim
+        "7d": "percent_change_7d",
+        "1w": "percent_change_7d"       # Alternatif gösterim
+    }
+    
+    # Ana ve yardımcı timeframe'ler
+    main_key = timeframe_mapping.get(timeframe, "percent_change_24h")
+    
+    # Kısa vadeli momentum için 1h her zaman kontrol edilir
+    short_term = features.get("percent_change_1h") or 0.0
+    main_change = features.get(main_key) or 0.0
+    
+    # Timeframe'e göre ağırlıklandırma
+    if timeframe in ["15m", "1h"]:
+        # Kısa vade: sadece 1h önemli
+        score = main_change
+        weight_desc = "1h momentum"
+    elif timeframe in ["4h", "12h"]:
+        # Orta vade: 24h ana, 1h destek
+        score = main_change * 0.7 + short_term * 0.3
+        weight_desc = "24h (70%) + 1h (30%)"
+    elif timeframe in ["24h", "1d"]:
+        # Günlük: 24h ana, 1h destek
+        score = main_change * 0.8 + short_term * 0.2
+        weight_desc = "24h (80%) + 1h (20%)"
+    else:  # 7d, 1w
+        # Haftalık: sadece 7d
+        score = main_change
+        weight_desc = "7d trend"
+    
     prob = min(max(abs(score), 0.0), 100.0)
+    
     if prob < 0.5:
-        return None, prob, None, None
+        return None, prob, None, None, weight_desc
     
     current_price = features.get("price", 0)
     
@@ -65,4 +105,4 @@ def predict_signal_from_features(features):
     
     tp, sl = calculate_tp_sl(signal_type, current_price, prob)
     
-    return signal_type, prob, tp, sl
+    return signal_type, prob, tp, sl, weight_desc
