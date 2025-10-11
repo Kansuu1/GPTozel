@@ -102,6 +102,27 @@ function App() {
     setConfig({ ...config, selected_coins: newSelected });
   };
 
+  const removeCoin = (coin) => {
+    const selected = config.selected_coins || [];
+    setConfig({ ...config, selected_coins: selected.filter(c => c !== coin) });
+  };
+
+  const addNewCoin = () => {
+    const coin = newCoin.trim().toUpperCase();
+    if (!coin) {
+      setMessage("⚠️ Lütfen coin sembolü girin");
+      return;
+    }
+    const selected = config.selected_coins || [];
+    if (selected.includes(coin)) {
+      setMessage("⚠️ Bu coin zaten listede");
+      return;
+    }
+    setConfig({ ...config, selected_coins: [...selected, coin] });
+    setNewCoin("");
+    setMessage("✅ " + coin + " eklendi");
+  };
+
   return (
     <div className="app-container">
       <header className="header">
