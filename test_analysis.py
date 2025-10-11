@@ -53,7 +53,8 @@ async def test_analysis():
                 print(f"   📊 24h Değişim: {change_24h:+.2f}%")
                 
                 # Sinyal üretimi
-                signal_type, probability, tp, sl = predict_signal_from_features(features)
+                timeframe = cfg.get("timeframe", "24h")
+                signal_type, probability, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
                 
                 print(f"   🎯 Skor: {probability:.2f}%")
                 
