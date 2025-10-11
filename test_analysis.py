@@ -27,7 +27,9 @@ async def test_analysis():
         print("❌ API Key bulunamadı!")
         return
     
+    timeframe = cfg.get("timeframe", "24h")
     print(f"🎯 Threshold: {threshold}%")
+    print(f"⏱ Zaman Dilimi: {timeframe}")
     print(f"🪙 Seçili Coinler: {', '.join(selected_coins)}")
     print(f"🔑 API Key uzunluğu: {len(api_key)} karakter")
     print("\n" + "-"*60 + "\n")
