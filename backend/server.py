@@ -86,6 +86,8 @@ async def post_config(payload: ConfigIn, request: Request):
         updates["threshold"] = int(payload.threshold)
     if payload.selected_coins is not None:
         updates["selected_coins"] = [c.strip().upper() for c in payload.selected_coins if c.strip()]
+    if payload.timeframe is not None:
+        updates["timeframe"] = payload.timeframe.strip()
     if payload.cmc_api_key is not None and payload.cmc_api_key != "*****":
         updates["cmc_api_key"] = payload.cmc_api_key.strip()
     if payload.telegram_token is not None and payload.telegram_token != "*****":
