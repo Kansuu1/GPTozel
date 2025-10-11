@@ -337,7 +337,14 @@ function App() {
                           </div>
                         )}
                         <div className="signal-time">
-                          {new Date(signal.created_at).toLocaleString('tr-TR')}
+                          {signal.created_at ? new Date(signal.created_at).toLocaleString('tr-TR', {
+                            timeZone: 'Europe/Istanbul',
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }) : 'Bilinmiyor'}
                         </div>
                       </div>
                     </div>
