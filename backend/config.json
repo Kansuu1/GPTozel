@@ -1,15 +1,15 @@
 {
-  "threshold": 1,
+  "threshold": 20,
   "selected_coins": [
     "BTC",
     "ETH",
     "SOL",
-    "ADA"
+    "PEPE"
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
   "telegram_token": "8489964512:AAGTLTRkv9VKK1fy9Mb6nvGSlKsuYxoPMRM",
   "telegram_chat_id": "-1003097160408",
   "allowed_user_ids": "",
   "max_concurrent_coins": 20,
-  "timeframe": "30d"
+  "timeframe": "24h"
 }
