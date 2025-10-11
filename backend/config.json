@@ -3,9 +3,7 @@
   "selected_coins": [
     "BTC",
     "ETH",
-    "SOL",
-    "BNB",
-    "ADA"
+    "SOL"
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
   "telegram_token": "8489964512:AAGTLTRkv9VKK1fy9Mb6nvGSlKsuYxoPMRM",
