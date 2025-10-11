@@ -177,6 +177,23 @@ function App() {
               </div>
 
               <div className="form-group">
+                <label>⏱ Zaman Dilimi</label>
+                <select
+                  className="input"
+                  value={config.timeframe}
+                  onChange={(e) => setConfig({...config, timeframe: e.target.value})}
+                >
+                  <option value="15m">15 Dakika (15m)</option>
+                  <option value="1h">1 Saat (1h)</option>
+                  <option value="4h">4 Saat (4h)</option>
+                  <option value="12h">12 Saat (12h)</option>
+                  <option value="24h">24 Saat (1 Gün)</option>
+                  <option value="7d">7 Gün (1 Hafta)</option>
+                </select>
+                <small>Seçilen zaman dilimine göre analiz yapılır</small>
+              </div>
+
+              <div className="form-group">
                 <label>Maksimum Eşzamanlı Coin</label>
                 <input
                   type="number"
