@@ -188,17 +188,60 @@ function App() {
             </div>
 
             <div className="card">
-              <h3>🪙 Coin Seçimi ({config.selected_coins?.length || 0})</h3>
-              <div className="coin-grid">
-                {availableCoins.map(coin => (
-                  <button
-                    key={coin}
-                    className={`coin-btn ${config.selected_coins?.includes(coin) ? 'selected' : ''}`}
-                    onClick={() => toggleCoin(coin)}
-                  >
-                    {coin}
+              <h3>🪙 Coin Yönetimi</h3>
+              
+              <div className="add-coin-section">
+                <label>Yeni Coin Ekle</label>
+                <div className="add-coin-input">
+                  <input
+                    type="text"
+                    className="input"
+                    value={newCoin}
+                    onChange={(e) => setNewCoin(e.target.value)}
+                    placeholder="Örn: SHIB, PEPE, FLOKI"
+                    onKeyPress={(e) => e.key === 'Enter' && addNewCoin()}
+                  />
+                  <button className="btn btn-add" onClick={addNewCoin}>
+                    ➕ Ekle
                   </button>
-                ))}
+                </div>
+              </div>
+
+              <div className="selected-coins-section">
+                <label>Seçili Coinler ({config.selected_coins?.length || 0})</label>
+                <div className="selected-coins-list">
+                  {config.selected_coins && config.selected_coins.length > 0 ? (
+                    config.selected_coins.map(coin => (
+                      <div key={coin} className="selected-coin-item">
+                        <span className="coin-name">{coin}</span>
+                        <button 
+                          className="remove-btn"
+                          onClick={() => removeCoin(coin)}
+                          title="Kaldır"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="no-coins">Henüz coin seçilmedi. Aşağıdan coin ekleyin veya hızlı seçim yapın.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="quick-select-section">
+                <label>Hızlı Seçim</label>
+                <div className="coin-grid">
+                  {availableCoins.map(coin => (
+                    <button
+                      key={coin}
+                      className={`coin-btn ${config.selected_coins?.includes(coin) ? 'selected' : ''}`}
+                      onClick={() => toggleCoin(coin)}
+                    >
+                      {coin}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
