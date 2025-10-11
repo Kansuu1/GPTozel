@@ -8,6 +8,7 @@ _lock = threading.Lock()
 DEFAULT = {
     "threshold": int(os.getenv("MANUAL_THRESHOLD", "75")),
     "selected_coins": os.getenv("SELECTED_COINS","BTC,ETH,ADA,SOL,BNB").split(","),
+    "timeframe": os.getenv("TIMEFRAME", "24h"),
     "cmc_api_key": os.getenv("CMC_API_KEY", ""),
     "telegram_token": os.getenv("TELEGRAM_BOT_TOKEN", ""),
     "telegram_chat_id": os.getenv("TELEGRAM_CHAT_ID", ""),
