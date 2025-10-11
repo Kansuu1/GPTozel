@@ -40,7 +40,13 @@ def update_threshold(val:int):
 
 def update_config(updates: dict):
     with _lock:
-        cfg = read_config()
+        # Read directly without calling read_config to avoid nested lock
+        if not os.path.exists(CONFIG_PATH):
+            cfg = DEFAULT.copy()
+        else:
+            with open(CONFIG_PATH, "r") as f:
+                cfg = json.load(f)
+        
         cfg.update(updates)
         with open(CONFIG_PATH, "w") as f:
             json.dump(cfg, f, indent=2)
