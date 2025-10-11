@@ -1,6 +1,6 @@
-# 🤖 Kripto Analiz Botu
+# 📊 MM TRADING BOT PRO
 
-CoinMarketCap API ve Telegram entegrasyonlu, gerçek zamanlı kripto para analiz botu.
+CoinMarketCap API ve Telegram entegrasyonlu, profesyonel kripto para analiz botu.
 
 ## ✨ Özellikler
 
