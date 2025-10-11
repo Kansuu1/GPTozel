@@ -27,12 +27,13 @@ async def send_telegram_message_async(text: str, parse_mode="HTML", buttons=None
             return await resp.json()
 
 def format_signal_message(rec: dict):
-    txt = f"🔔 <b>{rec['coin']}</b> — <i>{rec['signal_type']}</i>\n"
-    txt += f"Güvenilirlik: {rec['probability']:.2f}%  (Eşik: {rec['threshold_used']})\n"
-    txt += f"Zaman Dilimi: {rec.get('timeframe')}\n"
+    txt = f"📊 <b>MM TRADING BOT PRO</b>\n\n"
+    txt += f"🪙 <b>{rec['coin']}</b> — <i>{rec['signal_type']}</i>\n"
+    txt += f"💯 Güvenilirlik: {rec['probability']:.2f}%  (Eşik: {rec['threshold_used']})\n"
+    txt += f"⏱ Zaman Dilimi: {rec.get('timeframe')}\n"
     if rec.get("stop_loss"):
-        txt += f"StopLoss önerisi: {rec.get('stop_loss')}\n"
+        txt += f"🛡 StopLoss önerisi: {rec.get('stop_loss')}\n"
     if rec.get("features") and rec['features'].get('price'):
-        txt += f"Fiyat: ${rec['features']['price']:.4f}\n"
-    txt += f"Zaman: {rec.get('created_at')}\n"
+        txt += f"💰 Fiyat: ${rec['features']['price']:.4f}\n"
+    txt += f"🕐 Zaman: {rec.get('created_at')}\n"
     return txt
