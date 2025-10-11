@@ -59,7 +59,10 @@ async def analyze_cycle():
                         }
                         rec_id = insert_signal_record(rec)
                         rec["id"] = rec_id
-                        rec["created_at"] = "Az önce"
+                        
+                        # Türkiye saati (UTC+3)
+                        turkey_time = datetime.now(timezone.utc) + timedelta(hours=3)
+                        rec["created_at"] = turkey_time.strftime("%H:%M")
                         
                         msg = format_signal_message(rec)
                         await send_telegram_message_async(msg)
