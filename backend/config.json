@@ -10,5 +10,6 @@
   "telegram_token": "8489964512:AAGTLTRkv9VKK1fy9Mb6nvGSlKsuYxoPMRM",
   "telegram_chat_id": "-1003097160408",
   "allowed_user_ids": "",
-  "max_concurrent_coins": 20
+  "max_concurrent_coins": 20,
+  "timeframe": "24h"
 }
