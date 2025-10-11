@@ -63,7 +63,9 @@ def predict_signal_from_features(features, timeframe="24h"):
         "24h": "percent_change_24h",
         "1d": "percent_change_24h",     # Alternatif gösterim
         "7d": "percent_change_7d",
-        "1w": "percent_change_7d"       # Alternatif gösterim
+        "1w": "percent_change_7d",      # Alternatif gösterim
+        "30d": "percent_change_30d",
+        "1m": "percent_change_30d"      # 1 ay alternatif gösterim
     }
     
     # Ana ve yardımcı timeframe'ler
