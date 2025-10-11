@@ -88,10 +88,14 @@ def predict_signal_from_features(features, timeframe="24h"):
         # Günlük: 24h ana, 1h destek
         score = main_change * 0.8 + short_term * 0.2
         weight_desc = "24h (80%) + 1h (20%)"
-    else:  # 7d, 1w
+    elif timeframe in ["7d", "1w"]:
         # Haftalık: sadece 7d
         score = main_change
         weight_desc = "7d trend"
+    else:  # 30d, 1m
+        # Aylık: sadece 30d
+        score = main_change
+        weight_desc = "30d trend"
     
     prob = min(max(abs(score), 0.0), 100.0)
     
