@@ -9,6 +9,7 @@ function App() {
   const [config, setConfig] = useState({
     threshold: 75,
     selected_coins: [],
+    timeframe: "24h",
     max_concurrent_coins: 20
   });
   const [signals, setSignals] = useState([]);
