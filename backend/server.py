@@ -55,6 +55,7 @@ def require_admin(request: Request):
 class ConfigIn(BaseModel):
     threshold: Optional[int] = None
     selected_coins: Optional[List[str]] = None
+    timeframe: Optional[str] = None
     cmc_api_key: Optional[str] = None
     telegram_token: Optional[str] = None
     telegram_chat_id: Optional[str] = None
