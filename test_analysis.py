@@ -19,13 +19,17 @@ async def test_analysis():
     print("="*60 + "\n")
     
     cfg = read_config()
-    api_key = cfg.get("cmc_api_key")
+    api_key = cfg.get("cmc_api_key") or os.getenv("CMC_API_KEY")
     selected_coins = cfg.get("selected_coins", [])
     threshold = cfg.get("threshold", 75)
     
+    if not api_key:
+        print("❌ API Key bulunamadı!")
+        return
+    
     print(f"🎯 Threshold: {threshold}%")
     print(f"🪙 Seçili Coinler: {', '.join(selected_coins)}")
-    print(f"🔑 API Key: {api_key[:20]}...")
+    print(f"🔑 API Key uzunluğu: {len(api_key)} karakter")
     print("\n" + "-"*60 + "\n")
     
     async with aiohttp.ClientSession() as session:
