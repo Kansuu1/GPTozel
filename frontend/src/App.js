@@ -126,7 +126,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="header">
-        <h1>🤖 Kripto Analiz Botu</h1>
+        <h1>📊 MM TRADING BOT PRO</h1>
         <p className="subtitle">CoinMarketCap & Telegram Entegrasyonlu</p>
       </header>
 
