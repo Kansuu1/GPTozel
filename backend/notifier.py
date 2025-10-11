@@ -71,5 +71,5 @@ def format_signal_message(rec: dict):
         txt += f"📊 Potansiyel Kayıp: <b>-{loss_percent:.2f}%</b>\n"
         txt += f"⚖️ Risk/Reward: <b>1:{risk_reward:.1f}</b>\n"
     
-    txt += f"\n🕐 Zaman: {rec.get('created_at')}\n"
+    txt += f"\n🕐 Zaman: {rec.get('created_at')} (TR)\n"
     return txt
