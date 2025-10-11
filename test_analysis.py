@@ -53,12 +53,23 @@ async def test_analysis():
                 print(f"   📊 24h Değişim: {change_24h:+.2f}%")
                 
                 # Sinyal üretimi
-                signal_type, probability = predict_signal_from_features(features)
+                signal_type, probability, tp, sl = predict_signal_from_features(features)
                 
                 print(f"   🎯 Skor: {probability:.2f}%")
                 
                 if signal_type and probability >= threshold:
                     print(f"   ✅ SİNYAL: {signal_type} (Güvenilirlik: {probability:.2f}%)")
+                    if tp and sl:
+                        if signal_type == "LONG":
+                            profit = ((tp - price) / price) * 100
+                            loss = ((price - sl) / price) * 100
+                        else:
+                            profit = ((price - tp) / price) * 100
+                            loss = ((sl - price) / price) * 100
+                        
+                        print(f"   🎯 Take Profit: ${tp:,.4f} (+{profit:.2f}%)")
+                        print(f"   🛡 Stop Loss: ${sl:,.4f} (-{loss:.2f}%)")
+                        print(f"   ⚖️ Risk/Reward: 1:{(profit/loss):.1f}")
                     print(f"   📱 Telegram bildirimi gönderilecek!")
                 else:
                     if probability < threshold:
