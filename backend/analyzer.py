@@ -39,7 +39,7 @@ async def analyze_cycle():
                 try:
                     quote = await cmc.get_quote(session, sym)
                     features = build_features_from_quote(quote)
-                    sig, prob, tp, sl = predict_signal_from_features(features)
+                    sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
                     prob = float(prob)
                     
                     if sig and prob >= threshold:
@@ -50,7 +50,7 @@ async def analyze_cycle():
                             "probability": prob,
                             "confidence_score": int(prob),
                             "threshold_used": threshold,
-                            "timeframe": "1m/auto",
+                            "timeframe": timeframe,
                             "features": features,
                             "stop_loss": sl,
                             "tp": tp,
@@ -62,9 +62,9 @@ async def analyze_cycle():
                         
                         msg = format_signal_message(rec)
                         await send_telegram_message_async(msg)
-                        logger.info(f"Sinyal gönderildi: {sym} - {sig} - {prob:.2f}% (TP: ${tp}, SL: ${sl})")
+                        logger.info(f"Sinyal gönderildi: {sym} - {sig} - {prob:.2f}% (TF: {timeframe}, TP: ${tp}, SL: ${sl})")
                     else:
-                        logger.debug(f"{sym}: Sinyal yok (prob={prob:.2f}%, threshold={threshold})")
+                        logger.debug(f"{sym}: Sinyal yok (prob={prob:.2f}%, threshold={threshold}, timeframe={timeframe})")
                         
                 except Exception as e:
                     logger.error(f"Coin işleme hatası {sym}: {e}")
