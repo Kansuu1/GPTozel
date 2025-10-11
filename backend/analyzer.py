@@ -23,6 +23,7 @@ async def analyze_cycle():
     
     selected_coins = cfg.get("selected_coins", ["BTC", "ETH"])
     threshold = cfg.get("threshold", 75)
+    timeframe = cfg.get("timeframe", "24h")
     max_concurrent = cfg.get("max_concurrent_coins", 20)
     
     if not selected_coins:
