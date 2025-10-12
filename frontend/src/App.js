@@ -504,11 +504,31 @@ function App() {
               <h3>📈 Sinyal Ayarları</h3>
               
               <div className="form-group">
+                <label className="toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={config.use_coin_specific_settings}
+                    onChange={(e) => setConfig({...config, use_coin_specific_settings: e.target.checked})}
+                    className="toggle-checkbox"
+                  />
+                  <span className="toggle-text">
+                    {config.use_coin_specific_settings ? '✅ Coin Başına Özel Ayarlar Aktif' : '⚙️ Global Ayarlar Aktif'}
+                  </span>
+                </label>
+                {config.use_coin_specific_settings && (
+                  <div className="info-box">
+                    ⚙️ Coin başına özel ayarlar aktif — global ayarlar devre dışı bırakıldı.
+                  </div>
+                )}
+              </div>
+
+              <div className="form-group">
                 <label>🎯 Eşik Tipi</label>
                 <select
                   className="input"
                   value={config.threshold_mode}
                   onChange={(e) => setConfig({...config, threshold_mode: e.target.value})}
+                  disabled={config.use_coin_specific_settings}
                 >
                   <option value="manual">Manuel (Sabit Eşik)</option>
                   <option value="dynamic">Dinamik (Otomatik Eşik)</option>
@@ -529,7 +549,7 @@ function App() {
                   onChange={(e) => setConfig({...config, threshold: e.target.value})}
                   min="0"
                   max="100"
-                  disabled={config.threshold_mode === 'dynamic'}
+                  disabled={config.threshold_mode === 'dynamic' || config.use_coin_specific_settings}
                 />
                 <small>
                   {config.threshold_mode === 'dynamic' 
@@ -544,6 +564,7 @@ function App() {
                   className="input"
                   value={config.timeframe}
                   onChange={(e) => setConfig({...config, timeframe: e.target.value})}
+                  disabled={config.use_coin_specific_settings}
                 >
                   <option value="15m">15 Dakika (15m)</option>
                   <option value="1h">1 Saat (1h)</option>
