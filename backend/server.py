@@ -776,6 +776,19 @@ async def get_indicators(symbol: str):
     symbol = symbol.upper()
     
     try:
+        # PASSIVE KONTROLÜ - Passive coinler için gösterge döndürme!
+        cfg = read_config()
+        coin_settings = cfg.get("coin_settings", [])
+        coin_config = next((cs for cs in coin_settings if cs["coin"] == symbol), None)
+        
+        if coin_config and coin_config.get("status") == "passive":
+            return {
+                "error": "Coin passive durumda",
+                "symbol": symbol,
+                "data_points": 0,
+                "indicators": None
+            }
+        
         # Son 50 fiyat noktasını al
         prices = get_recent_prices(symbol, count=50)
         
