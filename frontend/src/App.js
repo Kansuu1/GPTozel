@@ -53,6 +53,11 @@ function App() {
     }
   }, [darkMode]);
 
+  // Alarms active durumunu localStorage'a kaydet
+  useEffect(() => {
+    localStorage.setItem('alarmsActive', JSON.stringify(alarmsActive));
+  }, [alarmsActive]);
+
   // Load admin token from localStorage on mount
   useEffect(() => {
     const loadToken = () => {
