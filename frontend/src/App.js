@@ -268,13 +268,22 @@ function App() {
                 <label>📊 CoinMarketCap API Key</label>
                 <div className="token-input-group">
                   <input
-                    type="password"
+                    type="text"
                     className="input"
                     value={config.cmc_api_key || ""}
                     onChange={(e) => setConfig({...config, cmc_api_key: e.target.value})}
                     placeholder="API Key (örn: ad7e6f5c-...)"
+                    readOnly={config.cmc_api_key === "*****"}
                   />
-                  {config.cmc_api_key && (
+                  {config.cmc_api_key && config.cmc_api_key === "*****" && (
+                    <button 
+                      className="btn btn-small btn-warning"
+                      onClick={() => setConfig({...config, cmc_api_key: ""})}
+                    >
+                      ✏️ Değiştir
+                    </button>
+                  )}
+                  {config.cmc_api_key && config.cmc_api_key !== "*****" && (
                     <button 
                       className="btn btn-small btn-info"
                       onClick={() => {
@@ -287,9 +296,11 @@ function App() {
                   )}
                 </div>
                 <small>
-                  {config.cmc_api_key && config.cmc_api_key !== "*****" 
-                    ? "✅ API Key ayarlanmış" 
-                    : "💡 CMC Pro plan için yeni API key girebilirsiniz"}
+                  {config.cmc_api_key === "*****" 
+                    ? "🔒 Mevcut API Key kullanılıyor (Değiştirmek için ✏️ tıklayın)" 
+                    : config.cmc_api_key 
+                      ? "✅ API Key ayarlanacak" 
+                      : "💡 CMC Pro plan için yeni API key girebilirsiniz"}
                 </small>
               </div>
             </div>
