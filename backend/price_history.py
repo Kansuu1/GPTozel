@@ -43,7 +43,7 @@ def save_price_point(coin: str, price: float, volume_24h: float = 0):
         logger.error(f"❌ Fiyat kaydetme hatası [{coin}]: {e}")
 
 
-async def get_price_history(coin: str, hours: int = 24, limit: int = 500) -> List[float]:
+def get_price_history(coin: str, hours: int = 24, limit: int = 500) -> List[float]:
     """
     Coin için fiyat geçmişini getir
     
@@ -56,7 +56,7 @@ async def get_price_history(coin: str, hours: int = 24, limit: int = 500) -> Lis
         Fiyat listesi (eski → yeni)
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         # Zaman aralığını belirle
         cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
@@ -67,7 +67,7 @@ async def get_price_history(coin: str, hours: int = 24, limit: int = 500) -> Lis
             "timestamp": {"$gte": cutoff}
         }).sort("timestamp", 1).limit(limit)
         
-        prices = [doc["price"] async for doc in cursor]
+        prices = [doc["price"] for doc in cursor]
         
         return prices
     
