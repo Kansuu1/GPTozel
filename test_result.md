@@ -211,6 +211,18 @@ backend:
         comment: "GET /api/indicators/{symbol}, GET /api/alarms, GET /api/signals/chart endpoint'leri çalışıyor."
 
 frontend:
+  - task: "Telegram entegrasyon sekmesi"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Telegram bot token ve chat ID manuel giriş sekmesi eklendi. Aktif alarmlar listesi gösteriliyor."
+  
   - task: "Status toggle button (Active/Passive)"
     implemented: true
     working: true
