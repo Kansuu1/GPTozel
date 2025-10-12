@@ -23,7 +23,7 @@
       "timeframe": "30d",
       "threshold": 3.0,
       "threshold_mode": "dynamic",
-      "active": false
+      "active": true
     },
     {
       "coin": "ADA",
@@ -37,7 +37,7 @@
       "timeframe": "15m",
       "threshold": 6.0,
       "threshold_mode": "dynamic",
-      "active": false
+      "active": true
     },
     {
       "coin": "XRP",
