@@ -310,6 +310,29 @@ function App() {
     setLoading(false);
   };
 
+  const toggleAlarms = async (enabled) => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      setAlarmsActive(!enabled); // Geri al
+      return;
+    }
+
+    try {
+      await axios.post(`${API}/alarms/toggle`, {
+        enabled: enabled
+      }, {
+        headers: { "x-admin-token": adminToken }
+      });
+      
+      const statusText = enabled ? 'aktif' : 'pasif';
+      setMessage(`✅ Alarm sistemi ${statusText}`);
+      console.log(`🔔 Alarm sistemi ${statusText}`);
+    } catch (e) {
+      setMessage("❌ Alarm toggle hatası: " + (e.response?.data?.detail || e.message));
+      setAlarmsActive(!enabled); // Hata durumunda geri al
+    }
+  };
+
   const restartBackend = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");
