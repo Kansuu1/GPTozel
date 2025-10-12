@@ -1025,6 +1025,97 @@ select.input {
 
 .coin-name-cell strong {
   color: #667eea;
+
+
+/* Coin Delete Button */
+.btn-delete-coin {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-coin:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-delete-coin:active {
+  transform: scale(0.95);
+}
+
+/* Add Coin Section */
+.add-coin-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 12px;
+  border: 2px dashed #3b82f6;
+}
+
+.add-coin-section h4 {
+  color: #1e40af;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.add-coin-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.add-coin-input-group .input {
+  flex: 1;
+}
+
+.add-coin-input-group .btn {
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.help-text {
+  display: block;
+  color: #1e40af;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+/* Mobile Responsive for Delete Button */
+@media (max-width: 768px) {
+  .btn-delete-coin {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+
+  .add-coin-input-group {
+    flex-direction: column;
+  }
+
+  .add-coin-input-group .btn {
+    width: 100%;
+  }
+}
+
   font-size: 1.1rem;
 }
 
