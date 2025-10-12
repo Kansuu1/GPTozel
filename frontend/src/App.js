@@ -68,11 +68,18 @@ function App() {
     loadSignals();
     loadCoinSettings();
     loadFetchIntervals();
-    const signalInterval = setInterval(loadSignals, 30000); // Refresh signals every 30s
-    const coinInterval = setInterval(loadCoinSettings, 10000); // Refresh coin settings every 10s for time_ago updates
+    loadAlarms();
+    loadChartData();
+    
+    // 10 dakikada bir yenile
+    const signalInterval = setInterval(loadSignals, 600000); // 10 minutes
+    const coinInterval = setInterval(loadCoinSettings, 600000); // 10 minutes
+    const alarmInterval = setInterval(loadAlarms, 600000); // 10 minutes
+    
     return () => {
       clearInterval(signalInterval);
       clearInterval(coinInterval);
+      clearInterval(alarmInterval);
     };
   }, []);
 
