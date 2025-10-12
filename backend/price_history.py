@@ -30,11 +30,11 @@ def save_price_point(coin: str, price: float, volume_24h: float = 0):
             "timestamp": datetime.now(timezone.utc)
         }
         
-        await db.price_history.insert_one(price_point)
+        db.price_history.insert_one(price_point)
         
         # Eski verileri temizle (90 günden eski)
         cutoff = datetime.now(timezone.utc) - timedelta(days=90)
-        await db.price_history.delete_many({
+        db.price_history.delete_many({
             "coin": coin,
             "timestamp": {"$lt": cutoff}
         })
