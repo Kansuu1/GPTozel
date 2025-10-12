@@ -629,8 +629,15 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
                     "status": status
                 }
                 
-                current_price = quote.get('price', 0)
-                volume_24h = quote.get('volume_24h', 0)
+                # Fiyat ve hacim bilgisini çıkar
+                try:
+                    q_data = quote["data"][symbol]["quote"]["USD"]
+                    current_price = q_data.get("price", 0)
+                    volume_24h = q_data.get("volume_24h", 0)
+                except (KeyError, TypeError) as e:
+                    logger.error(f"❌ [{symbol}] Fiyat çıkarma hatası: {e}")
+                    current_price = 0
+                    volume_24h = 0
                 
                 logger.info(f"✅ [{symbol}] Veri çekildi - Fiyat: ${current_price:.2f}")
                 
