@@ -131,19 +131,37 @@ async def analyze_single_coin(symbol: str, quote: dict):
             turkey_time = datetime.now(timezone.utc) + timedelta(hours=3)
             rec["created_at"] = turkey_time.strftime("%H:%M")
             
-            # Fiyat alarmı oluştur (sinyal giriş fiyatı için)
-            entry_price = features.get("price", 0)
-            if entry_price > 0:
-                alarm_id = create_price_alarm(
+            # TP ve SL için fiyat alarmları oluştur
+            created_alarms = []
+            
+            # TP (Take Profit) alarmı
+            if tp and tp > 0:
+                tp_alarm_id = create_price_alarm(
                     coin=symbol,
-                    target_price=entry_price,
-                    alarm_type="target",
+                    target_price=tp,
+                    alarm_type="tp",
                     signal_id=str(rec_id),
                     signal_type=sig
                 )
-                if alarm_id:
-                    rec["alarm_id"] = alarm_id
-                    logger.info(f"🔔 [{symbol}] Fiyat alarmı oluşturuldu: {entry_price}$")
+                if tp_alarm_id:
+                    created_alarms.append(f"TP: ${tp:.4f}")
+                    logger.info(f"🎯 [{symbol}] TP alarmı oluşturuldu: ${tp:.4f}")
+            
+            # SL (Stop Loss) alarmı
+            if sl and sl > 0:
+                sl_alarm_id = create_price_alarm(
+                    coin=symbol,
+                    target_price=sl,
+                    alarm_type="sl",
+                    signal_id=str(rec_id),
+                    signal_type=sig
+                )
+                if sl_alarm_id:
+                    created_alarms.append(f"SL: ${sl:.4f}")
+                    logger.info(f"🛑 [{symbol}] SL alarmı oluşturuldu: ${sl:.4f}")
+            
+            if created_alarms:
+                logger.info(f"🔔 [{symbol}] Alarmlar oluşturuldu: {', '.join(created_alarms)}")
             
             # Telegram bildirimi gönder
             msg = format_signal_message(rec)
