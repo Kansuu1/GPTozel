@@ -697,6 +697,7 @@ function App() {
                   <table className="coin-settings-table">
                     <thead>
                       <tr>
+                        <th>Durum</th>
                         <th>Coin</th>
                         <th>Zaman Dilimi</th>
                         <th>Eşik (%)</th>
@@ -706,9 +707,20 @@ function App() {
                     </thead>
                     <tbody>
                       {coinSettings.map((cs) => (
-                        <tr key={cs.coin}>
+                        <tr key={cs.coin} className={!cs.active ? 'inactive-coin' : ''}>
+                          <td className="status-cell">
+                            <label className="toggle-switch-small">
+                              <input
+                                type="checkbox"
+                                checked={cs.active !== false}
+                                onChange={(e) => updateCoinSetting(cs.coin, 'active', e.target.checked)}
+                              />
+                              <span className="toggle-slider-small"></span>
+                            </label>
+                          </td>
                           <td className="coin-name-cell">
                             <strong>{cs.coin}</strong>
+                            {!cs.active && <span className="inactive-badge">Pasif</span>}
                           </td>
                           <td>
                             <select
