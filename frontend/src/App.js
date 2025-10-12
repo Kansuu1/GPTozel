@@ -1011,19 +1011,16 @@ function App() {
                 </p>
 
                 {coinSettings.length > 0 && (
-                  <div className="coin-status-summary">
-                    <div className="status-item">
-                      <span className="status-icon">✅</span>
-                      <span>Aktif: <span className="status-count">{coinSettings.filter(cs => cs.active !== false).length}</span></span>
-                    </div>
-                    <div className="status-item">
-                      <span className="status-icon">⏸️</span>
-                      <span>Pasif: <span className="status-count">{coinSettings.filter(cs => cs.active === false).length}</span></span>
-                    </div>
-                    <div className="status-item">
-                      <span className="status-icon">📊</span>
-                      <span>Toplam: <span className="status-count">{coinSettings.length}</span></span>
-                    </div>
+                  <div className="flex gap-4 text-sm mb-4">
+                    <span className="text-green-600 dark:text-green-400">
+                      ✅ Aktif: <strong>{coinSettings.filter(cs => cs.status === 'active' || cs.active !== false).length}</strong>
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      ⏸️ Pasif: <strong>{coinSettings.filter(cs => cs.status === 'passive' || cs.active === false).length}</strong>
+                    </span>
+                    <span className="text-blue-600 dark:text-blue-400">
+                      📊 Toplam: <strong>{coinSettings.length}</strong>
+                    </span>
                   </div>
                 )}
                 
