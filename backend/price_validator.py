@@ -258,7 +258,7 @@ async def get_validated_price(symbol: str, cmc_price: float) -> float:
     Doğrulanmış fiyat döndür
     Eğer CMC ile alternatif kaynaklar arasında büyük fark varsa, en güvenilir kaynağı kullan
     
-    Öncelik: DexScreener > Binance > CoinGecko > CMC
+    Öncelik: Manuel Override > DexScreener > Binance > CoinGecko > CMC
     
     Args:
         symbol: Coin sembolü
@@ -267,6 +267,14 @@ async def get_validated_price(symbol: str, cmc_price: float) -> float:
     Returns:
         Doğrulanmış fiyat
     """
+    # ÖNCE manuel override kontrol et
+    from manual_price_override import get_manual_price
+    manual_price = get_manual_price(symbol)
+    if manual_price:
+        logger.info(f"[{symbol}] 📌 Manuel fiyat kullanılıyor: ${manual_price:.4f} (CMC: ${cmc_price:.2f})")
+        return manual_price
+    
+    # Manuel yoksa, otomatik doğrulama yap
     validation = await validate_price(symbol, cmc_price)
     
     if not validation["is_valid"]:
