@@ -522,6 +522,10 @@ function App() {
             </div>
           </div>
         )}
+
+        {activeTab === 'dashboard' && (
+          <PerformanceDashboard />
+        )}
       </div>
 
       <footer className="footer">
