@@ -1,5 +1,7 @@
 # backend/server.py
-import os, asyncio, json
+import os
+import asyncio
+import json
 from fastapi import FastAPI, HTTPException, Request, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -259,7 +261,7 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
         "selected_coins": coin_list
     })
     
-    logger.info(f"🔄 Coin ayarları güncellendi. Fetch task'ları yeniden başlatılıyor...")
+    logger.info("🔄 Coin ayarları güncellendi. Fetch task'ları yeniden başlatılıyor...")
     
     # Tüm fetch task'larını yeniden başlat
     await restart_all_fetch_tasks()
@@ -409,7 +411,7 @@ async def restart_backend(request: Request):
         "selected_coins": coin_list
     })
     
-    logger.info(f"🔄 Coin ayarları güncellendi. Değişiklikler backend restart'ta uygulanacak.")
+    logger.info("🔄 Coin ayarları güncellendi. Değişiklikler backend restart'ta uygulanacak.")
     
     return {
         "status": "ok",
