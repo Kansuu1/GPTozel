@@ -1129,10 +1129,10 @@ function App() {
                 {coinSettings.length > 0 && (
                   <div className="flex gap-4 text-sm mb-4">
                     <span className="text-green-600 dark:text-green-400">
-                      ✅ Aktif: <strong>{coinSettings.filter(cs => cs.status === 'active' || cs.active !== false).length}</strong>
+                      ✅ Aktif: <strong>{coinSettings.filter(cs => cs.status === 'active').length}</strong>
                     </span>
                     <span className="text-gray-600 dark:text-gray-400">
-                      ⏸️ Pasif: <strong>{coinSettings.filter(cs => cs.status === 'passive' || cs.active === false).length}</strong>
+                      ⏸️ Pasif: <strong>{coinSettings.filter(cs => cs.status === 'passive').length}</strong>
                     </span>
                     <span className="text-blue-600 dark:text-blue-400">
                       📊 Toplam: <strong>{coinSettings.length}</strong>
