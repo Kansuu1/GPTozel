@@ -691,6 +691,23 @@ function App() {
                 <p className="card-description">
                   Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
                 </p>
+
+                {coinSettings.length > 0 && (
+                  <div className="coin-status-summary">
+                    <div className="status-item">
+                      <span className="status-icon">✅</span>
+                      <span>Aktif: <span className="status-count">{coinSettings.filter(cs => cs.active !== false).length}</span></span>
+                    </div>
+                    <div className="status-item">
+                      <span className="status-icon">⏸️</span>
+                      <span>Pasif: <span className="status-count">{coinSettings.filter(cs => cs.active === false).length}</span></span>
+                    </div>
+                    <div className="status-item">
+                      <span className="status-icon">📊</span>
+                      <span>Toplam: <span className="status-count">{coinSettings.length}</span></span>
+                    </div>
+                  </div>
+                )}
                 
                 {coinSettings.length > 0 ? (
                 <div className="coin-settings-table-wrapper">
