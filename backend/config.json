@@ -19,7 +19,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 2,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "ETH",
@@ -28,7 +28,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 2,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "XRP",
@@ -55,7 +55,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 3,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "PEPE",
@@ -73,7 +73,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active"
+      "status": "passive"
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
