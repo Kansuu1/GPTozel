@@ -98,12 +98,31 @@ def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
         for alarm in alarms:
             target_price = alarm["target_price"]
             alarm_type = alarm["alarm_type"]
+            signal_type = alarm.get("signal_type", "LONG")
             
             # Alarm kontrolü
             should_trigger = False
             
-            if alarm_type == "target":
-                # Hedef fiyata ulaşıldı mı? (%0.5 tolerans)
+            if alarm_type == "tp":
+                # Take Profit kontrolü
+                # LONG sinyali için: fiyat TP'ye ulaştı veya geçti mi?
+                # SHORT sinyali için: fiyat TP'nin altına düştü mü?
+                if signal_type == "LONG":
+                    should_trigger = current_price >= target_price
+                else:  # SHORT
+                    should_trigger = current_price <= target_price
+                    
+            elif alarm_type == "sl":
+                # Stop Loss kontrolü
+                # LONG sinyali için: fiyat SL'nin altına düştü mü?
+                # SHORT sinyali için: fiyat SL'ye ulaştı veya geçti mi?
+                if signal_type == "LONG":
+                    should_trigger = current_price <= target_price
+                else:  # SHORT
+                    should_trigger = current_price >= target_price
+                    
+            elif alarm_type == "target":
+                # Eski tip alarm (giriş fiyatı) - %0.5 tolerans
                 tolerance = target_price * 0.005
                 if abs(current_price - target_price) <= tolerance:
                     should_trigger = True
