@@ -132,7 +132,8 @@ function App() {
       coin: coinSymbol,
       timeframe: config.timeframe || "24h",
       threshold: parseFloat(config.threshold) || 4.0,
-      threshold_mode: config.threshold_mode || "dynamic"
+      threshold_mode: config.threshold_mode || "dynamic",
+      active: true
     };
 
     setCoinSettings([...coinSettings, newCoinSetting]);
