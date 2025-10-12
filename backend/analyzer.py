@@ -67,8 +67,17 @@ async def analyze_single_coin(symbol: str, quote: dict):
             threshold_mode = global_threshold_mode
             logger.info(f"[{symbol}] Global ayarlarla analiz: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
         
-        # Feature extraction
-        features = build_features_from_quote(quote)
+        # Fiyat doğrulaması yap
+        cmc_price = quote["data"][symbol]["quote"]["USD"]["price"]
+        validated_price = await get_validated_price(symbol, cmc_price)
+        
+        # Feature extraction (doğrulanmış fiyat ile)
+        features = build_features_from_quote(quote, validated_price=validated_price)
+        
+        # Fiyat farkı varsa logla
+        if abs(validated_price - cmc_price) > 0.01:
+            price_diff = ((validated_price - cmc_price) / cmc_price) * 100
+            logger.warning(f"[{symbol}] ⚠️ Fiyat düzeltmesi: CMC ${cmc_price:.2f} → Validated ${validated_price:.2f} (Fark: %{price_diff:.1f})")
         
         # Threshold hesapla
         threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
