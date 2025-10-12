@@ -703,6 +703,132 @@ async def update_coin_config(setting: CoinSetting, request: Request):
         "coin": setting.dict()
     }
 
+async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
+    """Belirli bir coin için fetch loop - her X dakikada bir çalışır"""
+    from cmc_client import CMCClient
+    import aiohttp
+    
+    cfg = read_config()
+    API_KEY = cfg.get("cmc_api_key") or os.getenv("CMC_API_KEY")
+    
+    if not API_KEY:
+        logger.error(f"[{symbol}] CMC API anahtarı bulunamadı!")
+        return
+    
+    logger.info(f"🔄 [{symbol}] Fetch loop başlatıldı: {interval_minutes} dakikada bir")
+    
+    while True:
+        try:
+            # Config'den coin ayarlarını al
+            cfg = read_config()
+            coin_settings = cfg.get("coin_settings", [])
+            coin_config = next((cs for cs in coin_settings if cs["coin"] == symbol), None)
+            
+            if not coin_config:
+                logger.warning(f"[{symbol}] Config'de bulunamadı, loop sonlandırılıyor")
+                break
+            
+            # Status kontrolü - passive ise veri çekme
+            status = coin_config.get("status", "active")
+            if status == "passive":
+                logger.debug(f"[{symbol}] Passive durumda, veri çekilmiyor")
+                await asyncio.sleep(interval_minutes * 60)
+                continue
+            
+            # Veri çek
+            async with aiohttp.ClientSession() as session:
+                cmc = CMCClient(API_KEY)
+                quote = await cmc.get_quote(session, symbol)
+                
+                # Cache'e kaydet
+                coin_data_cache[symbol] = {
+                    "data": quote,
+                    "last_fetch": datetime.now(),
+                    "status": status
+                }
+                
+                logger.info(f"✅ [{symbol}] Veri çekildi - Fiyat: ${quote.get('price', 0):.2f}")
+                
+        except Exception as e:
+            logger.error(f"❌ [{symbol}] Veri çekme hatası: {e}")
+        
+        # Interval kadar bekle
+        await asyncio.sleep(interval_minutes * 60)
+
+async def restart_coin_fetch_task(symbol: str):
+    """Belirli bir coin için fetch task'ını yeniden başlat"""
+    global fetch_tasks
+    
+    # Eski task'ı iptal et
+    if symbol in fetch_tasks:
+        old_task = fetch_tasks[symbol]
+        if not old_task.done():
+            old_task.cancel()
+            try:
+                await old_task
+            except asyncio.CancelledError:
+                pass
+        logger.info(f"🛑 [{symbol}] Eski fetch task iptal edildi")
+    
+    # Yeni ayarları al
+    cfg = read_config()
+    coin_settings = cfg.get("coin_settings", [])
+    coin_config = next((cs for cs in coin_settings if cs["coin"] == symbol), None)
+    
+    if not coin_config:
+        logger.warning(f"[{symbol}] Config'de bulunamadı")
+        return
+    
+    interval_minutes = coin_config.get("fetch_interval_minutes", 2)
+    status = coin_config.get("status", "active")
+    
+    # Passive ise task başlatma
+    if status == "passive":
+        logger.info(f"⚫ [{symbol}] Passive durumda, fetch task başlatılmadı")
+        return
+    
+    # Yeni task başlat
+    task = asyncio.create_task(fetch_coin_data_loop(symbol, interval_minutes))
+    fetch_tasks[symbol] = task
+    logger.info(f"🚀 [{symbol}] Yeni fetch task başlatıldı: {interval_minutes} dakika")
+
+async def restart_all_fetch_tasks():
+    """Tüm coin'ler için fetch task'larını yeniden başlat"""
+    cfg = read_config()
+    coin_settings = cfg.get("coin_settings", [])
+    
+    logger.info(f"🔄 Tüm fetch task'ları yeniden başlatılıyor ({len(coin_settings)} coin)...")
+    
+    for coin_config in coin_settings:
+        symbol = coin_config["coin"]
+        await restart_coin_fetch_task(symbol)
+    
+    logger.info("✅ Tüm fetch task'ları yenilendi")
+
+async def start_all_fetch_tasks():
+    """Uygulama başlangıcında tüm fetch task'larını başlat"""
+    cfg = read_config()
+    coin_settings = cfg.get("coin_settings", [])
+    
+    logger.info(f"🚀 Fetch task'ları başlatılıyor ({len(coin_settings)} coin)...")
+    
+    for coin_config in coin_settings:
+        symbol = coin_config["coin"]
+        interval_minutes = coin_config.get("fetch_interval_minutes", 2)
+        status = coin_config.get("status", "active")
+        
+        # Passive olanları atla
+        if status == "passive":
+            logger.info(f"⚫ [{symbol}] Passive durumda, atlandı")
+            continue
+        
+        # Task başlat
+        task = asyncio.create_task(fetch_coin_data_loop(symbol, interval_minutes))
+        fetch_tasks[symbol] = task
+        logger.info(f"🟢 [{symbol}] Fetch task başlatıldı: {interval_minutes} dakika")
+    
+    logger.info("✅ Tüm fetch task'ları başlatıldı")
+
 @app.on_event("startup")
 async def startup_event():
     """Uygulama başlangıcında çalışacak"""
