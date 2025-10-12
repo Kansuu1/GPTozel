@@ -893,6 +893,22 @@ async def get_signals_chart(days: int = 7, coin: Optional[str] = None):
 @app.on_event("startup")
 async def startup_event():
     """Uygulama başlangıcında çalışacak"""
+    global fetch_tasks
+    
+    # ÖNEMLİ: Eski fetch task'larını iptal et (reload durumunda)
+    if fetch_tasks:
+        logger.warning(f"⚠️ {len(fetch_tasks)} eski fetch task bulundu, iptal ediliyor...")
+        for symbol, task in list(fetch_tasks.items()):
+            if not task.done():
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass
+                logger.info(f"🛑 [{symbol}] Eski task iptal edildi")
+        fetch_tasks.clear()
+        logger.info("✅ Tüm eski task'lar temizlendi")
+    
     logger.info("Veritabanı başlatılıyor...")
     init_db()
     logger.info("✅ Veritabanı hazır")
