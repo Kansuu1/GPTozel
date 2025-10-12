@@ -65,5 +65,6 @@
     "24h": 15,
     "7d": 30,
     "30d": 60
-  }
+  },
+  "use_fetch_intervals": true
 }
