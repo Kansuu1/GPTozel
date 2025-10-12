@@ -1,104 +1,318 @@
-# backend/db_sqlite.py - SQLite Version (Backup)
+# backend/db_mongodb.py - MongoDB Version
 import os
-from sqlalchemy import (create_engine, Column, Integer, String, Float, Boolean, JSON, TIMESTAMP, text)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import datetime
-from pathlib import Path
+from pymongo import MongoClient, DESCENDING
+from datetime import datetime, timezone
+import logging
 
-DATABASE_URL = os.getenv("DB_URL", "sqlite:///./data.db")
+logger = logging.getLogger(__name__)
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {})
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
+# MongoDB bağlantısı
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "crypto_bot")
 
-class SignalHistory(Base):
-    __tablename__ = "signal_history"
-    id = Column(Integer, primary_key=True, index=True)
-    coin = Column(String, index=True)
-    symbol = Column(String, nullable=True)
-    signal_type = Column(String)
-    probability = Column(Float)
-    confidence_score = Column(Integer, nullable=True)
-    threshold_used = Column(Integer)
-    timeframe = Column(String)
-    features = Column(JSON, nullable=True)
-    stop_loss = Column(Float, nullable=True)
-    tp = Column(Float, nullable=True)
-    success = Column(Boolean, nullable=True)
-    reward = Column(Float, nullable=True)
-    created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+# Global MongoDB client ve database
+_client = None
+_db = None
 
-class PerformanceAgg(Base):
-    __tablename__ = "performance_agg"
-    id = Column(Integer, primary_key=True, index=True)
-    coin = Column(String, index=True)
-    timeframe = Column(String, index=True)
-    sample_count = Column(Integer, default=0)
-    success_count = Column(Integer, default=0)
-    avg_reward = Column(Float, default=0.0)
-    last_updated = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+def get_db():
+    """MongoDB database instance'ını döndür"""
+    global _client, _db
+    if _db is None:
+        try:
+            _client = MongoClient(MONGO_URL)
+            _db = _client[DB_NAME]
+            logger.info(f"✅ MongoDB bağlantısı başarılı: {DB_NAME}")
+        except Exception as e:
+            logger.error(f"❌ MongoDB bağlantı hatası: {e}")
+            raise
+    return _db
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
-
-# helper wrappers
-def insert_signal_record(rec: dict):
-    db = SessionLocal()
+    """MongoDB collections ve indexler oluştur"""
     try:
-        obj = SignalHistory(**rec)
-        db.add(obj)
-        db.commit()
-        db.refresh(obj)
-        return obj.id
-    finally:
-        db.close()
+        db = get_db()
+        
+        # signal_history collection için indexler
+        db.signal_history.create_index([("coin", 1)])
+        db.signal_history.create_index([("created_at", DESCENDING)])
+        db.signal_history.create_index([("coin", 1), ("timeframe", 1)])
+        
+        # performance_agg collection için indexler
+        db.performance_agg.create_index([("coin", 1), ("timeframe", 1)], unique=True)
+        
+        logger.info("✅ MongoDB collections ve indexler hazır")
+    except Exception as e:
+        logger.error(f"❌ MongoDB init hatası: {e}")
+        raise
+
+# Helper fonksiyonlar - MongoDB
+def insert_signal_record(rec: dict):
+    """Yeni sinyal kaydı ekle"""
+    try:
+        db = get_db()
+        
+        # created_at yoksa ekle
+        if "created_at" not in rec:
+            rec["created_at"] = datetime.now(timezone.utc)
+        
+        result = db.signal_history.insert_one(rec)
+        return str(result.inserted_id)
+    except Exception as e:
+        logger.error(f"❌ Signal insert hatası: {e}")
+        raise
 
 def fetch_recent_signals(limit=100):
-    db = SessionLocal()
+    """En son sinyalleri getir"""
     try:
-        return db.query(SignalHistory).order_by(SignalHistory.created_at.desc()).limit(limit).all()
-    finally:
-        db.close()
+        db = get_db()
+        cursor = db.signal_history.find().sort("created_at", DESCENDING).limit(limit)
+        
+        # MongoDB dökümanlarını dict listesine çevir
+        signals = []
+        for doc in cursor:
+            doc["id"] = str(doc["_id"])  # _id'yi id'ye çevir
+            signals.append(doc)
+        
+        return signals
+    except Exception as e:
+        logger.error(f"❌ Fetch signals hatası: {e}")
+        return []
+
+def get_signal_by_id(signal_id: str):
+    """ID'ye göre sinyal getir"""
+    try:
+        db = get_db()
+        from bson.objectid import ObjectId
+        
+        if not ObjectId.is_valid(signal_id):
+            return None
+        
+        doc = db.signal_history.find_one({"_id": ObjectId(signal_id)})
+        if doc:
+            doc["id"] = str(doc["_id"])
+        return doc
+    except Exception as e:
+        logger.error(f"❌ Get signal by ID hatası: {e}")
+        return None
+
+def update_signal_success(signal_id: str, success: bool, reward: float = None):
+    """Sinyal başarı durumunu güncelle"""
+    try:
+        db = get_db()
+        from bson.objectid import ObjectId
+        
+        if not ObjectId.is_valid(signal_id):
+            return False
+        
+        update_data = {"success": success}
+        if reward is not None:
+            update_data["reward"] = reward
+        
+        result = db.signal_history.update_one(
+            {"_id": ObjectId(signal_id)},
+            {"$set": update_data}
+        )
+        
+        return result.modified_count > 0
+    except Exception as e:
+        logger.error(f"❌ Update signal hatası: {e}")
+        return False
+
+def delete_signal(signal_id: str):
+    """Sinyal sil"""
+    try:
+        db = get_db()
+        from bson.objectid import ObjectId
+        
+        if not ObjectId.is_valid(signal_id):
+            return False
+        
+        result = db.signal_history.delete_one({"_id": ObjectId(signal_id)})
+        return result.deleted_count > 0
+    except Exception as e:
+        logger.error(f"❌ Delete signal hatası: {e}")
+        return False
+
+def clear_all_signals():
+    """Tüm sinyalleri temizle"""
+    try:
+        db = get_db()
+        result = db.signal_history.delete_many({})
+        return result.deleted_count
+    except Exception as e:
+        logger.error(f"❌ Clear all signals hatası: {e}")
+        return 0
+
+def clear_failed_signals():
+    """Başarısız sinyalleri temizle"""
+    try:
+        db = get_db()
+        result = db.signal_history.delete_many({"success": False})
+        return result.deleted_count
+    except Exception as e:
+        logger.error(f"❌ Clear failed signals hatası: {e}")
+        return 0
+
+def get_dashboard_stats():
+    """Dashboard istatistikleri"""
+    try:
+        db = get_db()
+        
+        # Toplam sinyal
+        total_signals = db.signal_history.count_documents({})
+        
+        # Başarılı, başarısız, bekleyen
+        successful = db.signal_history.count_documents({"success": True})
+        failed = db.signal_history.count_documents({"success": False})
+        pending = db.signal_history.count_documents({"success": None})
+        
+        # Başarı oranı
+        success_rate = (successful / total_signals * 100) if total_signals > 0 else 0
+        
+        # Maksimum kazanç/kayıp
+        max_gain_doc = db.signal_history.find_one(
+            {"reward": {"$ne": None}},
+            sort=[("reward", DESCENDING)]
+        )
+        max_loss_doc = db.signal_history.find_one(
+            {"reward": {"$ne": None}},
+            sort=[("reward", 1)]
+        )
+        
+        max_gain = max_gain_doc.get("reward", 0) if max_gain_doc else 0
+        max_loss = max_loss_doc.get("reward", 0) if max_loss_doc else 0
+        
+        # Ortalama reward
+        pipeline = [
+            {"$match": {"reward": {"$ne": None}}},
+            {"$group": {"_id": None, "avg_reward": {"$avg": "$reward"}}}
+        ]
+        avg_result = list(db.signal_history.aggregate(pipeline))
+        avg_reward = avg_result[0]["avg_reward"] if avg_result else 0
+        
+        # Coin başına istatistikler
+        coin_pipeline = [
+            {"$group": {
+                "_id": "$coin",
+                "total": {"$sum": 1},
+                "successful": {"$sum": {"$cond": [{"$eq": ["$success", True]}, 1, 0]}},
+                "avg_prob": {"$avg": "$probability"}
+            }},
+            {"$sort": {"total": DESCENDING}},
+            {"$limit": 10}
+        ]
+        coin_stats = list(db.signal_history.aggregate(coin_pipeline))
+        
+        return {
+            "total_signals": total_signals,
+            "successful_signals": successful,
+            "failed_signals": failed,
+            "pending_signals": pending,
+            "success_rate": round(success_rate, 2),
+            "max_gain": max_gain,
+            "max_loss": max_loss,
+            "avg_reward": round(avg_reward, 2) if avg_reward else 0,
+            "coin_stats": coin_stats
+        }
+    except Exception as e:
+        logger.error(f"❌ Dashboard stats hatası: {e}")
+        return {
+            "total_signals": 0,
+            "successful_signals": 0,
+            "failed_signals": 0,
+            "pending_signals": 0,
+            "success_rate": 0,
+            "max_gain": 0,
+            "max_loss": 0,
+            "avg_reward": 0,
+            "coin_stats": []
+        }
 
 def fetch_prune_candidates(cutoff_ts, min_samples, success_threshold):
-    db = SessionLocal()
+    """Temizleme için aday kayıtları bul"""
     try:
-        # returns grouping coin+timeframe with ids
-        sql = """
-        SELECT coin, timeframe, COUNT(*) as sample_count,
-            SUM(CASE WHEN success=1 THEN 1 ELSE 0 END) as success_count
-        FROM signal_history
-        WHERE created_at <= :cutoff
-        GROUP BY coin, timeframe
-        HAVING COUNT(*) >= :min_samples
-        """
-        rows = db.execute(text(sql), {"cutoff": cutoff_ts, "min_samples": min_samples}).fetchall()
+        db = get_db()
+        
+        # MongoDB aggregation pipeline
+        pipeline = [
+            {"$match": {"created_at": {"$lte": cutoff_ts}}},
+            {"$group": {
+                "_id": {"coin": "$coin", "timeframe": "$timeframe"},
+                "sample_count": {"$sum": 1},
+                "success_count": {"$sum": {"$cond": [{"$eq": ["$success", True]}, 1, 0]}}
+            }},
+            {"$match": {"sample_count": {"$gte": min_samples}}}
+        ]
+        
+        results = db.signal_history.aggregate(pipeline)
+        
         candidates = []
-        for r in rows:
-            sample_count = r[2]  # COUNT(*)
-            success_count = r[3] or 0  # SUM(...)
-            success_rate = success_count / sample_count if sample_count else 0
+        for r in results:
+            sample_count = r["sample_count"]
+            success_count = r["success_count"]
+            success_rate = success_count / sample_count if sample_count > 0 else 0
+            
             if success_rate < success_threshold:
-                candidates.append((r[0], r[1]))  # coin, timeframe
+                candidates.append((r["_id"]["coin"], r["_id"]["timeframe"]))
+        
         return candidates
-    finally:
-        db.close()
+    except Exception as e:
+        logger.error(f"❌ Prune candidates hatası: {e}")
+        return []
 
 def delete_records_by_coin_timeframe(coin, timeframe, cutoff_ts):
-    db = SessionLocal()
+    """Belirli coin+timeframe için eski kayıtları sil"""
     try:
-        q = db.query(SignalHistory).filter(SignalHistory.coin==coin, SignalHistory.timeframe==timeframe, SignalHistory.created_at<=cutoff_ts)
-        ids = [r.id for r in q.all()]
-        q.delete(synchronize_session=False)
-        db.commit()
+        db = get_db()
+        
+        # Silinecek kayıtların ID'lerini al
+        cursor = db.signal_history.find({
+            "coin": coin,
+            "timeframe": timeframe,
+            "created_at": {"$lte": cutoff_ts}
+        }, {"_id": 1})
+        
+        ids = [str(doc["_id"]) for doc in cursor]
+        
+        # Sil
+        result = db.signal_history.delete_many({
+            "coin": coin,
+            "timeframe": timeframe,
+            "created_at": {"$lte": cutoff_ts}
+        })
+        
+        logger.info(f"✅ Silindi: {result.deleted_count} kayıt ({coin}/{timeframe})")
         return ids
-    finally:
-        db.close()
+    except Exception as e:
+        logger.error(f"❌ Delete records hatası: {e}")
+        return []
 
 def fetch_records_by_ids(ids):
-    db = SessionLocal()
+    """Belirli ID'lere sahip kayıtları getir"""
     try:
-        return db.query(SignalHistory).filter(SignalHistory.id.in_(ids)).all()
-    finally:
-        db.close()
+        db = get_db()
+        from bson.objectid import ObjectId
+        
+        # String ID'leri ObjectId'ye çevir
+        object_ids = [ObjectId(id_str) for id_str in ids if ObjectId.is_valid(id_str)]
+        
+        cursor = db.signal_history.find({"_id": {"$in": object_ids}})
+        
+        records = []
+        for doc in cursor:
+            doc["id"] = str(doc["_id"])
+            records.append(doc)
+        
+        return records
+    except Exception as e:
+        logger.error(f"❌ Fetch by IDs hatası: {e}")
+        return []
+
+# Backward compatibility için dummy class'lar
+class SessionLocal:
+    """Dummy class - MongoDB kullanıyor"""
+    pass
+
+class SignalHistory:
+    """Dummy class - MongoDB kullanıyor"""
+    pass
