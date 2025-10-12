@@ -3,12 +3,7 @@
   "threshold_mode": "manual",
   "use_coin_specific_settings": true,
   "selected_coins": [
-    "BTC",
-    "ETH",
-    "XRP",
-    "ADA",
     "SOL",
-    "PEPE",
     "COAI"
   ],
   "coin_settings": [
