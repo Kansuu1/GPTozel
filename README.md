@@ -235,11 +235,13 @@ Bot token'ınız ve chat ID'niz `.env` dosyasında tanımlı:
 **Active/Passive Status:**
 - 🟢 **Active**: Coin belirlenen interval'de otomatik veri çeker
 - ⚫ **Passive**: Coin veri çekmez, API kotası harcanmaz
+- ✅ **Doğrulandı**: Passive coinler gerçekten veri çekmiyor!
 
 **Fetch Interval (Dakika):**
 - Her coin için ayrı veri çekme aralığı ayarlayabilirsiniz
-- Örnek: BTC → 2 dakika, ETH → 3 dakika, SOL → 5 dakika
+- Örnek: SOL → 3 dakika, COAI → 5 dakika
 - Minimum: 1 dakika, Maximum: 1440 dakika (24 saat)
+- ✅ **Doğrulandı**: Her coin kendi interval'inde bağımsız çalışıyor!
 
 **Son Güncelleme:**
 - Her coin için en son ne zaman veri çekildiğini gösterir
@@ -250,6 +252,12 @@ Bot token'ınız ve chat ID'niz `.env` dosyasında tanımlı:
 - Sinyaller **her zaman en son çekilen veri** üzerinden üretilir
 - Cache sistemi sayesinde API kotası verimli kullanılır
 - Her coin kendi interval'inde bağımsız çalışır
+
+**Tek Kaynak Sistemi:**
+- ✅ Sadece coin-based fetch sistemi çalışır
+- ❌ Price tracker devre dışı
+- ❌ Interval-based analyzer devre dışı
+- ✅ API kotası maksimum verimlilikle kullanılır
 
 ### Avantajlar
 
