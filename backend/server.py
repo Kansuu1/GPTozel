@@ -229,11 +229,18 @@ async def startup_event():
     logger.info("Crypto Bot API başlatıldı")
     # Start analyzer in background
     asyncio.create_task(run_analyzer_loop())
+    # Start cleanup scheduler in background
+    asyncio.create_task(run_cleanup_scheduler())
 
 async def run_analyzer_loop():
     """Background analyzer loop"""
     from analyzer import run_loop
     await run_loop()
+
+async def run_cleanup_scheduler():
+    """Background cleanup scheduler"""
+    from cleanup_scheduler import start_scheduler
+    await start_scheduler()
 
 if __name__ == "__main__":
     import uvicorn
