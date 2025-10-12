@@ -72,6 +72,8 @@ class CoinSetting(BaseModel):
     threshold: float
     threshold_mode: str
     active: bool = True
+    fetch_interval_minutes: Optional[int] = 2  # Varsayılan 2 dakika
+    status: Optional[str] = "active"  # "active" veya "passive"
 
 class CoinSettingsUpdate(BaseModel):
     coin_settings: List[CoinSetting]
