@@ -33,6 +33,12 @@ async def analyze_cycle():
     coin_settings_list = cfg.get("coin_settings", [])
     coin_settings_map = {cs["coin"]: cs for cs in coin_settings_list}
     
+    # Eğer coin-specific mod aktifse, sadece aktif coinleri analiz et
+    if use_coin_specific:
+        active_coins = [cs["coin"] for cs in coin_settings_list if cs.get("active", True)]
+        selected_coins = active_coins
+        logger.info(f"Aktif coinler: {', '.join(active_coins)} ({len(active_coins)}/{len(coin_settings_list)})")
+    
     # Global ayarlar
     global_threshold = cfg.get("threshold", 4)
     global_threshold_mode = cfg.get("threshold_mode", "dynamic")
