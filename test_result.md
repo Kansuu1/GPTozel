@@ -161,6 +161,54 @@ backend:
       - working: true
         agent: "main"
         comment: "Analyzer önce cache'den veri alıyor, yoksa API'den çekiyor. Sinyaller en son veri üzerinden."
+  
+  - task: "RSI ve MACD göstergeleri"
+    implemented: true
+    working: true
+    file: "backend/indicators.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "RSI (14 periyot) ve MACD (12,26,9) hesaplanıyor. Sinyal üretiminde kullanılıyor."
+  
+  - task: "Fiyat geçmişi kaydetme"
+    implemented: true
+    working: true
+    file: "backend/price_history.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Her veri çekiminde fiyat MongoDB'ye kaydediliyor. RSI/MACD için gerekli."
+  
+  - task: "Fiyat alarm sistemi"
+    implemented: true
+    working: true
+    file: "backend/price_alarms.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Sinyal üretilince otomatik alarm oluşuyor. Hedef fiyata ulaşınca Telegram bildirimi gönderiliyor."
+  
+  - task: "API endpoints (indicators, alarms, chart)"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/indicators/{symbol}, GET /api/alarms, GET /api/signals/chart endpoint'leri çalışıyor."
 
 frontend:
   - task: "Status toggle button (Active/Passive)"
