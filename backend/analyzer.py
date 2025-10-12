@@ -72,9 +72,31 @@ async def analyze_single_coin(symbol: str, quote: dict):
         # Threshold hesapla
         threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
         
+        # RSI ve MACD göstergelerini hesapla
+        prices = await get_recent_prices(symbol, count=50)
+        indicators = {}
+        if len(prices) >= 26:  # MACD için minimum
+            indicators = calculate_indicators(prices)
+            logger.info(f"[{symbol}] Göstergeler: RSI={indicators.get('rsi')}, MACD={indicators.get('macd_signal')}")
+        
         # Sinyal tahmini
         sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
         prob = float(prob)
+        
+        # RSI ve MACD ile sinyal doğruluğunu artır
+        if indicators.get('rsi') is not None and indicators.get('macd_signal') is not None:
+            rsi_signal = indicators['rsi_signal']
+            macd_signal = indicators['macd_signal']
+            
+            # RSI oversold ve MACD bullish ise prob artır
+            if sig == "LONG" and rsi_signal == "OVERSOLD" and macd_signal == "BULLISH":
+                prob = min(prob * 1.2, 100)  # %20 artır
+                logger.info(f"[{symbol}] RSI+MACD pozitif, prob artırıldı: {prob:.1f}%")
+            
+            # RSI overbought ve MACD bearish ise prob azalt
+            elif sig == "LONG" and rsi_signal == "OVERBOUGHT" and macd_signal == "BEARISH":
+                prob = prob * 0.8  # %20 azalt
+                logger.info(f"[{symbol}] RSI+MACD negatif, prob azaltıldı: {prob:.1f}%")
         
         logger.info(f"[{symbol}] Analiz: Signal={sig}, Prob={prob:.1f}%, Threshold={threshold:.1f}%")
         
