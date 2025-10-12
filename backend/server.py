@@ -537,7 +537,7 @@ async def analyze_now(background_tasks: BackgroundTasks, request: Request):
 async def delete_signal(signal_id: int, request: Request):
     """Tek bir sinyali sil"""
     require_admin(request)
-    # MongoDB kullanılıyor - SessionLocal ve SignalHistory kaldırıldı
+    from db import SessionLocal, SignalHistory
     db = SessionLocal()
     try:
         signal = db.query(SignalHistory).filter(SignalHistory.id == signal_id).first()
@@ -553,7 +553,7 @@ async def delete_signal(signal_id: int, request: Request):
 async def clear_all_signals(request: Request):
     """Tüm sinyalleri sil"""
     require_admin(request)
-    # MongoDB kullanılıyor - SessionLocal ve SignalHistory kaldırıldı
+    from db import SessionLocal, SignalHistory
     db = SessionLocal()
     try:
         count = db.query(SignalHistory).count()
@@ -567,7 +567,7 @@ async def clear_all_signals(request: Request):
 async def clear_failed_signals(request: Request):
     """Başarısız sinyalleri sil"""
     require_admin(request)
-    # MongoDB kullanılıyor - SessionLocal ve SignalHistory kaldırıldı
+    from db import SessionLocal, SignalHistory
     db = SessionLocal()
     try:
         failed = db.query(SignalHistory).filter(SignalHistory.success == False).all()
