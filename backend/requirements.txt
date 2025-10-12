@@ -56,6 +56,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-jose==3.5.0
 python-multipart==0.0.20
+pymongo==4.10.1
 pytokens==0.1.10
 pytz==2025.2
 requests==2.32.5
