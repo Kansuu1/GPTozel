@@ -24,10 +24,16 @@ async def analyze_cycle():
         return
     
     selected_coins = cfg.get("selected_coins", ["BTC", "ETH"])
-    manual_threshold = cfg.get("threshold", 75)
-    threshold_mode = cfg.get("threshold_mode", "manual")
-    timeframe = cfg.get("timeframe", "24h")
     max_concurrent = cfg.get("max_concurrent_coins", 20)
+    
+    # Coin settings'i al (coin başına özel ayarlar)
+    coin_settings_list = cfg.get("coin_settings", [])
+    coin_settings_map = {cs["coin"]: cs for cs in coin_settings_list}
+    
+    # Varsayılan değerler
+    default_threshold = cfg.get("threshold", 4)
+    default_threshold_mode = cfg.get("threshold_mode", "dynamic")
+    default_timeframe = cfg.get("timeframe", "24h")
     
     if not selected_coins:
         logger.warning("Seçili coin yok!")
@@ -40,10 +46,18 @@ async def analyze_cycle():
         async def handle_coin(sym):
             async with sem:
                 try:
+                    # Coin için özel ayarları al veya varsayılanları kullan
+                    coin_config = coin_settings_map.get(sym, {})
+                    timeframe = coin_config.get("timeframe", default_timeframe)
+                    manual_threshold = coin_config.get("threshold", default_threshold)
+                    threshold_mode = coin_config.get("threshold_mode", default_threshold_mode)
+                    
+                    logger.info(f"Analyzing {sym}: timeframe={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
+                    
                     quote = await cmc.get_quote(session, sym)
                     features = build_features_from_quote(quote)
                     
-                    # Dinamik veya manuel threshold kullan
+                    # Dinamik veya manuel threshold kullan (coin başına)
                     threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
                     
                     sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
