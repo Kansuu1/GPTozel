@@ -189,13 +189,13 @@ async def get_coin_settings():
                 "coin": coin,
                 "timeframe": default_timeframe,
                 "threshold": float(default_threshold),
-                "threshold_mode": default_mode
+                "threshold_mode": default_mode,
+                "active": True
             })
     
-    # Sadece seçili coinlerin ayarlarını döndür
-    filtered_settings = [cs for cs in coin_settings if cs["coin"] in selected_coins]
-    
-    return {"coin_settings": filtered_settings}
+    # TÜM coin_settings'i döndür (filtreleme yapma)
+    # Frontend'de zaten sadece aktif olanlar gösterilecek
+    return {"coin_settings": coin_settings}
 
 @app.post("/api/coin-settings")
 async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
