@@ -2193,10 +2193,12 @@ body.dark-mode .tab.active {
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  gap: 20px;
 }
 
 .header-title {
   flex: 1;
+  text-align: center;
 }
 
 .dark-mode-toggle {
