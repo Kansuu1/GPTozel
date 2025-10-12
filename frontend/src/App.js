@@ -523,10 +523,7 @@ function App() {
         )}
 
         {activeTab === 'dashboard' && (
-          <div className="dashboard-placeholder">
-            <h2>📊 Performance Dashboard</h2>
-            <p>Dashboard yükleniyor...</p>
-          </div>
+          <DashboardSection />
         )}
       </div>
 
