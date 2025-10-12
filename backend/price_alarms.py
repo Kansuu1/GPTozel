@@ -181,7 +181,7 @@ def delete_alarm(alarm_id: str) -> bool:
         return False
 
 
-async def get_alarm_statistics() -> Dict:
+def get_alarm_statistics() -> Dict:
     """
     Alarm istatistikleri
     
@@ -193,16 +193,16 @@ async def get_alarm_statistics() -> Dict:
         }
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         # Aktif alarmlar
-        active_count = await db.price_alarms.count_documents({
+        active_count = db.price_alarms.count_documents({
             "is_active": True,
             "triggered": False
         })
         
         # Tetiklenen alarmlar
-        triggered_count = await db.price_alarms.count_documents({
+        triggered_count = db.price_alarms.count_documents({
             "triggered": True
         })
         
@@ -212,7 +212,7 @@ async def get_alarm_statistics() -> Dict:
             {"$group": {"_id": "$coin", "count": {"$sum": 1}}}
         ]
         by_coin_cursor = db.price_alarms.aggregate(pipeline)
-        by_coin = {item["_id"]: item["count"] async for item in by_coin_cursor}
+        by_coin = {item["_id"]: item["count"] for item in by_coin_cursor}
         
         return {
             "total_active": active_count,
