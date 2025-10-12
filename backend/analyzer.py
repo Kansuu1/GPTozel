@@ -120,6 +120,144 @@ async def analyze_cycle():
         await asyncio.gather(*(handle_coin(c.strip().upper()) for c in selected_coins if c.strip()))
 
 async def run_loop():
+
+
+async def analyze_with_intervals():
+    """
+    Fetch intervals kullanarak timeframe bazlı analiz
+    Her timeframe için kendi interval'i ile döngü oluşturur
+    """
+    global task_running
+    
+    if task_running:
+        logger.info("Interval-based analyzer zaten çalışıyor")
+        return
+    
+    task_running = True
+    cfg = read_config()
+    
+    # Fetch intervals al
+    fetch_intervals = cfg.get("fetch_intervals", {
+        "15m": 1, "1h": 2, "4h": 5, "12h": 10,
+        "24h": 15, "7d": 30, "30d": 60
+    })
+    
+    use_coin_specific = cfg.get("use_coin_specific_settings", False)
+    
+    if use_coin_specific:
+        # Coin-bazlı mod: Her coin'in timeframe'i için ayrı task
+        coin_settings_list = cfg.get("coin_settings", [])
+        active_coins = [cs for cs in coin_settings_list if cs.get("active", True)]
+        
+        # Timeframe'lere göre grupla
+        timeframe_groups = {}
+        for cs in active_coins:
+            tf = cs.get("timeframe", "24h")
+            if tf not in timeframe_groups:
+                timeframe_groups[tf] = []
+            timeframe_groups[tf].append(cs)
+        
+        logger.info(f"Coin-bazlı mod: {len(timeframe_groups)} farklı timeframe tespit edildi")
+        
+        # Her timeframe için task oluştur
+        tasks = []
+        for timeframe, coins in timeframe_groups.items():
+            interval = fetch_intervals.get(timeframe, 15)
+            task = asyncio.create_task(
+                analyze_timeframe_group(timeframe, coins, interval, use_coin_specific=True)
+            )
+            tasks.append(task)
+            logger.info(f"Task başlatıldı: {timeframe} → {len(coins)} coin, interval: {interval}dk")
+        
+        # Tüm task'ları çalıştır
+        await asyncio.gather(*tasks)
+    else:
+        # Global mod: Tek bir timeframe için task
+        global_timeframe = cfg.get("timeframe", "24h")
+        interval = fetch_intervals.get(global_timeframe, 15)
+        
+        logger.info(f"Global mod: {global_timeframe}, interval: {interval}dk")
+        await analyze_timeframe_group(global_timeframe, [], interval, use_coin_specific=False)
+
+async def analyze_timeframe_group(timeframe: str, coin_settings: list, interval_minutes: int, use_coin_specific: bool = False):
+    """
+    Belirli bir timeframe için sürekli analiz döngüsü
+    """
+    logger.info(f"[{timeframe}] Analiz döngüsü başladı (interval: {interval_minutes}dk)")
+    
+    while True:
+        try:
+            if use_coin_specific:
+                # Coin-specific mode: sadece bu grup için analiz
+                await analyze_coin_group(coin_settings, timeframe)
+            else:
+                # Global mode: tüm coinler için analiz
+                await analyze_cycle()
+            
+        except Exception as e:
+            logger.error(f"[{timeframe}] Analiz hatası: {e}")
+        
+        # Interval kadar bekle
+        await asyncio.sleep(interval_minutes * 60)
+
+async def analyze_coin_group(coin_settings: list, timeframe: str):
+    """
+    Belirli bir coin grubu için analiz yap
+    """
+    cfg = read_config()
+    API_KEY = cfg.get("cmc_api_key") or os.getenv("CMC_API_KEY")
+    
+    if not API_KEY:
+        logger.error("CMC API anahtarı bulunamadı!")
+        return
+    
+    max_concurrent = cfg.get("max_concurrent_coins", 20)
+    
+    async with aiohttp.ClientSession() as session:
+        cmc = CMCClient(API_KEY)
+        sem = asyncio.Semaphore(max_concurrent)
+        
+        async def handle_coin(cs):
+            async with sem:
+                try:
+                    coin_symbol = cs["coin"]
+                    tf = cs.get("timeframe", timeframe)
+                    manual_threshold = cs.get("threshold", 4)
+                    threshold_mode = cs.get("threshold_mode", "dynamic")
+                    
+                    quote = await cmc.get_quote(session, coin_symbol)
+                    features = build_features_from_quote(quote)
+                    
+                    threshold = get_threshold(features, threshold_mode, manual_threshold, tf)
+                    sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, tf)
+                    prob = float(prob)
+                    
+                    if sig and prob >= threshold:
+                        rec = {
+                            "coin": coin_symbol,
+                            "symbol": coin_symbol,
+                            "signal_type": sig,
+                            "probability": prob,
+                            "confidence_score": int(prob),
+                            "threshold_used": threshold,
+                            "timeframe": tf,
+                            "features": features,
+                            "stop_loss": sl,
+                            "tp": tp,
+                            "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+                        }
+                        
+                        insert_signal_record(rec)
+                        msg = format_signal_message(rec)
+                        await send_telegram_message_async(msg)
+                        logger.info(f"[{tf}] Sinyal: {coin_symbol} {sig} (prob={prob:.2f}%, threshold={threshold:.2f}%)")
+                    
+                except Exception as e:
+                    logger.error(f"[{timeframe}] {cs.get('coin', 'UNKNOWN')} analiz hatası: {e}")
+        
+        tasks = [handle_coin(cs) for cs in coin_settings]
+        await asyncio.gather(*tasks)
+
     """Ana döngü: Her 60 saniyede bir analiz çalıştırır"""
     logger.info("Analyzer loop başlatılıyor...")
     while True:
