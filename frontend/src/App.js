@@ -219,13 +219,30 @@ function App() {
           <div className="panel-section">
             <div className="card">
               <h3>🔐 Admin Token</h3>
-              <input
-                type="password"
-                className="input"
-                value={adminToken}
-                onChange={(e) => setAdminToken(e.target.value)}
-                placeholder="Admin token girin"
-              />
+              <div className="token-input-group">
+                <input
+                  type="password"
+                  className="input"
+                  value={adminToken}
+                  onChange={(e) => setAdminToken(e.target.value)}
+                  placeholder="Admin token girin (örn: mmkansu)"
+                />
+                {adminToken && (
+                  <button 
+                    className="btn btn-small btn-secondary"
+                    onClick={() => {
+                      localStorage.removeItem("admin_token");
+                      setAdminToken("");
+                      setMessage("🔓 Token temizlendi");
+                    }}
+                  >
+                    🗑 Temizle
+                  </button>
+                )}
+              </div>
+              <small>
+                {adminToken ? "✅ Token kaydedildi" : "⚠️ İlk kullanımda token girin"}
+              </small>
             </div>
 
             <div className="card">
