@@ -152,7 +152,7 @@ def get_active_alarms(coin: Optional[str] = None) -> List[Dict]:
         return []
 
 
-async def delete_alarm(alarm_id: str) -> bool:
+def delete_alarm(alarm_id: str) -> bool:
     """
     Alarmı sil veya deaktive et
     
@@ -163,10 +163,10 @@ async def delete_alarm(alarm_id: str) -> bool:
         Başarılı mı?
     """
     try:
-        db = await get_db()
+        db = get_db()
         from bson import ObjectId
         
-        result = await db.price_alarms.update_one(
+        result = db.price_alarms.update_one(
             {"_id": ObjectId(alarm_id)},
             {"$set": {"is_active": False}}
         )
