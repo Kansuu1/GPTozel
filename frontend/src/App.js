@@ -73,6 +73,45 @@ function App() {
     }
   };
 
+  const loadCoinSettings = async () => {
+    try {
+      const res = await axios.get(`${API}/coin-settings`);
+      setCoinSettings(res.data.coin_settings || []);
+    } catch (e) {
+      console.error("Coin ayarları yükleme hatası:", e);
+    }
+  };
+
+  const saveCoinSettings = async () => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+    try {
+      await axios.post(`${API}/coin-settings`, {
+        coin_settings: coinSettings
+      }, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ Coin ayarları kaydedildi!");
+      await loadCoinSettings();
+    } catch (e) {
+      setMessage("❌ Kaydetme hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
+  const updateCoinSetting = (coin, field, value) => {
+    setCoinSettings(prevSettings => 
+      prevSettings.map(cs => 
+        cs.coin === coin ? { ...cs, [field]: value } : cs
+      )
+    );
+  };
+
   const saveConfig = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");
