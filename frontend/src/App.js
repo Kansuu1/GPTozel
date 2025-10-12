@@ -1644,7 +1644,28 @@ function App() {
 
             {/* Alarmlar Kartı */}
             <div className="card mt-6">
-              <h3>🔔 Aktif Fiyat Alarmları</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3>🔔 Aktif Fiyat Alarmları</h3>
+                <div className="flex items-center gap-3">
+                  <span className={`text-sm font-medium ${alarmsActive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {alarmsActive ? '✅ Aktif' : '⛔ Pasif'}
+                  </span>
+                  <button
+                    onClick={() => setAlarmsActive(!alarmsActive)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      alarmsActive 
+                        ? 'bg-green-600 focus:ring-green-500' 
+                        : 'bg-red-600 focus:ring-red-500'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        alarmsActive ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
               <p className="card-description">
                 Sinyal üretildiğinde otomatik oluşturulan fiyat alarmları
               </p>
