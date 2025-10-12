@@ -474,11 +474,32 @@ async def download_export(filename: str):
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("Crypto Bot API başlatıldı")
-    # Start analyzer in background
-    asyncio.create_task(run_analyzer_loop())
-    # Start cleanup scheduler in background
-    asyncio.create_task(run_cleanup_scheduler())
+    """Uygulama başlangıcında çalışacak"""
+    logger.info("Veritabanı başlatılıyor...")
+    init_db()
+    logger.info("✅ Veritabanı hazır")
+    
+    # Eski sinyalleri temizle
+    from cleanup_scheduler import schedule_daily_cleanup
+    asyncio.create_task(schedule_daily_cleanup())
+    
+    # Price tracker'ı başlat
+    from price_tracker import start_price_tracking
+    asyncio.create_task(start_price_tracking())
+    
+    # Analyzer'ı başlat (interval-based veya classic)
+    from analyzer import analyze_with_intervals, run_loop
+    from data_sync import read_config
+    
+    cfg = read_config()
+    use_intervals = cfg.get("use_fetch_intervals", True)
+    
+    if use_intervals:
+        logger.info("🚀 Interval-based analyzer başlatılıyor...")
+        asyncio.create_task(analyze_with_intervals())
+    else:
+        logger.info("⏱ Classic analyzer başlatılıyor...")
+        asyncio.create_task(run_loop())
 
 async def run_analyzer_loop():
     """Background analyzer loop"""
