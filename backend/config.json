@@ -3,7 +3,12 @@
   "threshold_mode": "manual",
   "use_coin_specific_settings": true,
   "selected_coins": [
+    "BTC",
+    "ETH",
+    "XRP",
+    "ADA",
     "SOL",
+    "PEPE",
     "COAI"
   ],
   "coin_settings": [
@@ -48,9 +53,9 @@
       "timeframe": "24h",
       "threshold": 1.5,
       "threshold_mode": "dynamic",
-      "active": true,
+      "active": false,
       "fetch_interval_minutes": 3,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "PEPE",
