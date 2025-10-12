@@ -186,7 +186,9 @@ async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15)
 async def get_validated_price(symbol: str, cmc_price: float) -> float:
     """
     Doğrulanmış fiyat döndür
-    Eğer CMC ile CoinGecko arasında büyük fark varsa, CoinGecko'yu kullan
+    Eğer CMC ile alternatif kaynaklar arasında büyük fark varsa, en güvenilir kaynağı kullan
+    
+    Öncelik: Binance > CoinGecko > CMC
     
     Args:
         symbol: Coin sembolü
@@ -197,10 +199,12 @@ async def get_validated_price(symbol: str, cmc_price: float) -> float:
     """
     validation = await validate_price(symbol, cmc_price)
     
-    if not validation["is_valid"] and validation["coingecko_price"]:
-        # CMC fiyatı güvenilir değil, CoinGecko'yu kullan
-        logger.warning(f"[{symbol}] CMC fiyatı yerine CoinGecko fiyatı kullanılıyor: ${validation['coingecko_price']}")
-        return validation["coingecko_price"]
+    if not validation["is_valid"]:
+        # CMC fiyatı güvenilir değil, alternatifi kullan
+        recommended = validation["recommended_price"]
+        source = "Binance" if validation["binance_price"] else "CoinGecko"
+        logger.warning(f"[{symbol}] ⚠️ CMC fiyatı yerine {source} fiyatı kullanılıyor: ${recommended:.2f}")
+        return recommended
     
     # CMC fiyatı güvenilir
     return cmc_price
