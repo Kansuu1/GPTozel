@@ -634,10 +634,10 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
                 logger.info(f"✅ [{symbol}] Veri çekildi - Fiyat: ${current_price:.2f}")
                 
                 # Fiyat geçmişine kaydet (RSI/MACD için)
-                await save_price_point(symbol, current_price, volume_24h)
+                save_price_point(symbol, current_price, volume_24h)
                 
                 # Fiyat alarmlarını kontrol et
-                triggered_alarms = await check_price_alarms(symbol, current_price)
+                triggered_alarms = check_price_alarms(symbol, current_price)
                 if triggered_alarms:
                     for alarm in triggered_alarms:
                         target = alarm['target_price']
