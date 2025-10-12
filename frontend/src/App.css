@@ -1366,6 +1366,36 @@ select.input {
     font-size: 0.9rem;
   }
 
+
+/* Restart Section */
+.restart-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+}
+
+.restart-info {
+  color: #856404;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: white;
+  font-weight: 700;
+  width: 100%;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+
   .interval-unit {
     font-size: 0.8rem;
   }
