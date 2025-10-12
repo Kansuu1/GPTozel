@@ -17,18 +17,18 @@
       "timeframe": "30d",
       "threshold": 1.3,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 2,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "ETH",
       "timeframe": "30d",
       "threshold": 1.95,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 2,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "XRP",
