@@ -1075,6 +1075,32 @@ function App() {
                           )}
                         </div>
 
+                        {/* RSI/MACD Göstergeleri */}
+                        {isActive && indicators[cs.coin] && (
+                          <div className="coin-card-section border-t border-gray-200 dark:border-gray-700 pt-3">
+                            <div className="flex gap-2 items-center flex-wrap">
+                              {indicators[cs.coin].rsi && (
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                  indicators[cs.coin].rsi_signal === 'OVERSOLD' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  indicators[cs.coin].rsi_signal === 'OVERBOUGHT' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                                  'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                }`}>
+                                  RSI: {indicators[cs.coin].rsi.toFixed(1)}
+                                </span>
+                              )}
+                              {indicators[cs.coin].macd_signal && (
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                  indicators[cs.coin].macd_signal === 'BULLISH' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  indicators[cs.coin].macd_signal === 'BEARISH' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                                  'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                }`}>
+                                  MACD: {indicators[cs.coin].macd_signal}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
                         {/* Timeframe and Mode */}
                         <div className="coin-card-section">
                           <div className="section-label">
