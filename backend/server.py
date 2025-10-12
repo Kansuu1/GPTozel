@@ -217,6 +217,50 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
             "active": bool(setting.active)
         })
         coin_list.append(coin_symbol)
+
+
+@app.get("/api/fetch-intervals")
+async def get_fetch_intervals():
+    """Timeframe bazlı veri çekme sıklığını getir"""
+    cfg = read_config()
+    
+    # Varsayılan intervals
+    default_intervals = {
+        "15m": 1,
+        "1h": 2,
+        "4h": 5,
+        "12h": 10,
+        "24h": 15,
+        "7d": 30,
+        "30d": 60
+    }
+    
+    intervals = cfg.get("fetch_intervals", default_intervals)
+    return {"fetch_intervals": intervals}
+
+@app.post("/api/fetch-intervals")
+async def update_fetch_intervals(payload: FetchIntervals, request: Request):
+    """Timeframe bazlı veri çekme sıklığını güncelle"""
+    require_admin(request)
+    
+    # Validate intervals
+    valid_intervals = {}
+    for timeframe, minutes in payload.intervals.items():
+        if isinstance(minutes, (int, float)) and minutes > 0:
+            valid_intervals[timeframe] = int(minutes)
+    
+    if not valid_intervals:
+        raise HTTPException(status_code=400, detail="Geçerli interval değeri bulunamadı")
+    
+    # Update config
+    cfg = update_config({"fetch_intervals": valid_intervals})
+    
+    return {
+        "status": "ok",
+        "message": f"{len(valid_intervals)} timeframe interval güncellendi",
+        "fetch_intervals": valid_intervals
+    }
+
     
     # Config'i güncelle - hem coin_settings hem de selected_coins
     cfg = update_config({
