@@ -918,21 +918,22 @@ function App() {
                       </tr>
                     </thead>
                     <tbody>
-                      {coinSettings.map((cs) => (
-                        <tr key={cs.coin} className={!cs.active ? 'inactive-coin' : ''}>
+                      {coinSettings.map((cs) => {
+                        const isActive = cs.status === 'active' || (cs.active !== false && !cs.status);
+                        return (
+                        <tr key={cs.coin} className={!isActive ? 'inactive-coin' : ''}>
                           <td className="status-cell">
-                            <label className="toggle-switch-small">
-                              <input
-                                type="checkbox"
-                                checked={cs.active !== false}
-                                onChange={(e) => updateCoinSetting(cs.coin, 'active', e.target.checked)}
-                              />
-                              <span className="toggle-slider-small"></span>
-                            </label>
+                            <button 
+                              className={`status-toggle-btn ${isActive ? 'active' : 'passive'}`}
+                              onClick={() => updateCoinSetting(cs.coin, 'status', isActive ? 'passive' : 'active')}
+                              title={isActive ? 'Aktif - Veri çekiliyor' : 'Pasif - Veri çekilmiyor'}
+                            >
+                              {isActive ? '🟢' : '⚫'}
+                            </button>
                           </td>
                           <td className="coin-name-cell">
                             <strong>{cs.coin}</strong>
-                            {!cs.active && <span className="inactive-badge">Pasif</span>}
+                            {!isActive && <span className="inactive-badge">Pasif</span>}
                           </td>
                           <td>
                             <select
@@ -979,6 +980,30 @@ function App() {
                             </select>
                           </td>
                           <td>
+                            <input
+                              type="number"
+                              className="input-small interval-input"
+                              value={cs.fetch_interval_minutes || 2}
+                              onChange={(e) => updateCoinSetting(cs.coin, 'fetch_interval_minutes', parseInt(e.target.value))}
+                              min="1"
+                              max="1440"
+                              step="1"
+                              title="Veri çekme aralığı (dakika)"
+                            />
+                          </td>
+                          <td className="last-fetch-cell">
+                            {isActive ? (
+                              <>
+                                <span className="time-ago">{cs.time_ago || 'Henüz çekilmedi'}</span>
+                                {cs.time_ago && cs.time_ago !== 'Henüz çekilmedi' && (
+                                  <span className="fetch-indicator" title="Veri çekiliyor">📡</span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="passive-text">-</span>
+                            )}
+                          </td>
+                          <td>
                             <button
                               className="btn-delete-coin"
                               onClick={() => removeCoinFromSettings(cs.coin)}
@@ -988,7 +1013,7 @@ function App() {
                             </button>
                           </td>
                         </tr>
-                      ))}
+                      )})}
                     </tbody>
                   </table>
 
