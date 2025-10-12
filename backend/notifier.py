@@ -26,6 +26,23 @@ async def send_telegram_message_async(text: str, parse_mode="HTML", buttons=None
         async with session.post(url, data=payload) as resp:
             return await resp.json()
 
+def format_price(price):
+    """
+    Fiyatı akıllıca formatla
+    - Büyük fiyatlar (>1): 2 ondalık
+    - Orta fiyatlar (0.01-1): 4 ondalık
+    - Küçük fiyatlar (<0.01): 8 ondalık veya bilimsel gösterim
+    """
+    if price >= 1:
+        return f"${price:,.2f}"
+    elif price >= 0.01:
+        return f"${price:.4f}"
+    elif price >= 0.00001:
+        return f"${price:.8f}"
+    else:
+        # Çok küçük değerler için bilimsel gösterim
+        return f"${price:.2e}"
+
 def format_signal_message(rec: dict):
     txt = f"📊 <b>MM TRADING BOT PRO</b>\n\n"
     txt += f"🪙 <b>{rec['coin']}</b> — "
@@ -39,7 +56,7 @@ def format_signal_message(rec: dict):
     # Fiyat bilgisi
     if rec.get("features") and rec['features'].get('price'):
         price = rec['features']['price']
-        txt += f"💰 Giriş Fiyatı: <code>${price:.4f}</code>\n"
+        txt += f"💰 Giriş Fiyatı: <code>{format_price(price)}</code>\n"
     
     txt += f"💯 Güvenilirlik: <b>{rec['probability']:.2f}%</b>  (Eşik: {rec['threshold_used']}%)\n"
     txt += f"⏱ Zaman Dilimi: {rec.get('timeframe')}\n\n"
@@ -48,10 +65,10 @@ def format_signal_message(rec: dict):
     txt += f"<b>🎯 Hedefler:</b>\n"
     if rec.get("tp"):
         tp = rec.get('tp')
-        txt += f"✅ Take Profit (TP): <code>${tp:.4f}</code>\n"
+        txt += f"✅ Take Profit (TP): <code>{format_price(tp)}</code>\n"
     if rec.get("stop_loss"):
         sl = rec.get('stop_loss')
-        txt += f"🛡 Stop Loss (SL): <code>${sl:.4f}</code>\n"
+        txt += f"🛡 Stop Loss (SL): <code>{format_price(sl)}</code>\n"
     
     # Risk/Reward hesaplama
     if rec.get("tp") and rec.get("stop_loss") and rec.get("features") and rec['features'].get('price'):
