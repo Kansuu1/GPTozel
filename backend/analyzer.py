@@ -120,7 +120,13 @@ async def analyze_cycle():
         await asyncio.gather(*(handle_coin(c.strip().upper()) for c in selected_coins if c.strip()))
 
 async def run_loop():
-
+    """Ana döngü - backward compatibility için"""
+    while True:
+        try:
+            await analyze_cycle()
+        except Exception as e:
+            logger.error(f"Analyzer cycle hatası: {e}")
+        await asyncio.sleep(60)
 
 async def analyze_with_intervals():
     """
