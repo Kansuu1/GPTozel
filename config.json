@@ -11,5 +11,6 @@
   "telegram_token": "",
   "telegram_chat_id": "",
   "allowed_user_ids": "",
-  "max_concurrent_coins": 20
+  "max_concurrent_coins": 20,
+  "alarms_enabled": true
 }
