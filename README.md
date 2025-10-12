@@ -121,6 +121,44 @@ curl http://localhost:8001/api/signals?limit=20
 - "Coin Başına Özel Ayarlar" kartı görünür
 - Her coin için:
   - **Zaman Dilimi**: 15m, 1h, 4h, 12h, 24h, 7d, 30d
+
+
+### Mod Karşılaştırması
+
+| Özellik | Global Mod | Coin-Bazlı Mod |
+|---------|-----------|----------------|
+| Timeframe | Tek (tüm coinler için) | Her coin için ayrı |
+| Threshold | Tek | Her coin için ayrı |
+| Dinamik/Manuel | Tek | Her coin için ayrı |
+| Kullanım | Basit, hızlı | Optimize, hassas |
+| Önerilen | Başlangıç | İleri seviye |
+
+### Örnekler
+
+**Global Mod Örneği:**
+```
+Ayar: timeframe=24h, threshold=4%, mode=dynamic
+Sonuç: 
+  - BTC → 24h, 4%
+  - ETH → 24h, 4%
+  - PEPE → 24h, 4%
+  (Tüm coinler aynı ayarla analiz edilir)
+```
+
+**Coin-Bazlı Mod Örneği:**
+```
+Ayarlar:
+  - BTC: timeframe=1h, threshold=3%, mode=dynamic
+  - ETH: timeframe=1h, threshold=3%, mode=dynamic
+  - PEPE: timeframe=15m, threshold=6%, mode=dynamic
+
+Sonuç:
+  - BTC → 1h analiz, düşük threshold
+  - ETH → 1h analiz, düşük threshold
+  - PEPE → 15m hızlı analiz, yüksek threshold
+  (Her coin optimize ayarlarla analiz edilir)
+```
+
   - **Eşik (%)**: Manuel threshold değeri
   - **Mod**: Manuel veya Dinamik
 
