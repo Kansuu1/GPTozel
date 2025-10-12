@@ -1396,6 +1396,34 @@ select.input {
 }
 
 
+
+/* Threshold Input Wrapper */
+.threshold-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dynamic-indicator {
+  font-size: 1.2rem;
+  animation: pulse 2s ease-in-out infinite;
+  cursor: help;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.threshold-input-wrapper .input-small[disabled] {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-color: #4caf50;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+
   .interval-unit {
     font-size: 0.8rem;
   }
