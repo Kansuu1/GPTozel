@@ -283,6 +283,24 @@ async def start_interval_analyzer(request: Request):
         logger.error(f"Analyzer başlatma hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.post("/api/restart")
+async def restart_backend(request: Request):
+    """Backend'i yeniden başlat (analyzer'ı yeniden başlatır)"""
+    require_admin(request)
+    
+    logger.info("🔄 Backend restart komutu alındı")
+    
+    # Supervisor ile restart
+    import subprocess
+    try:
+        subprocess.Popen(["sudo", "supervisorctl", "restart", "backend"])
+        return {"status": "ok", "message": "Backend yeniden başlatılıyor..."}
+    except Exception as e:
+        logger.error(f"Restart hatası: {e}")
+        raise HTTPException(status_code=500, detail="Restart başarısız")
+
+
     
     # Config'i güncelle - hem coin_settings hem de selected_coins
     cfg = update_config({
