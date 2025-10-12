@@ -30,6 +30,8 @@ function App() {
     telegram_token: "",
     telegram_chat_id: ""
   });
+  const [manualPrices, setManualPrices] = useState({});  // Manuel fiyat override'ları
+  const [newManualPrice, setNewManualPrice] = useState({ coin: "", price: "" });
   const [darkMode, setDarkMode] = useState(() => {
     // localStorage'dan dark mode tercihini yükle
     const saved = localStorage.getItem('darkMode');
