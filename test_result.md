@@ -105,11 +105,13 @@
 user_problem_statement: |
   MM TRADING BOT PRO - CoinMarketCap & Telegram entegrasyonlu kripto analiz botu
   
-  Son özellik: Coin Başına Fetch Interval & Status Yönetimi
-  - Her coin için ayrı veri çekme aralığı (dakika)
-  - Active/Passive status sistemi
-  - Gerçek zamanlı son güncelleme gösterimi
-  - Sinyaller en son çekilen veri üzerinden üretilir
+  Yeni Özellikler (Güncel):
+  - Dashboard yenileme: 10 dakikada bir
+  - RSI (14) ve MACD (12,26,9) göstergeleri - Sinyal üretiminde kullanılıyor
+  - Fiyat alarmları: Sinyal üretilince otomatik alarm, hedef fiyata ulaşınca Telegram bildirimi
+  - Signal geçmişi grafikleri
+  - Minimal tasarım ve mobil uyumluluk
+  - Coin Başına Fetch Interval & Status Yönetimi
 
 backend:
   - task: "Coin başına fetch interval sistemi"
