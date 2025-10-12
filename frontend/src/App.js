@@ -13,11 +13,19 @@ function App() {
     max_concurrent_coins: 20
   });
   const [signals, setSignals] = useState([]);
-  const [adminToken, setAdminToken] = useState("cryptobot_admin_2024");
+  const [adminToken, setAdminToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState("panel");
   const [newCoin, setNewCoin] = useState("");
+
+  // Load admin token from localStorage on mount
+  useEffect(() => {
+    const savedToken = localStorage.getItem("admin_token");
+    if (savedToken) {
+      setAdminToken(savedToken);
+    }
+  }, []);
   
   // Available coins - now dynamic
   const availableCoins = ["BTC", "ETH", "BNB", "SOL", "ADA", "XRP", "DOGE", "DOT", "MATIC", "AVAX", "LINK", "UNI", "ARB", "OP", "SUI"];
