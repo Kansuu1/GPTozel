@@ -88,7 +88,16 @@ async def analyze_cycle():
                         threshold_mode = global_threshold_mode
                         logger.info(f"[GLOBAL] Analyzing {sym}: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
                     
-                    quote = await cmc.get_quote(session, sym)
+                    # ÖNCELİKLE CACHE'DEN VERİ AL - En son çekilen veriyi kullan
+                    quote = get_coin_from_cache(sym)
+                    
+                    # Cache'de yoksa API'den çek
+                    if quote is None:
+                        logger.debug(f"[{sym}] Cache'de bulunamadı, API'den çekiliyor...")
+                        quote = await cmc.get_quote(session, sym)
+                    else:
+                        logger.debug(f"[{sym}] Cache'den alındı ✅")
+                    
                     features = build_features_from_quote(quote)
                     
                     # Dinamik veya manuel threshold kullan (coin başına)
