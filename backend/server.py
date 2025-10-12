@@ -719,7 +719,7 @@ async def restart_coin_fetch_task(symbol: str):
     logger.info(f"🚀 [{symbol}] Yeni fetch task başlatıldı: {interval_minutes} dakika")
 
 async def restart_all_fetch_tasks():
-    """Tüm coin'ler için fetch task'larını yeniden başlat"""
+    """Tüm coin'ler için fetch task'larını yeniden başlat (sadece active olanlar)"""
     cfg = read_config()
     coin_settings = cfg.get("coin_settings", [])
     
@@ -727,6 +727,18 @@ async def restart_all_fetch_tasks():
     
     for coin_config in coin_settings:
         symbol = coin_config["coin"]
+        status = coin_config.get("status", "active")
+        
+        # Passive olanları restart etme!
+        if status == "passive":
+            # Eğer çalışan task varsa durdur
+            if symbol in fetch_tasks:
+                fetch_tasks[symbol].cancel()
+                fetch_tasks.pop(symbol)
+                logger.info(f"⚫ [{symbol}] Passive olduğu için task durduruldu")
+            continue
+        
+        # Active olanları restart et
         await restart_coin_fetch_task(symbol)
     
     logger.info("✅ Tüm fetch task'ları yenilendi")
