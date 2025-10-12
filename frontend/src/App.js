@@ -194,12 +194,14 @@ function App() {
       timeframe: timeframe,
       threshold: threshold,
       threshold_mode: thresholdMode,
-      active: true
+      active: true,
+      fetch_interval_minutes: 2,
+      status: "active"
     };
 
     setCoinSettings([...coinSettings, newCoinSetting]);
     setNewCoin("");
-    setMessage(`✅ ${coinSymbol} eklendi (Eşik: ${threshold}%) - ayarları yapıp kaydedin`);
+    setMessage(`✅ ${coinSymbol} eklendi (Eşik: ${threshold}%, Interval: 2dk) - ayarları yapıp kaydedin`);
   };
 
   const removeCoinFromSettings = (coin) => {
