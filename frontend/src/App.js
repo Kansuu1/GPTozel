@@ -76,6 +76,7 @@ function App() {
     loadFetchIntervals();
     loadAlarms();
     loadChartData();
+    loadManualPrices();
     
     // 10 dakikada bir yenile
     const signalInterval = setInterval(loadSignals, 600000); // 10 minutes
