@@ -32,6 +32,95 @@ def get_coin_from_cache(symbol: str):
         return cache_entry.get("data")
     return None
 
+async def analyze_single_coin(symbol: str, quote: dict):
+    """
+    Tek bir coin için analiz yap ve gerekirse sinyal üret
+    Bu fonksiyon fetch loop'tan her veri çekildikinde çağrılır
+    """
+    cfg = read_config()
+    
+    # Coin başına özel ayarlar
+    use_coin_specific = cfg.get("use_coin_specific_settings", False)
+    coin_settings = cfg.get("coin_settings", [])
+    coin_settings_map = {cs["coin"]: cs for cs in coin_settings}
+    
+    # Global ayarlar
+    global_threshold = cfg.get("threshold", 4)
+    global_threshold_mode = cfg.get("threshold_mode", "dynamic")
+    global_timeframe = cfg.get("timeframe", "24h")
+    
+    try:
+        # Coin config al
+        if use_coin_specific and symbol in coin_settings_map:
+            coin_config = coin_settings_map[symbol]
+            timeframe = coin_config.get("timeframe", "24h")
+            manual_threshold = coin_config.get("threshold", 4)
+            threshold_mode = coin_config.get("threshold_mode", "dynamic")
+            logger.info(f"[{symbol}] Coin-bazlı analiz: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
+        else:
+            timeframe = global_timeframe
+            manual_threshold = global_threshold
+            threshold_mode = global_threshold_mode
+            logger.info(f"[{symbol}] Global ayarlarla analiz: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
+        
+        # Feature extraction
+        features = build_features_from_quote(quote)
+        
+        # Threshold hesapla
+        threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
+        
+        # Sinyal tahmini
+        sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
+        prob = float(prob)
+        
+        logger.info(f"[{symbol}] Analiz: Signal={sig}, Prob={prob:.1f}%, Threshold={threshold:.1f}%")
+        
+        # Threshold aşıldıysa sinyal üret
+        if sig and prob >= threshold:
+            rec = {
+                "coin": symbol,
+                "symbol": symbol,
+                "signal_type": sig,
+                "probability": prob,
+                "confidence_score": int(prob),
+                "threshold_used": threshold,
+                "timeframe": timeframe,
+                "features": features,
+                "stop_loss": sl,
+                "tp": tp,
+                "success": None,
+            }
+            
+            # DB'ye kaydet
+            rec_id = insert_signal_record(rec)
+            rec["id"] = rec_id
+            
+            # Türkiye saati
+            turkey_time = datetime.now(timezone.utc) + timedelta(hours=3)
+            rec["created_at"] = turkey_time.strftime("%H:%M")
+            
+            # Telegram bildirimi gönder
+            msg = format_signal_message(rec, weight_desc, timeframe)
+            telegram_token = cfg.get("telegram_token") or os.getenv("TELEGRAM_BOT_TOKEN")
+            telegram_chat = cfg.get("telegram_chat_id") or os.getenv("TELEGRAM_CHAT_ID")
+            
+            if telegram_token and telegram_chat:
+                await send_telegram_message_async(telegram_token, telegram_chat, msg)
+                logger.info(f"🚀 [{symbol}] Sinyal üretildi ve Telegram'a gönderildi! (Prob: {prob:.1f}%)")
+            else:
+                logger.warning(f"⚠️ [{symbol}] Sinyal üretildi ama Telegram config eksik")
+                
+            return True  # Sinyal üretildi
+        else:
+            logger.debug(f"[{symbol}] Threshold aşılmadı ({prob:.1f}% < {threshold:.1f}%), sinyal üretilmedi")
+            return False  # Sinyal üretilmedi
+            
+    except Exception as e:
+        logger.error(f"❌ [{symbol}] Analiz hatası: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
 async def analyze_cycle():
     """Ana analiz döngüsü - seçili coinleri analiz eder ve sinyal gönderir"""
     cfg = read_config()
