@@ -602,14 +602,15 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
     
     while True:
         try:
-            # MongoDB'den güncel coin ayarlarını al
-            from db_mongodb import get_db
-            db = get_db()
-            coin_config = db.coin_settings.find_one({"coin": symbol})
+            # Config'den coin ayarlarını al (güncel status için)
+            cfg = read_config()
+            coin_settings = cfg.get("coin_settings", [])
+            coin_config = next((cs for cs in coin_settings if cs["coin"] == symbol), None)
             
             if not coin_config:
-                logger.warning(f"[{symbol}] MongoDB'de bulunamadı, loop sonlandırılıyor")
-                break
+                # Config'de yoksa varsayılan değerler kullan
+                logger.debug(f"[{symbol}] Config'de bulunamadı, varsayılan ayarlar kullanılıyor")
+                coin_config = {"coin": symbol, "status": "active"}
             
             # Status kontrolü - passive ise LOOP'U SONLANDIR
             status = coin_config.get("status", "active")
