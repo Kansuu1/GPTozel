@@ -15,8 +15,10 @@ load_dotenv(ROOT_DIR / '.env')
 
 from data_sync import read_config, update_config
 from notifier import send_telegram_message_async
-from db import init_db, fetch_recent_signals
+from db import init_db, fetch_recent_signals, SessionLocal, SignalHistory
 from analyzer import analyze_cycle
+from sqlalchemy import func, desc
+from datetime import datetime, timedelta
 
 # Ensure DB and export dir exist
 init_db()
