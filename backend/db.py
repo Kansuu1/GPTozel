@@ -190,42 +190,83 @@ def get_dashboard_stats():
         avg_result = list(db.signal_history.aggregate(pipeline))
         avg_reward = avg_result[0]["avg_reward"] if avg_result else 0
         
-        # Coin başına istatistikler
+        # Top profitable signals (en karlı 5)
+        top_profitable_cursor = db.signal_history.find(
+            {"reward": {"$ne": None, "$gt": 0}},
+            sort=[("reward", DESCENDING)]
+        ).limit(5)
+        
+        top_profitable = []
+        for doc in top_profitable_cursor:
+            top_profitable.append({
+                "id": str(doc["_id"]),
+                "coin": doc.get("coin"),
+                "signal_type": doc.get("signal_type"),
+                "reward": round(doc.get("reward", 0), 2),
+                "probability": round(doc.get("probability", 0), 2),
+                "timeframe": doc.get("timeframe"),
+                "created_at": doc.get("created_at").isoformat() if doc.get("created_at") else None
+            })
+        
+        # Coin başına performans
         coin_pipeline = [
             {"$group": {
                 "_id": "$coin",
-                "total": {"$sum": 1},
+                "total_signals": {"$sum": 1},
                 "successful": {"$sum": {"$cond": [{"$eq": ["$success", True]}, 1, 0]}},
                 "avg_prob": {"$avg": "$probability"}
             }},
-            {"$sort": {"total": DESCENDING}},
+            {"$sort": {"total_signals": DESCENDING}},
             {"$limit": 10}
         ]
-        coin_stats = list(db.signal_history.aggregate(coin_pipeline))
+        coin_performance_raw = list(db.signal_history.aggregate(coin_pipeline))
         
+        coin_performance = []
+        for cp in coin_performance_raw:
+            total = cp["total_signals"]
+            successful = cp["successful"]
+            success_rate_coin = (successful / total * 100) if total > 0 else 0
+            coin_performance.append({
+                "coin": cp["_id"],
+                "total_signals": total,
+                "successful": successful,
+                "success_rate": round(success_rate_coin, 2)
+            })
+        
+        # Eski SQLite format'ına uyumlu response
         return {
-            "total_signals": total_signals,
-            "successful_signals": successful,
-            "failed_signals": failed,
-            "pending_signals": pending,
-            "success_rate": round(success_rate, 2),
-            "max_gain": max_gain,
-            "max_loss": max_loss,
-            "avg_reward": round(avg_reward, 2) if avg_reward else 0,
-            "coin_stats": coin_stats
+            "summary": {
+                "total_signals": total_signals,
+                "successful_signals": successful,
+                "failed_signals": failed,
+                "pending_signals": pending,
+                "success_rate": round(success_rate, 2),
+                "max_gain": round(max_gain, 2) if max_gain else 0,
+                "max_loss": round(max_loss, 2) if max_loss else 0,
+                "avg_reward": round(avg_reward, 2) if avg_reward else 0
+            },
+            "top_profitable": top_profitable,
+            "coin_performance": coin_performance,
+            "monthly_signals": [],  # TODO: Implement if needed
+            "signal_type_distribution": []  # TODO: Implement if needed
         }
     except Exception as e:
         logger.error(f"❌ Dashboard stats hatası: {e}")
         return {
-            "total_signals": 0,
-            "successful_signals": 0,
-            "failed_signals": 0,
-            "pending_signals": 0,
-            "success_rate": 0,
-            "max_gain": 0,
-            "max_loss": 0,
-            "avg_reward": 0,
-            "coin_stats": []
+            "summary": {
+                "total_signals": 0,
+                "successful_signals": 0,
+                "failed_signals": 0,
+                "pending_signals": 0,
+                "success_rate": 0,
+                "max_gain": 0,
+                "max_loss": 0,
+                "avg_reward": 0
+            },
+            "top_profitable": [],
+            "coin_performance": [],
+            "monthly_signals": [],
+            "signal_type_distribution": []
         }
 
 def fetch_prune_candidates(cutoff_ts, min_samples, success_threshold):
