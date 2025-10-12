@@ -824,7 +824,7 @@ async def get_signals_chart(days: int = 7, coin: Optional[str] = None):
         from db_mongodb import get_db
         from datetime import datetime, timezone, timedelta
         
-        db = await get_db()
+        db = get_db()
         
         # Zaman aralığı
         cutoff = datetime.now(timezone.utc) - timedelta(days=days)
@@ -833,9 +833,9 @@ async def get_signals_chart(days: int = 7, coin: Optional[str] = None):
         if coin:
             query["coin"] = coin.upper()
         
-        # Sinyalleri al
-        signals_cursor = db.signals.find(query).sort("created_at", 1)
-        signals = await signals_cursor.to_list(length=1000)
+        # Sinyalleri al (signal_history collection kullan)
+        signals_cursor = db.signal_history.find(query).sort("created_at", 1).limit(1000)
+        signals = list(signals_cursor)
         
         # Coin bazında gruplama
         by_coin = {}
