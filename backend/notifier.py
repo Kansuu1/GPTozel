@@ -2,6 +2,9 @@
 import os, json, asyncio
 import aiohttp
 from data_sync import read_config
+import logging
+
+logger = logging.getLogger(__name__)
 
 async def send_telegram_message_async(text: str, parse_mode="HTML", buttons=None):
     cfg = read_config()
@@ -9,8 +12,8 @@ async def send_telegram_message_async(text: str, parse_mode="HTML", buttons=None
     TELEGRAM_CHAT = cfg.get("telegram_chat_id") or os.getenv("TELEGRAM_CHAT_ID")
     
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT:
-        print("Telegram not configured, message:", text)
-        return
+        logger.error(f"❌ Telegram config eksik! Token: {bool(TELEGRAM_TOKEN)}, Chat: {bool(TELEGRAM_CHAT)}")
+        return {"ok": False, "error": "Config eksik"}
     
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {
@@ -22,9 +25,18 @@ async def send_telegram_message_async(text: str, parse_mode="HTML", buttons=None
     if buttons:
         payload["reply_markup"] = json.dumps({"inline_keyboard": buttons})
     
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, data=payload) as resp:
-            return await resp.json()
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=payload) as resp:
+                result = await resp.json()
+                if result.get('ok'):
+                    logger.debug(f"✅ Telegram mesajı gönderildi")
+                else:
+                    logger.error(f"❌ Telegram API hatası: {result}")
+                return result
+    except Exception as e:
+        logger.error(f"❌ Telegram gönderme hatası: {e}")
+        return {"ok": False, "error": str(e)}
 
 def format_price(price):
     """
