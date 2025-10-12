@@ -9,7 +9,7 @@ import asyncio
 import schedule
 import time
 from datetime import datetime, timezone, timedelta
-from db import SessionLocal, SignalHistory
+# MongoDB kullanılıyor - SessionLocal ve SignalHistory kaldırıldı
 # from price_tracker import PriceTracker  # DEVRE DIȘI - Coin-based fetch kullanıyoruz
 import logging
 

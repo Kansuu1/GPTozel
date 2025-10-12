@@ -6,7 +6,7 @@ Her sinyal için güncel fiyatı kontrol eder ve başarı durumunu günceller
 import asyncio
 import aiohttp
 from datetime import datetime, timezone, timedelta
-from db import SessionLocal, SignalHistory
+# MongoDB kullanılıyor - SessionLocal ve SignalHistory kaldırıldı
 from cmc_client import CMCClient
 from data_sync import read_config
 import logging
