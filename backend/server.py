@@ -210,7 +210,8 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
             "coin": coin_symbol,
             "timeframe": setting.timeframe.strip(),
             "threshold": float(setting.threshold),
-            "threshold_mode": setting.threshold_mode.strip().lower()
+            "threshold_mode": setting.threshold_mode.strip().lower(),
+            "active": bool(setting.active)
         })
         coin_list.append(coin_symbol)
     
