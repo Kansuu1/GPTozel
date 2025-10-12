@@ -82,7 +82,8 @@ function App() {
         threshold: parseInt(config.threshold),
         selected_coins: config.selected_coins,
         timeframe: config.timeframe,
-        max_concurrent_coins: parseInt(config.max_concurrent_coins)
+        max_concurrent_coins: parseInt(config.max_concurrent_coins),
+        cmc_api_key: config.cmc_api_key || undefined
       }, {
         headers: { "x-admin-token": adminToken }
       });
