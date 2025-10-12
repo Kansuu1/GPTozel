@@ -37,6 +37,10 @@ logger = logging.getLogger(__name__)
 # Admin token for protecting config-changing endpoints
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "cryptobot_admin_2024")
 
+# Global cache for coin data and fetch times
+coin_data_cache = {}  # {symbol: {"data": {}, "last_fetch": datetime, "status": "active/passive"}}
+fetch_tasks = {}  # {symbol: asyncio.Task}
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
