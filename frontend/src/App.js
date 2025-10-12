@@ -108,7 +108,14 @@ function App() {
   const loadCoinSettings = async () => {
     try {
       const res = await axios.get(`${API}/coin-settings`);
-      setCoinSettings(res.data.coin_settings || []);
+      const settings = res.data.coin_settings || [];
+      setCoinSettings(settings);
+      
+      // Her coin için göstergeleri yükle (sadece active olanlar)
+      const activeCoins = settings.filter(cs => cs.status === 'active');
+      activeCoins.forEach(cs => {
+        loadIndicators(cs.coin);
+      });
     } catch (e) {
       console.error("Coin ayarları yükleme hatası:", e);
     }
