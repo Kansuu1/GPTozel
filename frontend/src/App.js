@@ -654,7 +654,7 @@ function App() {
                     className="input"
                     value={adminToken}
                     onChange={(e) => setAdminToken(e.target.value)}
-                    placeholder="Admin token (örn: mmkansu)"
+                    placeholder="Admin token'ı girin"
                   />
                   {adminToken && (
                     <button 
