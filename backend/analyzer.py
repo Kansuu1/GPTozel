@@ -15,10 +15,20 @@ import logging
 running_tasks = {}
 task_running = False
 
+# Global coin data cache - server.py'den erişilebilir
+coin_data_cache = {}
+
 
 logger = logging.getLogger(__name__)
 
 init_db()
+
+def get_coin_from_cache(symbol: str):
+    """Cache'den coin verisini al, yoksa None döndür"""
+    if symbol in coin_data_cache:
+        cache_entry = coin_data_cache[symbol]
+        return cache_entry.get("data")
+    return None
 
 async def analyze_cycle():
     """Ana analiz döngüsü - seçili coinleri analiz eder ve sinyal gönderir"""
