@@ -26,6 +26,10 @@ function App() {
   const [indicators, setIndicators] = useState({});  // RSI/MACD göstergeleri
   const [alarms, setAlarms] = useState([]);  // Fiyat alarmları
   const [chartData, setChartData] = useState(null);  // Signal grafik verileri
+  const [telegramConfig, setTelegramConfig] = useState({
+    telegram_token: "",
+    telegram_chat_id: ""
+  });
   const [darkMode, setDarkMode] = useState(() => {
     // localStorage'dan dark mode tercihini yükle
     const saved = localStorage.getItem('darkMode');
