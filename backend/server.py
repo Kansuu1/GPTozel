@@ -217,6 +217,21 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
             "active": bool(setting.active)
         })
         coin_list.append(coin_symbol)
+    
+    # Config'i güncelle - hem coin_settings hem de selected_coins
+    cfg = update_config({
+        "coin_settings": new_settings,
+        "selected_coins": coin_list
+    })
+    
+    logger.info(f"🔄 Coin ayarları güncellendi. Değişiklikler backend restart'ta uygulanacak.")
+    
+    return {
+        "status": "ok",
+        "message": f"{len(new_settings)} coin ayarı güncellendi",
+        "coin_settings": new_settings,
+        "selected_coins": coin_list
+    }
 
 
 @app.get("/api/fetch-intervals")
