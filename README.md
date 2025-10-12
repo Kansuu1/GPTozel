@@ -112,11 +112,21 @@ curl http://localhost:8001/api/signals?limit=20
 
 ### Nasıl Kullanılır?
 
-Web panelinde "Coin Başına Özel Ayarlar" kartından her coin için:
+**1. Modu Seçin:**
+- Web panelinde "Sinyal Ayarları" kartında toggle butonunu kullanın
+- ✅ **Coin Başına Özel Ayarlar Aktif**: Her coin kendi ayarlarıyla analiz edilir
+- ⚙️ **Global Ayarlar Aktif**: Tüm coinler aynı ayarlarla analiz edilir
 
-1. **Zaman Dilimi**: 15m, 1h, 4h, 12h, 24h, 7d, 30d
-2. **Eşik (%)**: Manuel threshold değeri
-3. **Mod**: Manuel veya Dinamik
+**2. Coin Ayarlarını Yapın** (Coin-bazlı mod aktifken):
+- "Coin Başına Özel Ayarlar" kartı görünür
+- Her coin için:
+  - **Zaman Dilimi**: 15m, 1h, 4h, 12h, 24h, 7d, 30d
+  - **Eşik (%)**: Manuel threshold değeri
+  - **Mod**: Manuel veya Dinamik
+
+**3. Önemli:**
+- Coin-bazlı mod aktifken global ayarlar otomatik devre dışı kalır
+- Global moda dönüldüğünde tüm coinler aynı ayarları kullanır
 
 ### Örnek Konfigürasyon
 
