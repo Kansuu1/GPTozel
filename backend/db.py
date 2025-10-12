@@ -45,63 +45,115 @@ def init_db():
         logger.error(f"❌ MongoDB init hatası: {e}")
         raise
 
-# helper wrappers
+# Helper fonksiyonlar - MongoDB
 def insert_signal_record(rec: dict):
-    db = SessionLocal()
+    """Yeni sinyal kaydı ekle"""
     try:
-        obj = SignalHistory(**rec)
-        db.add(obj)
-        db.commit()
-        db.refresh(obj)
-        return obj.id
-    finally:
-        db.close()
+        db = get_db()
+        
+        # created_at yoksa ekle
+        if "created_at" not in rec:
+            rec["created_at"] = datetime.now(timezone.utc)
+        
+        result = db.signal_history.insert_one(rec)
+        return str(result.inserted_id)
+    except Exception as e:
+        logger.error(f"❌ Signal insert hatası: {e}")
+        raise
 
 def fetch_recent_signals(limit=100):
-    db = SessionLocal()
+    """En son sinyalleri getir"""
     try:
-        return db.query(SignalHistory).order_by(SignalHistory.created_at.desc()).limit(limit).all()
-    finally:
-        db.close()
+        db = get_db()
+        cursor = db.signal_history.find().sort("created_at", DESCENDING).limit(limit)
+        
+        # MongoDB dökümanlarını dict listesine çevir
+        signals = []
+        for doc in cursor:
+            doc["id"] = str(doc["_id"])  # _id'yi id'ye çevir
+            signals.append(doc)
+        
+        return signals
+    except Exception as e:
+        logger.error(f"❌ Fetch signals hatası: {e}")
+        return []
 
 def fetch_prune_candidates(cutoff_ts, min_samples, success_threshold):
-    db = SessionLocal()
+    """Temizleme için aday kayıtları bul"""
     try:
-        # returns grouping coin+timeframe with ids
-        sql = """
-        SELECT coin, timeframe, COUNT(*) as sample_count,
-            SUM(CASE WHEN success=1 THEN 1 ELSE 0 END) as success_count
-        FROM signal_history
-        WHERE created_at <= :cutoff
-        GROUP BY coin, timeframe
-        HAVING COUNT(*) >= :min_samples
-        """
-        rows = db.execute(text(sql), {"cutoff": cutoff_ts, "min_samples": min_samples}).fetchall()
+        db = get_db()
+        
+        # MongoDB aggregation pipeline
+        pipeline = [
+            {"$match": {"created_at": {"$lte": cutoff_ts}}},
+            {"$group": {
+                "_id": {"coin": "$coin", "timeframe": "$timeframe"},
+                "sample_count": {"$sum": 1},
+                "success_count": {"$sum": {"$cond": [{"$eq": ["$success", True]}, 1, 0]}}
+            }},
+            {"$match": {"sample_count": {"$gte": min_samples}}}
+        ]
+        
+        results = db.signal_history.aggregate(pipeline)
+        
         candidates = []
-        for r in rows:
-            sample_count = r[2]  # COUNT(*)
-            success_count = r[3] or 0  # SUM(...)
-            success_rate = success_count / sample_count if sample_count else 0
+        for r in results:
+            sample_count = r["sample_count"]
+            success_count = r["success_count"]
+            success_rate = success_count / sample_count if sample_count > 0 else 0
+            
             if success_rate < success_threshold:
-                candidates.append((r[0], r[1]))  # coin, timeframe
+                candidates.append((r["_id"]["coin"], r["_id"]["timeframe"]))
+        
         return candidates
-    finally:
-        db.close()
+    except Exception as e:
+        logger.error(f"❌ Prune candidates hatası: {e}")
+        return []
 
 def delete_records_by_coin_timeframe(coin, timeframe, cutoff_ts):
-    db = SessionLocal()
+    """Belirli coin+timeframe için eski kayıtları sil"""
     try:
-        q = db.query(SignalHistory).filter(SignalHistory.coin==coin, SignalHistory.timeframe==timeframe, SignalHistory.created_at<=cutoff_ts)
-        ids = [r.id for r in q.all()]
-        q.delete(synchronize_session=False)
-        db.commit()
+        db = get_db()
+        
+        # Silinecek kayıtların ID'lerini al
+        cursor = db.signal_history.find({
+            "coin": coin,
+            "timeframe": timeframe,
+            "created_at": {"$lte": cutoff_ts}
+        }, {"_id": 1})
+        
+        ids = [str(doc["_id"]) for doc in cursor]
+        
+        # Sil
+        result = db.signal_history.delete_many({
+            "coin": coin,
+            "timeframe": timeframe,
+            "created_at": {"$lte": cutoff_ts}
+        })
+        
+        logger.info(f"✅ Silindi: {result.deleted_count} kayıt ({coin}/{timeframe})")
         return ids
-    finally:
-        db.close()
+    except Exception as e:
+        logger.error(f"❌ Delete records hatası: {e}")
+        return []
 
 def fetch_records_by_ids(ids):
-    db = SessionLocal()
+    """Belirli ID'lere sahip kayıtları getir"""
     try:
-        return db.query(SignalHistory).filter(SignalHistory.id.in_(ids)).all()
-    finally:
-        db.close()
+        db = get_db()
+        from bson.objectid import ObjectId
+        
+        # String ID'leri ObjectId'ye çevir
+        object_ids = [ObjectId(id_str) for id_str in ids if ObjectId.is_valid(id_str)]
+        
+        cursor = db.signal_history.find({"_id": {"$in": object_ids}})
+        
+        records = []
+        for doc in cursor:
+            doc["id"] = str(doc["_id"])
+            records.append(doc)
+        
+        return records
+    except Exception as e:
+        logger.error(f"❌ Fetch by IDs hatası: {e}")
+        return []
