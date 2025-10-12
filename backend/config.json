@@ -5,7 +5,8 @@
   "selected_coins": [
     "BTC",
     "ETH",
-    "XRP"
+    "XRP",
+    "ADA"
   ],
   "coin_settings": [
     {
@@ -26,6 +27,13 @@
       "coin": "XRP",
       "timeframe": "4h",
       "threshold": 3.5,
+      "threshold_mode": "dynamic",
+      "active": true
+    },
+    {
+      "coin": "ADA",
+      "timeframe": "1h",
+      "threshold": 5.0,
       "threshold_mode": "dynamic",
       "active": true
     }
