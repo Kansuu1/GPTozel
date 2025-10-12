@@ -300,6 +300,54 @@ async def start_interval_analyzer(request: Request):
 
 
 @app.post("/api/restart")
+
+
+@app.get("/api/calculate-threshold")
+async def calculate_threshold_preview(coin: str, timeframe: str = "24h"):
+    """
+    Belirli bir coin ve timeframe için dinamik threshold hesapla
+    Frontend'de preview için kullanılır
+    """
+    try:
+        from cmc_client import CMCClient
+        from feature_store import build_features_from_quote
+        from volatility_calculator import calculate_volatility, calculate_dynamic_threshold
+        import aiohttp
+        
+        cfg = read_config()
+        API_KEY = cfg.get("cmc_api_key") or os.getenv("CMC_API_KEY")
+        
+        if not API_KEY:
+            return {"error": "CMC API key bulunamadı"}
+        
+        # Coin verilerini al
+        async with aiohttp.ClientSession() as session:
+            cmc = CMCClient(API_KEY)
+            quote = await cmc.get_quote(session, coin.upper())
+            features = build_features_from_quote(quote)
+        
+        # Volatiliteyi hesapla
+        volatility = calculate_volatility(features)
+        
+        # Dinamik threshold hesapla
+        dynamic_threshold = calculate_dynamic_threshold(volatility, timeframe)
+        
+        return {
+            "coin": coin.upper(),
+            "timeframe": timeframe,
+            "volatility": round(volatility, 2),
+            "threshold": round(dynamic_threshold, 2),
+            "calculation": {
+                "change_1h": features.get("percent_change_1h", 0),
+                "change_24h": features.get("percent_change_24h", 0),
+                "change_7d": features.get("percent_change_7d", 0)
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Threshold hesaplama hatası: {e}")
+        return {"error": str(e), "threshold": 4.0}
+
 async def restart_backend(request: Request):
     """Backend'i yeniden başlat (analyzer'ı yeniden başlatır)"""
     require_admin(request)
