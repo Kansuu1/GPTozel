@@ -21,10 +21,20 @@ function App() {
 
   // Load admin token from localStorage on mount
   useEffect(() => {
-    const savedToken = localStorage.getItem("admin_token");
-    if (savedToken) {
-      setAdminToken(savedToken);
-    }
+    const loadToken = () => {
+      try {
+        const savedToken = localStorage.getItem("admin_token");
+        if (savedToken) {
+          setAdminToken(savedToken);
+          console.log("✅ Token yüklendi:", savedToken);
+        } else {
+          console.log("⚠️ localStorage'da token yok");
+        }
+      } catch (e) {
+        console.error("Token yükleme hatası:", e);
+      }
+    };
+    loadToken();
   }, []);
   
   // Available coins - now dynamic
