@@ -10,7 +10,7 @@ import schedule
 import time
 from datetime import datetime, timezone, timedelta
 from db import SessionLocal, SignalHistory
-from price_tracker import PriceTracker
+# from price_tracker import PriceTracker  # DEVRE DIȘI - Coin-based fetch kullanıyoruz
 import logging
 
 logger = logging.getLogger(__name__)
