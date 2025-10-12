@@ -354,10 +354,19 @@ function App() {
                   {signals.map(signal => (
                     <div key={signal.id} className="signal-card">
                       <div className="signal-header">
-                        <span className="signal-coin">{signal.coin}</span>
-                        <span className={`signal-type ${signal.signal_type?.toLowerCase()}`}>
-                          {signal.signal_type === 'LONG' ? '📈 LONG' : '📉 SHORT'}
-                        </span>
+                        <div className="signal-header-left">
+                          <span className="signal-coin">{signal.coin}</span>
+                          <span className={`signal-type ${signal.signal_type?.toLowerCase()}`}>
+                            {signal.signal_type === 'LONG' ? '📈 LONG' : '📉 SHORT'}
+                          </span>
+                        </div>
+                        <button 
+                          className="delete-signal-btn"
+                          onClick={() => deleteSignal(signal.id)}
+                          title="Sinyali sil"
+                        >
+                          🗑
+                        </button>
                       </div>
                       <div className="signal-body">
                         <div className="signal-row">
