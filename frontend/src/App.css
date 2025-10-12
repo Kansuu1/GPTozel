@@ -1687,3 +1687,104 @@ select.input {
     font-size: 1.5rem;
   }
 }
+
+/* Fetch Interval & Status Styles */
+.status-toggle-btn {
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-toggle-btn.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.status-toggle-btn.passive {
+  border-color: #6b7280;
+  background: rgba(107, 114, 128, 0.1);
+}
+
+.status-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.interval-input {
+  width: 80px !important;
+  text-align: center;
+  font-weight: 600;
+}
+
+.last-fetch-cell {
+  min-width: 150px;
+}
+
+.time-ago {
+  display: inline-block;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.fetch-indicator {
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+.passive-text {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.inactive-coin .time-ago {
+  background: #9ca3af;
+}
+
+/* Responsive adjustments for new columns */
+@media (max-width: 1200px) {
+  .coin-settings-table th:nth-child(7),
+  .coin-settings-table td:nth-child(7) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .status-toggle-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1.1rem;
+  }
+  
+  .interval-input {
+    width: 60px !important;
+  }
+  
+  .time-ago {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+}
