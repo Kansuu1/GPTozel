@@ -47,7 +47,7 @@ def create_price_alarm(
             "triggered_at": None
         }
         
-        result = await db.price_alarms.insert_one(alarm)
+        result = db.price_alarms.insert_one(alarm)
         alarm_id = str(result.inserted_id)
         
         logger.info(f"✅ [{coin}] Fiyat alarmı oluşturuldu: {target_price}$ (ID: {alarm_id})")
