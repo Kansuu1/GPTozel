@@ -228,6 +228,45 @@ Bot token'ınız ve chat ID'niz `.env` dosyasında tanımlı:
 - Bot Token: `8489964512:AAGTLTRkv9VKK1fy9Mb6nvGSlKsuYxoPMRM`
 - Chat ID: `-1003097160408`
 
+## 🔄 Fetch Interval & Status Yönetimi
+
+### Nasıl Çalışır?
+
+**Active/Passive Status:**
+- 🟢 **Active**: Coin belirlenen interval'de otomatik veri çeker
+- ⚫ **Passive**: Coin veri çekmez, API kotası harcanmaz
+
+**Fetch Interval (Dakika):**
+- Her coin için ayrı veri çekme aralığı ayarlayabilirsiniz
+- Örnek: BTC → 2 dakika, ETH → 3 dakika, SOL → 5 dakika
+- Minimum: 1 dakika, Maximum: 1440 dakika (24 saat)
+
+**Son Güncelleme:**
+- Her coin için en son ne zaman veri çekildiğini gösterir
+- "Az önce", "2 dakika önce" formatında
+- Pasif coinler için "-" gösterir
+
+**Sinyal Üretimi:**
+- Sinyaller **her zaman en son çekilen veri** üzerinden üretilir
+- Cache sistemi sayesinde API kotası verimli kullanılır
+- Her coin kendi interval'inde bağımsız çalışır
+
+### Avantajlar
+
+✅ **API Kotası Tasarrufu**: Pasif coinler API çağrısı yapmaz
+✅ **Esnek Yönetim**: Her coin farklı sıklıkta analiz edilebilir
+✅ **Gerçek Zamanlı**: En taze veri her zaman kullanılır
+✅ **Bağımsız Loop**: Her coin kendi döngüsünde çalışır
+
+### Örnek Kullanım
+
+```
+BTC  → 🟢 Active, 2 dakika  → Her 2 dakikada veri çeker
+ETH  → 🟢 Active, 3 dakika  → Her 3 dakikada veri çeker
+SOL  → 🟢 Active, 5 dakika  → Her 5 dakikada veri çeker
+PEPE → ⚫ Passive, -        → Veri çekmez
+```
+
 ## 🔧 Özelleştirme
 
 ### Threshold Değiştirme
@@ -235,6 +274,12 @@ Web panelinden "Eşik Değeri" alanını değiştirin.
 
 ### Coin Listesi
 Web panelinden istediğiniz coinleri seçin/kaldırın.
+
+### Fetch Interval Ayarlama
+1. Coin tablosunda "Interval (dk)" kolonuna tıklayın
+2. Dakika cinsinden süreyi girin (örn: 2, 5, 10)
+3. "Coin Ayarlarını Kaydet" butonuna basın
+4. Değişiklikler otomatik uygulanır
 
 ## 🐛 Sorun Giderme
 
