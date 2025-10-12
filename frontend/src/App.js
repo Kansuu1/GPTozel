@@ -10,7 +10,8 @@ function App() {
     threshold: 75,
     selected_coins: [],
     timeframe: "24h",
-    max_concurrent_coins: 20
+    max_concurrent_coins: 20,
+    cmc_api_key: ""
   });
   const [signals, setSignals] = useState([]);
   const [adminToken, setAdminToken] = useState("");
