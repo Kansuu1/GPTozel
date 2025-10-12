@@ -25,6 +25,11 @@ function App() {
   const [fetchIntervals, setFetchIntervals] = useState({});
   const [indicators, setIndicators] = useState({});  // RSI/MACD göstergeleri
   const [alarms, setAlarms] = useState([]);  // Fiyat alarmları
+  const [alarmsActive, setAlarmsActive] = useState(() => {
+    // localStorage'dan alarm durumunu yükle
+    const saved = localStorage.getItem('alarmsActive');
+    return saved ? JSON.parse(saved) : true; // Varsayılan: aktif
+  });
   const [chartData, setChartData] = useState(null);  // Signal grafik verileri
   const [telegramConfig, setTelegramConfig] = useState({
     telegram_token: "",
