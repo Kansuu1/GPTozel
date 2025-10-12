@@ -1,16 +1,18 @@
 {
   "threshold": 4,
-  "threshold_mode": "manual",
+  "threshold_mode": "dynamic",
   "selected_coins": [
     "BTC",
     "ETH",
     "SOL",
-    "PEPE"
+    "PEPE",
+    "TRUMP",
+    "COAI"
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
   "telegram_token": "8489964512:AAGTLTRkv9VKK1fy9Mb6nvGSlKsuYxoPMRM",
   "telegram_chat_id": "-1003097160408",
   "allowed_user_ids": "",
   "max_concurrent_coins": 15,
-  "timeframe": "24h"
+  "timeframe": "15m"
 }
