@@ -139,6 +139,74 @@ def get_macd_signal(macd: float, signal: float, histogram: float) -> str:
         return "NEUTRAL"
 
 
+def calculate_ema(prices: List[float], period: int) -> Optional[float]:
+    """
+    EMA (Exponential Moving Average) hesapla
+    
+    Args:
+        prices: Fiyat listesi (en yeni fiyat sonda)
+        period: EMA periyodu (örn: 9, 21)
+    
+    Returns:
+        EMA değeri veya None
+    """
+    if len(prices) < period:
+        return None
+    
+    try:
+        prices_array = np.array(prices)
+        multiplier = 2 / (period + 1)
+        
+        # İlk EMA = İlk N fiyatın ortalaması
+        ema = np.mean(prices_array[:period])
+        
+        # Sonraki değerleri hesapla
+        for price in prices_array[period:]:
+            ema = (price - ema) * multiplier + ema
+        
+        return round(float(ema), 4)
+    
+    except Exception as e:
+        logger.error(f"EMA hesaplama hatası: {e}")
+        return None
+
+
+def get_ema_signal(ema9: float, ema21: float, current_price: float) -> str:
+    """
+    EMA9 ve EMA21 kesişimine göre sinyal üret
+    
+    Args:
+        ema9: 9 periyotluk EMA
+        ema21: 21 periyotluk EMA
+        current_price: Güncel fiyat
+    
+    Returns:
+        "BULLISH" (EMA9 > EMA21 ve fiyat EMA9 üstünde),
+        "BEARISH" (EMA9 < EMA21 ve fiyat EMA9 altında),
+        "NEUTRAL"
+    """
+    if ema9 is None or ema21 is None:
+        return "NEUTRAL"
+    
+    # EMA9 > EMA21 = Yükseliş trendi
+    if ema9 > ema21:
+        # Fiyat da EMA9'un üstündeyse güçlü bullish
+        if current_price > ema9:
+            return "BULLISH"
+        else:
+            return "NEUTRAL"
+    
+    # EMA9 < EMA21 = Düşüş trendi
+    elif ema9 < ema21:
+        # Fiyat da EMA9'un altındaysa güçlü bearish
+        if current_price < ema9:
+            return "BEARISH"
+        else:
+            return "NEUTRAL"
+    
+    return "NEUTRAL"
+
+
 def calculate_indicators(prices: List[float]) -> dict:
     """
     Tüm göstergeleri hesapla ve döndür
