@@ -116,7 +116,7 @@ async def get_coingecko_price(symbol: str) -> Optional[float]:
 
 async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15) -> Dict:
     """
-    CMC fiyatını doğrula
+    CMC fiyatını doğrula (Binance ve CoinGecko ile)
     
     Args:
         symbol: Coin sembolü
@@ -127,40 +127,58 @@ async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15)
         {
             "is_valid": bool,
             "cmc_price": float,
+            "binance_price": float,
             "coingecko_price": float,
             "diff_percent": float,
-            "warning": str
+            "warning": str,
+            "recommended_price": float
         }
     """
     result = {
         "is_valid": True,
         "cmc_price": cmc_price,
+        "binance_price": None,
         "coingecko_price": None,
         "diff_percent": 0,
-        "warning": None
+        "warning": None,
+        "recommended_price": cmc_price
     }
     
-    # CoinGecko'dan fiyat al
+    # Önce Binance'den al (daha güvenilir)
+    binance_price = await get_binance_price(symbol)
+    result["binance_price"] = binance_price
+    
+    # CoinGecko'dan al
     cg_price = await get_coingecko_price(symbol)
-    
-    if cg_price is None:
-        # CoinGecko'dan fiyat alınamadı, CMC'ye güven
-        result["warning"] = "CoinGecko fiyatı alınamadı, CMC fiyatı kullanılıyor"
-        return result
-    
     result["coingecko_price"] = cg_price
     
+    # Hangi fiyatı referans alacağımıza karar ver
+    reference_price = None
+    reference_source = None
+    
+    if binance_price:
+        reference_price = binance_price
+        reference_source = "Binance"
+    elif cg_price:
+        reference_price = cg_price
+        reference_source = "CoinGecko"
+    else:
+        # Hiçbir alternatif yoksa CMC'ye güven
+        result["warning"] = "Alternatif fiyat kaynağı bulunamadı, CMC fiyatı kullanılıyor"
+        return result
+    
     # Fark yüzdesini hesapla
-    diff_percent = abs((cmc_price - cg_price) / cg_price) * 100
+    diff_percent = abs((cmc_price - reference_price) / reference_price) * 100
     result["diff_percent"] = round(diff_percent, 2)
     
     # Tolerans kontrolü
     if diff_percent > tolerance * 100:
         result["is_valid"] = False
-        result["warning"] = f"⚠️ Fiyat farkı çok yüksek! CMC: ${cmc_price:.2f}, CoinGecko: ${cg_price:.2f} (Fark: %{diff_percent:.1f})"
+        result["recommended_price"] = reference_price
+        result["warning"] = f"⚠️ Fiyat farkı yüksek! CMC: ${cmc_price:.2f}, {reference_source}: ${reference_price:.2f} (Fark: %{diff_percent:.1f})"
         logger.warning(f"[{symbol}] {result['warning']}")
     else:
-        logger.info(f"[{symbol}] Fiyat doğrulandı - CMC: ${cmc_price:.2f}, CG: ${cg_price:.2f} (Fark: %{diff_percent:.1f})")
+        logger.info(f"[{symbol}] Fiyat doğrulandı - CMC: ${cmc_price:.2f}, {reference_source}: ${reference_price:.2f} (Fark: %{diff_percent:.1f})")
     
     return result
 
