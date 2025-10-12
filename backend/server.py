@@ -76,6 +76,9 @@ class CoinSetting(BaseModel):
 class CoinSettingsUpdate(BaseModel):
     coin_settings: List[CoinSetting]
 
+class FetchIntervals(BaseModel):
+    intervals: dict  # {"15m": 1, "1h": 2, ...}
+
 @app.get("/api/")
 async def root():
     return {"message": "Crypto Bot API Çalışıyor", "status": "ok"}
