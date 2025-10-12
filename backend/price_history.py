@@ -148,7 +148,7 @@ def get_price_statistics(coin: str, hours: int = 24) -> dict:
         return None
 
 
-async def cleanup_old_prices(days: int = 90):
+def cleanup_old_prices(days: int = 90):
     """
     Eski fiyat verilerini temizle
     
@@ -156,11 +156,11 @@ async def cleanup_old_prices(days: int = 90):
         days: Kaç günden eski veriler silinsin
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         cutoff = datetime.now(timezone.utc) - timedelta(days=days)
         
-        result = await db.price_history.delete_many({
+        result = db.price_history.delete_many({
             "timestamp": {"$lt": cutoff}
         })
         
