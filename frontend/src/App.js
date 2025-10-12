@@ -919,119 +919,125 @@ function App() {
                 )}
                 
                 {coinSettings.length > 0 ? (
-                <div className="coin-settings-table-wrapper">
-                  <table className="coin-settings-table">
-                    <thead>
-                      <tr>
-                        <th>Status</th>
-                        <th>Coin</th>
-                        <th>Zaman Dilimi</th>
-                        <th>Eşik (%)</th>
-                        <th>Mod</th>
-                        <th>Interval (dk)</th>
-                        <th>Son Güncelleme</th>
-                        <th>İşlem</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {coinSettings.map((cs) => {
-                        const isActive = cs.status === 'active' || (cs.active !== false && !cs.status);
-                        return (
-                        <tr key={cs.coin} className={!isActive ? 'inactive-coin' : ''}>
-                          <td className="status-cell">
-                            <button 
-                              className={`status-toggle-btn ${isActive ? 'active' : 'passive'}`}
-                              onClick={() => updateCoinSetting(cs.coin, 'status', isActive ? 'passive' : 'active')}
-                              title={isActive ? 'Aktif - Veri çekiliyor' : 'Pasif - Veri çekilmiyor'}
-                            >
-                              {isActive ? '🟢' : '⚫'}
-                            </button>
-                          </td>
-                          <td className="coin-name-cell">
-                            <strong>{cs.coin}</strong>
-                            {!isActive && <span className="inactive-badge">Pasif</span>}
-                          </td>
-                          <td>
-                            <select
-                              className="input-small"
-                              value={cs.timeframe}
-                              onChange={(e) => updateCoinSetting(cs.coin, 'timeframe', e.target.value)}
-                            >
-                              <option value="15m">15m</option>
-                              <option value="1h">1h</option>
-                              <option value="4h">4h</option>
-                              <option value="12h">12h</option>
-                              <option value="24h">24h</option>
-                              <option value="7d">7d</option>
-                              <option value="30d">30d</option>
-                            </select>
-                          </td>
-                          <td>
-                            <div className="threshold-input-wrapper">
-                              <input
-                                type="number"
-                                className="input-small"
-                                value={cs.threshold}
-                                onChange={(e) => updateCoinSetting(cs.coin, 'threshold', parseFloat(e.target.value))}
-                                min="0"
-                                max="100"
-                                step="0.5"
-                                disabled={cs.threshold_mode === 'dynamic'}
-                              />
-                              {cs.threshold_mode === 'dynamic' && (
-                                <span className="dynamic-indicator" title="Dinamik olarak hesaplandı">
-                                  🤖
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td>
-                            <select
-                              className="input-small"
-                              value={cs.threshold_mode}
-                              onChange={(e) => updateCoinSetting(cs.coin, 'threshold_mode', e.target.value)}
-                            >
-                              <option value="manual">Manuel</option>
-                              <option value="dynamic">Dinamik</option>
-                            </select>
-                          </td>
-                          <td>
+                <div className="coin-settings-grid">
+                  {coinSettings.map((cs) => {
+                    const isActive = cs.status === 'active' || (cs.active !== false && !cs.status);
+                    return (
+                      <div key={cs.coin} className={`coin-card ${!isActive ? 'coin-card-inactive' : 'coin-card-active'}`}>
+                        {/* Header with Coin Name and Status */}
+                        <div className="coin-card-header">
+                          <div className="coin-card-title">
+                            <h4>{cs.coin}</h4>
+                            <span className={`status-badge ${isActive ? 'status-active' : 'status-passive'}`}>
+                              {isActive ? '🟢 Active' : '⚫ Passive'}
+                            </span>
+                          </div>
+                          <button 
+                            className={`status-toggle-modern ${isActive ? 'active' : 'passive'}`}
+                            onClick={() => updateCoinSetting(cs.coin, 'status', isActive ? 'passive' : 'active')}
+                            title={isActive ? 'Pasife al' : 'Aktif et'}
+                          >
+                            <span className="toggle-slider-modern"></span>
+                          </button>
+                        </div>
+
+                        {/* Fetch Interval Section */}
+                        <div className="coin-card-section interval-section">
+                          <div className="section-label">
+                            <span className="label-icon">⏱️</span>
+                            <span>Veri Çekme Sıklığı</span>
+                          </div>
+                          <div className="interval-control">
                             <input
                               type="number"
-                              className="input-small interval-input"
+                              className="interval-input-modern"
                               value={cs.fetch_interval_minutes || 2}
                               onChange={(e) => updateCoinSetting(cs.coin, 'fetch_interval_minutes', parseInt(e.target.value))}
                               min="1"
                               max="1440"
                               step="1"
-                              title="Veri çekme aralığı (dakika)"
+                              disabled={!isActive}
                             />
-                          </td>
-                          <td className="last-fetch-cell">
-                            {isActive ? (
-                              <>
-                                <span className="time-ago">{cs.time_ago || 'Henüz çekilmedi'}</span>
-                                {cs.time_ago && cs.time_ago !== 'Henüz çekilmedi' && (
-                                  <span className="fetch-indicator" title="Veri çekiliyor">📡</span>
-                                )}
-                              </>
-                            ) : (
-                              <span className="passive-text">-</span>
-                            )}
-                          </td>
-                          <td>
-                            <button
-                              className="btn-delete-coin"
-                              onClick={() => removeCoinFromSettings(cs.coin)}
-                              title={`${cs.coin} sil`}
-                            >
-                              🗑️
-                            </button>
-                          </td>
-                        </tr>
-                      )})}
-                    </tbody>
-                  </table>
+                            <span className="interval-unit">dakika</span>
+                          </div>
+                          {isActive && cs.time_ago && (
+                            <div className="last-update-info">
+                              <span className="update-icon">📡</span>
+                              <span className="update-text">{cs.time_ago}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Timeframe and Mode */}
+                        <div className="coin-card-section">
+                          <div className="section-label">
+                            <span className="label-icon">📊</span>
+                            <span>Analiz Ayarları</span>
+                          </div>
+                          <div className="settings-row">
+                            <div className="setting-item">
+                              <label>Zaman Dilimi</label>
+                              <select
+                                className="select-modern"
+                                value={cs.timeframe}
+                                onChange={(e) => updateCoinSetting(cs.coin, 'timeframe', e.target.value)}
+                              >
+                                <option value="15m">15 dakika</option>
+                                <option value="1h">1 saat</option>
+                                <option value="4h">4 saat</option>
+                                <option value="12h">12 saat</option>
+                                <option value="24h">24 saat</option>
+                                <option value="7d">7 gün</option>
+                                <option value="30d">30 gün</option>
+                              </select>
+                            </div>
+                            <div className="setting-item">
+                              <label>Eşik Modu</label>
+                              <select
+                                className="select-modern"
+                                value={cs.threshold_mode}
+                                onChange={(e) => updateCoinSetting(cs.coin, 'threshold_mode', e.target.value)}
+                              >
+                                <option value="manual">Manuel</option>
+                                <option value="dynamic">Dinamik 🤖</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Threshold */}
+                        <div className="coin-card-section">
+                          <div className="section-label">
+                            <span className="label-icon">🎯</span>
+                            <span>Eşik Değeri</span>
+                          </div>
+                          <div className="threshold-control">
+                            <input
+                              type="number"
+                              className="threshold-input-modern"
+                              value={cs.threshold}
+                              onChange={(e) => updateCoinSetting(cs.coin, 'threshold', parseFloat(e.target.value))}
+                              min="0"
+                              max="100"
+                              step="0.5"
+                              disabled={cs.threshold_mode === 'dynamic'}
+                            />
+                            <span className="threshold-unit">%</span>
+                          </div>
+                        </div>
+
+                        {/* Delete Button */}
+                        <button
+                          className="btn-delete-modern"
+                          onClick={() => removeCoinFromSettings(cs.coin)}
+                          title={`${cs.coin} sil`}
+                        >
+                          🗑️ Sil
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
 
                   <div className="add-coin-section">
                     <h4>➕ Yeni Coin Ekle</h4>
