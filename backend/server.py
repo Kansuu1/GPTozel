@@ -542,49 +542,38 @@ async def analyze_now(background_tasks: BackgroundTasks, request: Request):
     return {"status": "ok", "message": "Analiz başlatıldı"}
 
 @app.delete("/api/signals/{signal_id}")
-async def delete_signal(signal_id: int, request: Request):
+async def delete_signal_endpoint(signal_id: str, request: Request):
     """Tek bir sinyali sil"""
     require_admin(request)
-    from db import SessionLocal, SignalHistory
-    db = SessionLocal()
-    try:
-        signal = db.query(SignalHistory).filter(SignalHistory.id == signal_id).first()
-        if not signal:
-            raise HTTPException(status_code=404, detail="Sinyal bulunamadı")
-        db.delete(signal)
-        db.commit()
+    from db import delete_signal, get_signal_by_id
+    
+    signal = get_signal_by_id(signal_id)
+    if not signal:
+        raise HTTPException(status_code=404, detail="Sinyal bulunamadı")
+    
+    success = delete_signal(signal_id)
+    if success:
         return {"status": "ok", "message": f"Sinyal {signal_id} silindi"}
-    finally:
-        db.close()
+    else:
+        raise HTTPException(status_code=500, detail="Silme işlemi başarısız")
 
 @app.post("/api/signals/clear_all")
 async def clear_all_signals(request: Request):
     """Tüm sinyalleri sil"""
     require_admin(request)
-    from db import SessionLocal, SignalHistory
-    db = SessionLocal()
-    try:
-        count = db.query(SignalHistory).count()
-        db.query(SignalHistory).delete()
-        db.commit()
-        return {"status": "ok", "message": f"{count} sinyal silindi"}
-    finally:
-        db.close()
+    from db import clear_all_signals as clear_all
+    
+    count = clear_all()
+    return {"status": "ok", "message": f"{count} sinyal silindi"}
 
 @app.post("/api/signals/clear_failed")
 async def clear_failed_signals(request: Request):
     """Başarısız sinyalleri sil"""
     require_admin(request)
-    from db import SessionLocal, SignalHistory
-    db = SessionLocal()
-    try:
-        failed = db.query(SignalHistory).filter(SignalHistory.success == False).all()
-        count = len(failed)
-        db.query(SignalHistory).filter(SignalHistory.success == False).delete()
-        db.commit()
-        return {"status": "ok", "message": f"{count} başarısız sinyal silindi"}
-    finally:
-        db.close()
+    from db import clear_failed_signals as clear_failed
+    
+    count = clear_failed()
+    return {"status": "ok", "message": f"{count} başarısız sinyal silindi"}
 
 @app.get("/api/exports/{filename}")
 async def download_export(filename: str):
