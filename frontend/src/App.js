@@ -168,15 +168,51 @@ function App() {
     setLoading(true);
     setMessage("");
     try {
-      await axios.post(`${API}/fetch-intervals`, {
+      const response = await axios.post(`${API}/fetch-intervals`, {
         intervals: fetchIntervals
       }, {
         headers: { "x-admin-token": adminToken }
       });
-      setMessage("✅ Veri çekme sıklıkları kaydedildi!");
+      setMessage("✅ " + response.data.message);
     } catch (e) {
       setMessage("❌ Kaydetme hatası: " + (e.response?.data?.detail || e.message));
     }
+    setLoading(false);
+  };
+
+  const restartBackend = async () => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    if (!window.confirm("Backend'i yeniden başlatmak istediğinize emin misiniz? Bu işlem 5-10 saniye sürebilir.")) {
+      return;
+    }
+
+    setLoading(true);
+    setMessage("🔄 Backend yeniden başlatılıyor...");
+    
+    try {
+      await axios.post(`${API}/restart`, {}, {
+        headers: { "x-admin-token": adminToken },
+        timeout: 30000
+      });
+      setMessage("✅ Backend başarıyla yeniden başlatıldı!");
+      
+      // 5 saniye sonra config'i yeniden yükle
+      setTimeout(() => {
+        loadConfig();
+        loadCoinSettings();
+        loadFetchIntervals();
+        setMessage("✅ Ayarlar güncellendi!");
+      }, 5000);
+      
+    } catch (e) {
+      setMessage("⚠️ Backend restart edildi, sayfa yenileniyor...");
+      setTimeout(() => window.location.reload(), 3000);
+    }
+    
     setLoading(false);
   };
 
