@@ -145,7 +145,7 @@ function App() {
     }
   };
 
-  const addCoinToSettings = () => {
+  const addCoinToSettings = async () => {
     if (!newCoin.trim()) {
       setMessage("⚠️ Lütfen coin sembolü girin");
       return;
@@ -159,18 +159,37 @@ function App() {
       return;
     }
 
-    // Yeni coin ekle (varsayılan değerlerle)
+    const timeframe = config.timeframe || "24h";
+    const thresholdMode = config.threshold_mode || "dynamic";
+    let threshold = parseFloat(config.threshold) || 4.0;
+
+    // Eğer dinamik modsa, threshold'u hesapla
+    if (thresholdMode === "dynamic") {
+      setMessage(`⏳ ${coinSymbol} için dinamik eşik hesaplanıyor...`);
+      try {
+        const res = await axios.get(`${API}/calculate-threshold`, {
+          params: { coin: coinSymbol, timeframe }
+        });
+        if (res.data.threshold) {
+          threshold = res.data.threshold;
+        }
+      } catch (e) {
+        console.error('Threshold hesaplama hatası:', e);
+      }
+    }
+
+    // Yeni coin ekle
     const newCoinSetting = {
       coin: coinSymbol,
-      timeframe: config.timeframe || "24h",
-      threshold: parseFloat(config.threshold) || 4.0,
-      threshold_mode: config.threshold_mode || "dynamic",
+      timeframe: timeframe,
+      threshold: threshold,
+      threshold_mode: thresholdMode,
       active: true
     };
 
     setCoinSettings([...coinSettings, newCoinSetting]);
     setNewCoin("");
-    setMessage(`✅ ${coinSymbol} eklendi - ayarları yapıp kaydedin`);
+    setMessage(`✅ ${coinSymbol} eklendi (Eşik: ${threshold}%) - ayarları yapıp kaydedin`);
   };
 
   const removeCoinFromSettings = (coin) => {
