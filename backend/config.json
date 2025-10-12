@@ -42,8 +42,8 @@
     },
     {
       "coin": "COAI",
-      "timeframe": "15m",
-      "threshold": 5.5,
+      "timeframe": "24h",
+      "threshold": 3.0,
       "threshold_mode": "dynamic"
     }
   ],
