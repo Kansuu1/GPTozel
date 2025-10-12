@@ -602,19 +602,22 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
     
     while True:
         try:
-            # Config'den coin ayarlarını al
-            cfg = read_config()
-            coin_settings = cfg.get("coin_settings", [])
-            coin_config = next((cs for cs in coin_settings if cs["coin"] == symbol), None)
+            # MongoDB'den güncel coin ayarlarını al
+            from db_mongodb import get_db
+            db = get_db()
+            coin_config = db.coin_settings.find_one({"coin": symbol})
             
             if not coin_config:
-                logger.warning(f"[{symbol}] Config'de bulunamadı, loop sonlandırılıyor")
+                logger.warning(f"[{symbol}] MongoDB'de bulunamadı, loop sonlandırılıyor")
                 break
             
             # Status kontrolü - passive ise LOOP'U SONLANDIR
             status = coin_config.get("status", "active")
             if status == "passive":
                 logger.info(f"⚫ [{symbol}] Passive oldu, fetch loop sonlandırılıyor")
+                # Task'ı fetch_tasks'dan kaldır
+                if symbol in fetch_tasks:
+                    fetch_tasks.pop(symbol)
                 break  # Loop'tan çık, task bitsin
             
             # Veri çek
