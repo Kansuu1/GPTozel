@@ -1,46 +1,49 @@
 # backend/db.py
 import os
-from sqlalchemy import (create_engine, Column, Integer, String, Float, Boolean, JSON, TIMESTAMP, text)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import datetime
-from pathlib import Path
+from pymongo import MongoClient, DESCENDING
+from datetime import datetime, timezone
+import logging
 
-DATABASE_URL = os.getenv("DB_URL", "sqlite:///./data.db")
+logger = logging.getLogger(__name__)
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {})
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-Base = declarative_base()
+# MongoDB bağlantısı
+MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
+DB_NAME = os.getenv("DB_NAME", "crypto_bot")
 
-class SignalHistory(Base):
-    __tablename__ = "signal_history"
-    id = Column(Integer, primary_key=True, index=True)
-    coin = Column(String, index=True)
-    symbol = Column(String, nullable=True)
-    signal_type = Column(String)
-    probability = Column(Float)
-    confidence_score = Column(Integer, nullable=True)
-    threshold_used = Column(Integer)
-    timeframe = Column(String)
-    features = Column(JSON, nullable=True)
-    stop_loss = Column(Float, nullable=True)
-    tp = Column(Float, nullable=True)
-    success = Column(Boolean, nullable=True)
-    reward = Column(Float, nullable=True)
-    created_at = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+# Global MongoDB client ve database
+_client = None
+_db = None
 
-class PerformanceAgg(Base):
-    __tablename__ = "performance_agg"
-    id = Column(Integer, primary_key=True, index=True)
-    coin = Column(String, index=True)
-    timeframe = Column(String, index=True)
-    sample_count = Column(Integer, default=0)
-    success_count = Column(Integer, default=0)
-    avg_reward = Column(Float, default=0.0)
-    last_updated = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
+def get_db():
+    """MongoDB database instance'ını döndür"""
+    global _client, _db
+    if _db is None:
+        try:
+            _client = MongoClient(MONGO_URL)
+            _db = _client[DB_NAME]
+            logger.info(f"✅ MongoDB bağlantısı başarılı: {DB_NAME}")
+        except Exception as e:
+            logger.error(f"❌ MongoDB bağlantı hatası: {e}")
+            raise
+    return _db
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    """MongoDB collections ve indexler oluştur"""
+    try:
+        db = get_db()
+        
+        # signal_history collection için indexler
+        db.signal_history.create_index([("coin", 1)])
+        db.signal_history.create_index([("created_at", DESCENDING)])
+        db.signal_history.create_index([("coin", 1), ("timeframe", 1)])
+        
+        # performance_agg collection için indexler
+        db.performance_agg.create_index([("coin", 1), ("timeframe", 1)], unique=True)
+        
+        logger.info("✅ MongoDB collections ve indexler hazır")
+    except Exception as e:
+        logger.error(f"❌ MongoDB init hatası: {e}")
+        raise
 
 # helper wrappers
 def insert_signal_record(rec: dict):
