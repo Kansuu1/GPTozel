@@ -290,11 +290,14 @@ async def start_interval_analyzer(request: Request):
         "selected_coins": coin_list
     })
     
+    logger.info(f"🔄 Coin ayarları güncellendi. Değişiklikler backend restart'ta uygulanacak.")
+    
     return {
         "status": "ok",
-        "message": f"{len(new_settings)} coin ayarı güncellendi",
+        "message": f"{len(new_settings)} coin ayarı güncellendi. Değişiklikler backend restart'ta uygulanacak.",
         "coin_settings": new_settings,
-        "selected_coins": coin_list
+        "selected_coins": coin_list,
+        "note": "Backend'i restart ederek değişiklikleri uygulayın"
     }
 
 
