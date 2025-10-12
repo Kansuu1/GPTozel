@@ -628,7 +628,31 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
                     "status": status
                 }
                 
-                logger.info(f"✅ [{symbol}] Veri çekildi - Fiyat: ${quote.get('price', 0):.2f}")
+                current_price = quote.get('price', 0)
+                volume_24h = quote.get('volume_24h', 0)
+                
+                logger.info(f"✅ [{symbol}] Veri çekildi - Fiyat: ${current_price:.2f}")
+                
+                # Fiyat geçmişine kaydet (RSI/MACD için)
+                await save_price_point(symbol, current_price, volume_24h)
+                
+                # Fiyat alarmlarını kontrol et
+                triggered_alarms = await check_price_alarms(symbol, current_price)
+                if triggered_alarms:
+                    for alarm in triggered_alarms:
+                        target = alarm['target_price']
+                        signal_type = alarm.get('signal_type', 'UNKNOWN')
+                        
+                        # Telegram bildirimi gönder
+                        alarm_msg = f"🔔 FİYAT ALARMI!\n\n"
+                        alarm_msg += f"💎 Coin: {symbol}\n"
+                        alarm_msg += f"🎯 Hedef Fiyat: ${target:.4f}\n"
+                        alarm_msg += f"💵 Güncel Fiyat: ${current_price:.4f}\n"
+                        alarm_msg += f"📊 Sinyal: {signal_type}\n"
+                        alarm_msg += f"✅ Giriş noktasına ulaşıldı!\n"
+                        
+                        await send_telegram_message_async(alarm_msg)
+                        logger.info(f"🔔 [{symbol}] Alarm bildirimi gönderildi!")
                 
                 # 🆕 HEMEN ANALİZ YAP VE SİNYAL ÜRET
                 from analyzer import analyze_single_coin
