@@ -8,6 +8,7 @@ const API = `${BACKEND_URL}/api`;
 function App() {
   const [config, setConfig] = useState({
     threshold: 75,
+    threshold_mode: "manual",
     selected_coins: [],
     timeframe: "24h",
     max_concurrent_coins: 20,
