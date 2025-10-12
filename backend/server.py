@@ -427,6 +427,14 @@ async def get_signals(limit: int = 50):
 @app.get("/api/performance-dashboard")
 async def get_performance_dashboard():
     """Performance dashboard verileri"""
+    from db import get_dashboard_stats
+    
+    stats = get_dashboard_stats()
+    return stats
+
+@app.get("/api/performance-dashboard-old")
+async def get_performance_dashboard_old():
+    """Performance dashboard verileri - ESKİ SQLite versiyonu"""
     db = SessionLocal()
     try:
         # Toplam sinyal sayısı
