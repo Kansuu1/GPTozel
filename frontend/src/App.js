@@ -650,13 +650,14 @@ function App() {
 
 
 
-            <div className="card">
-              <h3>⚙️ Coin Başına Özel Ayarlar</h3>
-              <p className="card-description">
-                Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
-              </p>
-              
-              {coinSettings.length > 0 ? (
+            {config.use_coin_specific_settings && (
+              <div className="card">
+                <h3>⚙️ Coin Başına Özel Ayarlar</h3>
+                <p className="card-description">
+                  Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
+                </p>
+                
+                {coinSettings.length > 0 ? (
                 <div className="coin-settings-table-wrapper">
                   <table className="coin-settings-table">
                     <thead>
