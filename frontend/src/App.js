@@ -845,32 +845,67 @@ function App() {
                 Her timeframe için ne sıklıkla veri çekileceğini ayarlayın
               </p>
 
-              <div className="intervals-grid">
-                {Object.entries(fetchIntervals).map(([timeframe, minutes]) => (
-                  <div key={timeframe} className="interval-item">
-                    <label className="interval-label">
-                      <span className="timeframe-badge">{timeframe}</span>
-                      <input
-                        type="number"
-                        className="input-interval"
-                        value={minutes}
-                        onChange={(e) => updateFetchInterval(timeframe, e.target.value)}
-                        min="1"
-                        max="120"
-                      />
-                      <span className="interval-unit">dakika</span>
-                    </label>
-                  </div>
-                ))}
+              <div className="interval-cards-grid">
+                {Object.entries(fetchIntervals).map(([timeframe, minutes]) => {
+                  // Timeframe kategorisi belirle
+                  const getCategory = (tf) => {
+                    if (['15m', '1h'].includes(tf)) return 'short';
+                    if (['4h', '12h', '24h'].includes(tf)) return 'medium';
+                    return 'long';
+                  };
+                  
+                  const getRecommendation = (tf) => {
+                    if (['15m', '1h'].includes(tf)) return '1-2 dk önerilir';
+                    if (['4h', '12h', '24h'].includes(tf)) return '5-15 dk önerilir';
+                    return '30-60 dk önerilir';
+                  };
+                  
+                  const getIcon = (tf) => {
+                    if (['15m', '1h'].includes(tf)) return '⚡';
+                    if (['4h', '12h', '24h'].includes(tf)) return '⚖️';
+                    return '🐢';
+                  };
+                  
+                  const category = getCategory(timeframe);
+                  
+                  return (
+                    <div key={timeframe} className={`interval-card interval-${category}`}>
+                      <div className="interval-card-header">
+                        <span className="interval-icon">{getIcon(timeframe)}</span>
+                        <span className="timeframe-label">{timeframe}</span>
+                      </div>
+                      <div className="interval-input-wrapper">
+                        <input
+                          type="number"
+                          className="interval-input-modern"
+                          value={minutes}
+                          onChange={(e) => updateFetchInterval(timeframe, e.target.value)}
+                          min="1"
+                          max="1440"
+                        />
+                        <span className="interval-suffix">dk</span>
+                      </div>
+                      <div className="interval-recommendation">
+                        {getRecommendation(timeframe)}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="interval-info">
-                <p>💡 <strong>Önerilen Değerler:</strong></p>
-                <ul>
-                  <li>Kısa vade (15m, 1h): 1-2 dakika - Hızlı sinyaller</li>
-                  <li>Orta vade (4h, 12h, 24h): 5-15 dakika - Dengeli</li>
-                  <li>Uzun vade (7d, 30d): 30-60 dakika - API optimizasyonu</li>
-                </ul>
+              <div className="interval-legend">
+                <div className="legend-item">
+                  <span className="legend-icon">⚡</span>
+                  <span className="legend-text">Kısa Vade - Hızlı Sinyaller</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-icon">⚖️</span>
+                  <span className="legend-text">Orta Vade - Dengeli</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-icon">🐢</span>
+                  <span className="legend-text">Uzun Vade - API Optimizasyonu</span>
+                </div>
               </div>
 
               <div className="button-group">
