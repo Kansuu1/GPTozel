@@ -116,6 +116,13 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 "success": None,
             }
             
+            # RSI ve MACD değerlerini ekle
+            if indicators:
+                rec["rsi"] = indicators.get("rsi")
+                rec["rsi_signal"] = indicators.get("rsi_signal")
+                rec["macd"] = indicators.get("macd")
+                rec["macd_signal"] = indicators.get("macd_signal")
+            
             # DB'ye kaydet
             rec_id = insert_signal_record(rec)
             rec["id"] = rec_id
@@ -123,6 +130,20 @@ async def analyze_single_coin(symbol: str, quote: dict):
             # Türkiye saati
             turkey_time = datetime.now(timezone.utc) + timedelta(hours=3)
             rec["created_at"] = turkey_time.strftime("%H:%M")
+            
+            # Fiyat alarmı oluştur (sinyal giriş fiyatı için)
+            entry_price = features.get("price", 0)
+            if entry_price > 0:
+                alarm_id = await create_price_alarm(
+                    coin=symbol,
+                    target_price=entry_price,
+                    alarm_type="target",
+                    signal_id=str(rec_id),
+                    signal_type=sig
+                )
+                if alarm_id:
+                    rec["alarm_id"] = alarm_id
+                    logger.info(f"🔔 [{symbol}] Fiyat alarmı oluşturuldu: {entry_price}$")
             
             # Telegram bildirimi gönder
             msg = format_signal_message(rec)
