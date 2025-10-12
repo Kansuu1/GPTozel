@@ -20,6 +20,7 @@ function App() {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState("panel");
   const [newCoin, setNewCoin] = useState("");
+  const [coinSettings, setCoinSettings] = useState([]);
 
   // Load admin token from localStorage on mount
   useEffect(() => {
