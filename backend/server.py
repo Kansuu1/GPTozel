@@ -162,6 +162,61 @@ async def select_coins(payload: dict, request: Request):
     cfg = update_config({"selected_coins": [c.strip().upper() for c in selected if c.strip()]})
     return {"status": "ok", "selected_coins": cfg.get("selected_coins")}
 
+
+@app.get("/api/coin-settings")
+async def get_coin_settings():
+    """Coin başına ayarları getir"""
+    cfg = read_config()
+    coin_settings = cfg.get("coin_settings", [])
+    selected_coins = cfg.get("selected_coins", [])
+    
+    # Eğer coin_settings boşsa veya yeni coinler eklendiyse varsayılan ayarlarla doldur
+    existing_coins = {cs["coin"] for cs in coin_settings}
+    default_timeframe = cfg.get("timeframe", "24h")
+    default_threshold = cfg.get("threshold", 4)
+    default_mode = cfg.get("threshold_mode", "dynamic")
+    
+    for coin in selected_coins:
+        if coin not in existing_coins:
+            coin_settings.append({
+                "coin": coin,
+                "timeframe": default_timeframe,
+                "threshold": float(default_threshold),
+                "threshold_mode": default_mode
+            })
+    
+    # Sadece seçili coinlerin ayarlarını döndür
+    filtered_settings = [cs for cs in coin_settings if cs["coin"] in selected_coins]
+    
+    return {"coin_settings": filtered_settings}
+
+@app.post("/api/coin-settings")
+async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
+    """Coin başına ayarları güncelle"""
+    require_admin(request)
+    
+    cfg = read_config()
+    
+    # Yeni ayarları doğrula ve formatla
+    new_settings = []
+    for setting in payload.coin_settings:
+        new_settings.append({
+            "coin": setting.coin.strip().upper(),
+            "timeframe": setting.timeframe.strip(),
+            "threshold": float(setting.threshold),
+            "threshold_mode": setting.threshold_mode.strip().lower()
+        })
+    
+    # Config'i güncelle
+    cfg = update_config({"coin_settings": new_settings})
+    
+    return {
+        "status": "ok",
+        "message": f"{len(new_settings)} coin ayarı güncellendi",
+        "coin_settings": new_settings
+    }
+
+
 @app.get("/api/signals")
 async def get_signals(limit: int = 50):
     recs = fetch_recent_signals(limit)
