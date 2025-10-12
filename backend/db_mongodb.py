@@ -253,15 +253,20 @@ def get_dashboard_stats():
     except Exception as e:
         logger.error(f"❌ Dashboard stats hatası: {e}")
         return {
-            "total_signals": 0,
-            "successful_signals": 0,
-            "failed_signals": 0,
-            "pending_signals": 0,
-            "success_rate": 0,
-            "max_gain": 0,
-            "max_loss": 0,
-            "avg_reward": 0,
-            "coin_stats": []
+            "summary": {
+                "total_signals": 0,
+                "successful_signals": 0,
+                "failed_signals": 0,
+                "pending_signals": 0,
+                "success_rate": 0,
+                "max_gain": 0,
+                "max_loss": 0,
+                "avg_reward": 0
+            },
+            "top_profitable": [],
+            "coin_performance": [],
+            "monthly_signals": [],
+            "signal_type_distribution": []
         }
 
 def fetch_prune_candidates(cutoff_ts, min_samples, success_threshold):
