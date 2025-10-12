@@ -56,9 +56,17 @@ function App() {
   };
 
   const saveConfig = async () => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+    
     setLoading(true);
     setMessage("");
     try {
+      // Save token to localStorage
+      localStorage.setItem("admin_token", adminToken);
+      
       await axios.post(`${API}/config`, {
         threshold: parseInt(config.threshold),
         selected_coins: config.selected_coins,
@@ -70,7 +78,12 @@ function App() {
       setMessage("✅ Ayarlar kaydedildi!");
       await loadConfig();
     } catch (e) {
-      setMessage("❌ Kaydetme hatası: " + (e.response?.data?.detail || e.message));
+      if (e.response?.status === 403) {
+        setMessage("❌ Yanlış admin token!");
+        localStorage.removeItem("admin_token");
+      } else {
+        setMessage("❌ Kaydetme hatası: " + (e.response?.data?.detail || e.message));
+      }
     }
     setLoading(false);
   };
