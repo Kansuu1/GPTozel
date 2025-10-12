@@ -26,14 +26,19 @@ async def analyze_cycle():
     selected_coins = cfg.get("selected_coins", ["BTC", "ETH"])
     max_concurrent = cfg.get("max_concurrent_coins", 20)
     
+    # Coin başına özel ayarlar kullanılsın mı?
+    use_coin_specific = cfg.get("use_coin_specific_settings", False)
+    
     # Coin settings'i al (coin başına özel ayarlar)
     coin_settings_list = cfg.get("coin_settings", [])
     coin_settings_map = {cs["coin"]: cs for cs in coin_settings_list}
     
-    # Varsayılan değerler
-    default_threshold = cfg.get("threshold", 4)
-    default_threshold_mode = cfg.get("threshold_mode", "dynamic")
-    default_timeframe = cfg.get("timeframe", "24h")
+    # Global ayarlar
+    global_threshold = cfg.get("threshold", 4)
+    global_threshold_mode = cfg.get("threshold_mode", "dynamic")
+    global_timeframe = cfg.get("timeframe", "24h")
+    
+    logger.info(f"Analiz modu: {'Coin-Bazlı Ayarlar' if use_coin_specific else 'Global Ayarlar'}")
     
     if not selected_coins:
         logger.warning("Seçili coin yok!")
