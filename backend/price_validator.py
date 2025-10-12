@@ -176,7 +176,7 @@ async def get_coingecko_price(symbol: str) -> Optional[float]:
 
 async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15) -> Dict:
     """
-    CMC fiyatını doğrula (Binance ve CoinGecko ile)
+    CMC fiyatını doğrula (DexScreener, Binance ve CoinGecko ile)
     
     Args:
         symbol: Coin sembolü
@@ -187,6 +187,7 @@ async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15)
         {
             "is_valid": bool,
             "cmc_price": float,
+            "dex_price": float,
             "binance_price": float,
             "coingecko_price": float,
             "diff_percent": float,
@@ -197,6 +198,7 @@ async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15)
     result = {
         "is_valid": True,
         "cmc_price": cmc_price,
+        "dex_price": None,
         "binance_price": None,
         "coingecko_price": None,
         "diff_percent": 0,
@@ -204,19 +206,26 @@ async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15)
         "recommended_price": cmc_price
     }
     
-    # Önce Binance'den al (daha güvenilir)
+    # ÖNCELİK 1: DexScreener (DEX'lerdeki gerçek fiyat)
+    dex_price = await get_dexscreener_price(symbol)
+    result["dex_price"] = dex_price
+    
+    # ÖNCELİK 2: Binance
     binance_price = await get_binance_price(symbol)
     result["binance_price"] = binance_price
     
-    # CoinGecko'dan al
+    # ÖNCELİK 3: CoinGecko
     cg_price = await get_coingecko_price(symbol)
     result["coingecko_price"] = cg_price
     
-    # Hangi fiyatı referans alacağımıza karar ver
+    # Hangi fiyatı referans alacağımıza karar ver (öncelik sırasına göre)
     reference_price = None
     reference_source = None
     
-    if binance_price:
+    if dex_price:
+        reference_price = dex_price
+        reference_source = "DexScreener"
+    elif binance_price:
         reference_price = binance_price
         reference_source = "Binance"
     elif cg_price:
@@ -224,7 +233,8 @@ async def validate_price(symbol: str, cmc_price: float, tolerance: float = 0.15)
         reference_source = "CoinGecko"
     else:
         # Hiçbir alternatif yoksa CMC'ye güven
-        result["warning"] = "Alternatif fiyat kaynağı bulunamadı, CMC fiyatı kullanılıyor"
+        result["warning"] = "⚠️ Alternatif fiyat kaynağı bulunamadı, CMC fiyatı kullanılıyor"
+        logger.warning(f"[{symbol}] {result['warning']}")
         return result
     
     # Fark yüzdesini hesapla
