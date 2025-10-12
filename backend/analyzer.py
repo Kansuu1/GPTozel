@@ -178,12 +178,21 @@ async def analyze_with_intervals():
         # Tüm task'ları çalıştır
         await asyncio.gather(*tasks)
     else:
-        # Global mod: Tek bir timeframe için task
+        # Global mod: Tüm coinler için tek bir timeframe
         global_timeframe = cfg.get("timeframe", "24h")
         interval = fetch_intervals.get(global_timeframe, 15)
+        selected_coins = cfg.get("selected_coins", ["BTC", "ETH"])
         
-        logger.info(f"Global mod: {global_timeframe}, interval: {interval}dk")
-        await analyze_timeframe_group(global_timeframe, [], interval, use_coin_specific=False)
+        logger.info(f"Global mod: {global_timeframe}, interval: {interval}dk, {len(selected_coins)} coin")
+        
+        # Global mod için sürekli döngü
+        while True:
+            try:
+                await analyze_cycle()
+            except Exception as e:
+                logger.error(f"Global analiz hatası: {e}")
+            
+            await asyncio.sleep(interval * 60)
 
 async def analyze_timeframe_group(timeframe: str, coin_settings: list, interval_minutes: int, use_coin_specific: bool = False):
     """
