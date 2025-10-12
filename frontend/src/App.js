@@ -109,9 +109,19 @@ function App() {
 
   const updateCoinSetting = async (coin, field, value) => {
     setCoinSettings(prevSettings => 
-      prevSettings.map(cs => 
-        cs.coin === coin ? { ...cs, [field]: value } : cs
-      )
+      prevSettings.map(cs => {
+        if (cs.coin === coin) {
+          const updated = { ...cs, [field]: value };
+          
+          // Status değişikliğinde active alanını da güncelle (backward compatibility)
+          if (field === 'status') {
+            updated.active = value === 'active';
+          }
+          
+          return updated;
+        }
+        return cs;
+      })
     );
 
     // Dinamik moda geçildiğinde veya timeframe değiştiğinde threshold'u hesapla
