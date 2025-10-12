@@ -51,6 +51,10 @@ function App() {
   const loadConfig = async () => {
     try {
       const res = await axios.get(`${API}/config`);
+      // API key maskelenmiş gelirse göster
+      if (res.data.cmc_api_key === "*****") {
+        res.data.cmc_api_key = "*****";
+      }
       setConfig(res.data);
     } catch (e) {
       console.error("Config yükleme hatası:", e);
