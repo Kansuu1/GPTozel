@@ -10,6 +10,58 @@ from typing import Optional, Dict
 logger = logging.getLogger(__name__)
 
 
+async def get_binance_price(symbol: str) -> Optional[float]:
+    """
+    Binance API'den fiyat al (en gerçek zamanlı)
+    
+    Args:
+        symbol: Coin sembolü (BTC, ETH, vb.)
+    
+    Returns:
+        Fiyat veya None
+    """
+    # Binance pair mapping
+    pairs = {
+        "BTC": "BTCUSDT",
+        "ETH": "ETHUSDT",
+        "BNB": "BNBUSDT",
+        "SOL": "SOLUSDT",
+        "ADA": "ADAUSDT",
+        "XRP": "XRPUSDT",
+        "DOGE": "DOGEUSDT",
+        "AVAX": "AVAXUSDT",
+        "MATIC": "MATICUSDT",
+        "DOT": "DOTUSDT",
+        "LINK": "LINKUSDT",
+        "UNI": "UNIUSDT",
+        "COAI": "COAIUSDT"  # Binance'de varsa
+    }
+    
+    pair = pairs.get(symbol.upper())
+    if not pair:
+        return None
+    
+    try:
+        url = f"https://api.binance.com/api/v3/ticker/price?symbol={pair}"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, timeout=aiohttp.ClientTimeout(total=5)) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    price = data.get("price")
+                    if price:
+                        price = float(price)
+                        logger.info(f"[{symbol}] Binance fiyatı: ${price}")
+                        return price
+                else:
+                    logger.debug(f"[{symbol}] Binance'de pair bulunamadı: {pair}")
+                    return None
+    
+    except Exception as e:
+        logger.debug(f"[{symbol}] Binance fiyat alma hatası: {e}")
+        return None
+
+
 async def get_coingecko_price(symbol: str) -> Optional[float]:
     """
     CoinGecko API'den fiyat al
