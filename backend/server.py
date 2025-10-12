@@ -247,7 +247,9 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
             "timeframe": setting.timeframe.strip(),
             "threshold": float(setting.threshold),
             "threshold_mode": setting.threshold_mode.strip().lower(),
-            "active": bool(setting.active)
+            "active": bool(setting.active),
+            "fetch_interval_minutes": setting.fetch_interval_minutes or 2,
+            "status": setting.status or "active"
         })
         coin_list.append(coin_symbol)
     
@@ -257,11 +259,14 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
         "selected_coins": coin_list
     })
     
-    logger.info(f"🔄 Coin ayarları güncellendi. Değişiklikler backend restart'ta uygulanacak.")
+    logger.info(f"🔄 Coin ayarları güncellendi. Fetch task'ları yeniden başlatılıyor...")
+    
+    # Tüm fetch task'larını yeniden başlat
+    await restart_all_fetch_tasks()
     
     return {
         "status": "ok",
-        "message": f"{len(new_settings)} coin ayarı güncellendi",
+        "message": f"{len(new_settings)} coin ayarı güncellendi ve fetch task'ları yenilendi",
         "coin_settings": new_settings,
         "selected_coins": coin_list
     }
