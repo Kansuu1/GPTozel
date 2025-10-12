@@ -398,6 +398,16 @@ select.input {
   transform: translateY(-2px);
 }
 
+.btn-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: #138496;
+  transform: translateY(-2px);
+}
+
 .signals-list {
   display: grid;
   gap: 15px;
