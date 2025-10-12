@@ -336,7 +336,15 @@ function App() {
             <div className="card">
               <div className="signals-header">
                 <h3>📊 Son Sinyaller</h3>
-                <button className="btn btn-small" onClick={loadSignals}>🔄 Yenile</button>
+                <div className="signals-actions">
+                  <button className="btn btn-small" onClick={loadSignals}>🔄 Yenile</button>
+                  <button className="btn btn-small btn-danger" onClick={clearFailedSignals} disabled={loading}>
+                    🗑 Başarısızları Sil
+                  </button>
+                  <button className="btn btn-small btn-danger-outline" onClick={clearAllSignals} disabled={loading}>
+                    ⚠️ Tümünü Sil
+                  </button>
+                </div>
               </div>
               
               {signals.length === 0 ? (
