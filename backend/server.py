@@ -196,8 +196,35 @@ async def get_coin_settings():
                 "timeframe": default_timeframe,
                 "threshold": float(default_threshold),
                 "threshold_mode": default_mode,
-                "active": True
+                "active": True,
+                "fetch_interval_minutes": 2,
+                "status": "active"
             })
+    
+    # Mevcut ayarlara yeni alanları ekle (backward compatibility)
+    for cs in coin_settings:
+        if "fetch_interval_minutes" not in cs:
+            cs["fetch_interval_minutes"] = 2
+        if "status" not in cs:
+            cs["status"] = "active" if cs.get("active", True) else "passive"
+    
+    # Cache'den son fetch zamanlarını ekle
+    for cs in coin_settings:
+        symbol = cs["coin"]
+        if symbol in coin_data_cache:
+            cache_entry = coin_data_cache[symbol]
+            last_fetch = cache_entry.get("last_fetch")
+            if last_fetch:
+                elapsed_seconds = (datetime.now() - last_fetch).total_seconds()
+                elapsed_minutes = int(elapsed_seconds / 60)
+                cs["time_ago"] = f"{elapsed_minutes} dakika önce" if elapsed_minutes > 0 else "Az önce"
+                cs["last_fetch"] = last_fetch.isoformat()
+            else:
+                cs["time_ago"] = "Henüz çekilmedi"
+                cs["last_fetch"] = None
+        else:
+            cs["time_ago"] = "Henüz çekilmedi"
+            cs["last_fetch"] = None
     
     # TÜM coin_settings'i döndür (filtreleme yapma)
     # Frontend'de zaten sadece aktif olanlar gösterilecek
