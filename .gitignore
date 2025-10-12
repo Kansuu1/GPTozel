@@ -105,3 +105,6 @@ android-sdk/ -e
 # Environment files
 *.env
 *.env.*
+-e 
+# Config files with API keys
+backend/config.json
