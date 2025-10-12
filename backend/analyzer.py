@@ -7,6 +7,7 @@ from model_stub import predict_signal_from_features
 from db import insert_signal_record, init_db
 from notifier import format_signal_message, send_telegram_message_async
 from data_sync import read_config
+from volatility_calculator import get_threshold
 import logging
 
 logger = logging.getLogger(__name__)
