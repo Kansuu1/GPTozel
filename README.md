@@ -107,6 +107,53 @@ curl http://localhost:8001/api/signals?limit=20
 
 ## 🛠 Teknik Detaylar
 
+
+## ⚙️ Coin Başına Özel Ayarlar
+
+### Nasıl Kullanılır?
+
+Web panelinde "Coin Başına Özel Ayarlar" kartından her coin için:
+
+1. **Zaman Dilimi**: 15m, 1h, 4h, 12h, 24h, 7d, 30d
+2. **Eşik (%)**: Manuel threshold değeri
+3. **Mod**: Manuel veya Dinamik
+
+### Örnek Konfigürasyon
+
+| Coin | Timeframe | Eşik | Mod | Açıklama |
+|------|-----------|------|-----|----------|
+| BTC | 1h | 3.0% | Dinamik | Saatlik analiz, düşük threshold |
+| ETH | 1h | 3.0% | Dinamik | Saatlik analiz |
+| SOL | 15m | 5.0% | Dinamik | Hızlı sinyaller, orta threshold |
+| PEPE | 15m | 6.0% | Dinamik | Yüksek volatilite, yüksek threshold |
+| TRUMP | 4h | 4.0% | Manuel | 4 saatlik analiz, sabit threshold |
+| COAI | 24h | 3.0% | Dinamik | Günlük trend takibi |
+
+### Öneriler
+
+**Düşük Volatilite Coinler (BTC, ETH):**
+- Timeframe: 1h - 4h
+- Threshold: 2-3%
+- Mod: Dinamik
+
+**Orta Volatilite (SOL, ADA):**
+- Timeframe: 15m - 1h
+- Threshold: 4-5%
+- Mod: Dinamik
+
+**Yüksek Volatilite (PEPE, SHIB):**
+- Timeframe: 15m
+- Threshold: 5-7%
+- Mod: Dinamik (daha seçici)
+
+### Avantajlar
+
+✅ Her coin'in trading tarzına göre optimize edilmiş sinyaller
+✅ Gereksiz sinyaller azalır
+✅ Doğruluk oranı artar
+✅ Coin bazlı risk yönetimi
+
+
 - **Backend**: FastAPI + SQLAlchemy + SQLite
 - **Frontend**: React + Axios
 - **Entegrasyonlar**: CoinMarketCap API + Telegram Bot API
