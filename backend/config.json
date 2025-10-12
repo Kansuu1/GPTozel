@@ -7,18 +7,19 @@
     "ETH",
     "ADA",
     "DOGE",
-    "XRP"
+    "XRP",
+    "COAI"
   ],
   "coin_settings": [
     {
       "coin": "BTC",
-      "timeframe": "1h",
+      "timeframe": "30d",
       "threshold": 3.0,
       "threshold_mode": "dynamic"
     },
     {
       "coin": "ETH",
-      "timeframe": "1h",
+      "timeframe": "30d",
       "threshold": 3.0,
       "threshold_mode": "dynamic"
     },
@@ -38,6 +39,12 @@
       "coin": "XRP",
       "timeframe": "1h",
       "threshold": 3.5,
+      "threshold_mode": "dynamic"
+    },
+    {
+      "coin": "COAI",
+      "timeframe": "7d",
+      "threshold": 5.0,
       "threshold_mode": "dynamic"
     }
   ],
