@@ -65,6 +65,15 @@ class ConfigIn(BaseModel):
     allowed_user_ids: Optional[str] = None
     max_concurrent_coins: Optional[int] = None
 
+class CoinSetting(BaseModel):
+    coin: str
+    timeframe: str
+    threshold: float
+    threshold_mode: str
+
+class CoinSettingsUpdate(BaseModel):
+    coin_settings: List[CoinSetting]
+
 @app.get("/api/")
 async def root():
     return {"message": "Crypto Bot API Çalışıyor", "status": "ok"}
