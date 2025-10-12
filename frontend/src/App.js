@@ -395,6 +395,11 @@ function App() {
     try {
       const res = await axios.get(`${API}/alarms`);
       setAlarms(res.data.alarms || []);
+      
+      // Backend'den alarm durumunu yükle
+      if (res.data.alarms_enabled !== undefined) {
+        setAlarmsActive(res.data.alarms_enabled);
+      }
     } catch (e) {
       console.error("Alarmlar yükleme hatası:", e);
     }
