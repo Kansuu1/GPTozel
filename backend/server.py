@@ -753,7 +753,7 @@ async def get_indicators(symbol: str):
     
     try:
         # Son 50 fiyat noktasını al
-        prices = await get_recent_prices(symbol, count=50)
+        prices = get_recent_prices(symbol, count=50)
         
         if len(prices) < 26:
             return {
@@ -766,7 +766,7 @@ async def get_indicators(symbol: str):
         indicators = calculate_indicators(prices)
         
         # Fiyat istatistikleri
-        stats = await get_price_statistics(symbol, hours=24)
+        stats = get_price_statistics(symbol, hours=24)
         
         return {
             "symbol": symbol,
@@ -784,8 +784,8 @@ async def get_indicators(symbol: str):
 async def get_alarms_endpoint(coin: Optional[str] = None):
     """Aktif fiyat alarmlarını getir"""
     try:
-        alarms = await get_active_alarms(coin=coin.upper() if coin else None)
-        stats = await get_alarm_statistics()
+        alarms = get_active_alarms(coin=coin.upper() if coin else None)
+        stats = get_alarm_statistics()
         
         return {
             "alarms": alarms,
@@ -803,7 +803,7 @@ async def delete_alarm_endpoint(alarm_id: str, request: Request):
     require_admin(request)
     
     try:
-        success = await delete_alarm(alarm_id)
+        success = delete_alarm(alarm_id)
         
         if success:
             return {"status": "ok", "message": "Alarm silindi"}
