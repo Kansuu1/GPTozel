@@ -271,6 +271,20 @@ select.input {
   margin-top: 20px;
 }
 
+.token-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.token-input-group .input {
+  flex: 1;
+}
+
+.token-input-group .btn {
+  flex-shrink: 0;
+}
+
 .button-group {
   display: flex;
   gap: 10px;
