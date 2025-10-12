@@ -50,8 +50,12 @@ function App() {
     loadSignals();
     loadCoinSettings();
     loadFetchIntervals();
-    const interval = setInterval(loadSignals, 30000); // Refresh every 30s
-    return () => clearInterval(interval);
+    const signalInterval = setInterval(loadSignals, 30000); // Refresh signals every 30s
+    const coinInterval = setInterval(loadCoinSettings, 10000); // Refresh coin settings every 10s for time_ago updates
+    return () => {
+      clearInterval(signalInterval);
+      clearInterval(coinInterval);
+    };
   }, []);
 
   const loadConfig = async () => {
