@@ -743,6 +743,153 @@ async def start_all_fetch_tasks():
     
     logger.info("✅ Tüm fetch task'ları başlatıldı")
 
+
+# ==================== YENİ API ENDPOINTS ====================
+
+@app.get("/api/indicators/{symbol}")
+async def get_indicators(symbol: str):
+    """Coin için RSI ve MACD göstergelerini döndür"""
+    symbol = symbol.upper()
+    
+    try:
+        # Son 50 fiyat noktasını al
+        prices = await get_recent_prices(symbol, count=50)
+        
+        if len(prices) < 26:
+            return {
+                "error": "Yeterli veri yok (minimum 26 veri noktası gerekli)",
+                "symbol": symbol,
+                "data_points": len(prices)
+            }
+        
+        # Göstergeleri hesapla
+        indicators = calculate_indicators(prices)
+        
+        # Fiyat istatistikleri
+        stats = await get_price_statistics(symbol, hours=24)
+        
+        return {
+            "symbol": symbol,
+            "indicators": indicators,
+            "price_stats": stats,
+            "data_points": len(prices)
+        }
+    
+    except Exception as e:
+        logger.error(f"Indicators hatası [{symbol}]: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/alarms")
+async def get_alarms_endpoint(coin: Optional[str] = None):
+    """Aktif fiyat alarmlarını getir"""
+    try:
+        alarms = await get_active_alarms(coin=coin.upper() if coin else None)
+        stats = await get_alarm_statistics()
+        
+        return {
+            "alarms": alarms,
+            "statistics": stats
+        }
+    
+    except Exception as e:
+        logger.error(f"Alarmlar hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/alarms/{alarm_id}")
+async def delete_alarm_endpoint(alarm_id: str, request: Request):
+    """Alarm sil"""
+    require_admin(request)
+    
+    try:
+        success = await delete_alarm(alarm_id)
+        
+        if success:
+            return {"status": "ok", "message": "Alarm silindi"}
+        else:
+            raise HTTPException(status_code=404, detail="Alarm bulunamadı")
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Alarm silme hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/signals/chart")
+async def get_signals_chart(days: int = 7, coin: Optional[str] = None):
+    """Signal geçmişi grafik verileri"""
+    try:
+        from db_mongodb import get_db
+        from datetime import datetime, timezone, timedelta
+        
+        db = await get_db()
+        
+        # Zaman aralığı
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        
+        query = {"created_at": {"$gte": cutoff}}
+        if coin:
+            query["coin"] = coin.upper()
+        
+        # Sinyalleri al
+        signals_cursor = db.signals.find(query).sort("created_at", 1)
+        signals = await signals_cursor.to_list(length=1000)
+        
+        # Coin bazında gruplama
+        by_coin = {}
+        by_date = {}
+        signal_types = {"LONG": 0, "SHORT": 0}
+        
+        for signal in signals:
+            coin_symbol = signal.get("coin", "UNKNOWN")
+            created_at = signal.get("created_at")
+            signal_type = signal.get("signal_type", "UNKNOWN")
+            
+            # Coin bazında say
+            if coin_symbol not in by_coin:
+                by_coin[coin_symbol] = {"LONG": 0, "SHORT": 0, "total": 0}
+            by_coin[coin_symbol][signal_type] = by_coin[coin_symbol].get(signal_type, 0) + 1
+            by_coin[coin_symbol]["total"] += 1
+            
+            # Tarih bazında say
+            if created_at:
+                date_key = created_at.strftime("%Y-%m-%d")
+                if date_key not in by_date:
+                    by_date[date_key] = 0
+                by_date[date_key] += 1
+            
+            # Tip bazında say
+            signal_types[signal_type] = signal_types.get(signal_type, 0) + 1
+        
+        # Tarihleri sırala
+        sorted_dates = sorted(by_date.keys())
+        date_series = [{"date": date, "count": by_date[date]} for date in sorted_dates]
+        
+        # Coin listesini sırala (en çok sinyali olan üstte)
+        coin_series = [
+            {"coin": coin, **data}
+            for coin, data in sorted(by_coin.items(), key=lambda x: x[1]["total"], reverse=True)
+        ]
+        
+        return {
+            "total_signals": len(signals),
+            "days": days,
+            "by_date": date_series,
+            "by_coin": coin_series,
+            "by_type": signal_types,
+            "date_range": {
+                "start": cutoff.isoformat(),
+                "end": datetime.now(timezone.utc).isoformat()
+            }
+        }
+    
+    except Exception as e:
+        logger.error(f"Signal chart hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.on_event("startup")
 async def startup_event():
     """Uygulama başlangıcında çalışacak"""
