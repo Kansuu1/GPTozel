@@ -1,6 +1,6 @@
 {
-  "threshold": 4,
-  "threshold_mode": "dynamic",
+  "threshold": 5,
+  "threshold_mode": "manual",
   "use_coin_specific_settings": true,
   "selected_coins": [
     "BTC",
@@ -53,5 +53,5 @@
   "telegram_chat_id": "-1003097160408",
   "allowed_user_ids": "",
   "max_concurrent_coins": 15,
-  "timeframe": "15m"
+  "timeframe": "1h"
 }
