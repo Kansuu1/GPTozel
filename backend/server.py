@@ -261,6 +261,21 @@ async def update_fetch_intervals(payload: FetchIntervals, request: Request):
         "fetch_intervals": valid_intervals
     }
 
+
+
+@app.post("/api/start-interval-analyzer")
+async def start_interval_analyzer(request: Request):
+    """Interval-based analyzer başlat"""
+    require_admin(request)
+    
+    try:
+        from analyzer import analyze_with_intervals
+        asyncio.create_task(analyze_with_intervals())
+        return {"status": "ok", "message": "Interval-based analyzer başlatıldı"}
+    except Exception as e:
+        logger.error(f"Analyzer başlatma hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
     
     # Config'i güncelle - hem coin_settings hem de selected_coins
     cfg = update_config({
