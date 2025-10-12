@@ -46,6 +46,7 @@ function App() {
   useEffect(() => {
     loadConfig();
     loadSignals();
+    loadCoinSettings();
     const interval = setInterval(loadSignals, 30000); // Refresh every 30s
     return () => clearInterval(interval);
   }, []);
