@@ -860,6 +860,10 @@ async def startup_event():
     else:
         logger.info("⏱ Classic analyzer başlatılıyor...")
         asyncio.create_task(run_loop())
+    
+    # Coin-bazlı fetch task'larını başlat
+    logger.info("🔄 Coin-bazlı fetch task'ları başlatılıyor...")
+    await start_all_fetch_tasks()
 
 async def run_analyzer_loop():
     """Background analyzer loop"""
