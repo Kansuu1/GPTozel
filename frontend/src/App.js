@@ -459,8 +459,26 @@ function App() {
 
             <div className="card">
               <h3>📈 Sinyal Ayarları</h3>
+              
               <div className="form-group">
-                <label>Eşik Değeri (%)</label>
+                <label>🎯 Eşik Tipi</label>
+                <select
+                  className="input"
+                  value={config.threshold_mode}
+                  onChange={(e) => setConfig({...config, threshold_mode: e.target.value})}
+                >
+                  <option value="manual">Manuel (Sabit Eşik)</option>
+                  <option value="dynamic">Dinamik (Otomatik Eşik)</option>
+                </select>
+                <small>
+                  {config.threshold_mode === 'dynamic' 
+                    ? '🤖 Volatiliteye göre otomatik eşik hesaplanır' 
+                    : '👤 Manuel olarak belirlediğiniz eşik kullanılır'}
+                </small>
+              </div>
+
+              <div className="form-group">
+                <label>Eşik Değeri (%)  {config.threshold_mode === 'dynamic' && '(Referans)'}</label>
                 <input
                   type="number"
                   className="input"
@@ -468,8 +486,13 @@ function App() {
                   onChange={(e) => setConfig({...config, threshold: e.target.value})}
                   min="0"
                   max="100"
+                  disabled={config.threshold_mode === 'dynamic'}
                 />
-                <small>Sadece %{config.threshold} ve üzeri sinyaller gönderilir</small>
+                <small>
+                  {config.threshold_mode === 'dynamic' 
+                    ? '⚙️ Dinamik modda bu değer referans olarak kullanılır' 
+                    : `Sadece %${config.threshold} ve üzeri sinyaller gönderilir`}
+                </small>
               </div>
 
               <div className="form-group">
