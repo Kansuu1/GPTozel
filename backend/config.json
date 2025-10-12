@@ -5,9 +5,9 @@
   "selected_coins": [
     "BTC",
     "ETH",
-    "SOL",
     "ADA",
-    "DOGE"
+    "DOGE",
+    "XRP"
   ],
   "coin_settings": [
     {
@@ -23,12 +23,6 @@
       "threshold_mode": "dynamic"
     },
     {
-      "coin": "SOL",
-      "timeframe": "15m",
-      "threshold": 5.0,
-      "threshold_mode": "dynamic"
-    },
-    {
       "coin": "ADA",
       "timeframe": "4h",
       "threshold": 4.5,
@@ -38,6 +32,12 @@
       "coin": "DOGE",
       "timeframe": "15m",
       "threshold": 6.0,
+      "threshold_mode": "dynamic"
+    },
+    {
+      "coin": "XRP",
+      "timeframe": "1h",
+      "threshold": 3.5,
       "threshold_mode": "dynamic"
     }
   ],
