@@ -13,6 +13,7 @@ from volatility_calculator import get_threshold
 from price_history import get_recent_prices
 from indicators import calculate_indicators
 from price_alarms import create_price_alarm
+from price_validator import get_validated_price, validate_price
 import logging
 
 
