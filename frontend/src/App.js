@@ -375,6 +375,34 @@ function App() {
     }
   };
 
+  const saveTelegramConfig = async () => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    if (!telegramConfig.telegram_token || !telegramConfig.telegram_chat_id) {
+      setMessage("❌ Lütfen tüm alanları doldurun!");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+    try {
+      await axios.post(`${API}/config`, {
+        telegram_token: telegramConfig.telegram_token,
+        telegram_chat_id: telegramConfig.telegram_chat_id
+      }, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ Telegram ayarları kaydedildi!");
+      await loadConfig();
+    } catch (e) {
+      setMessage("❌ Kaydetme hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
   const saveConfig = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");
