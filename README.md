@@ -7,7 +7,8 @@ CoinMarketCap API ve Telegram entegrasyonlu, profesyonel kripto para analiz botu
 - ✅ **CoinMarketCap Entegrasyonu**: Gerçek zamanlı kripto para verileri
 - ✅ **Telegram Bildirimleri**: Otomatik sinyal gönderimi
 - ✅ **Web Panel**: Türkçe, mobil uyumlu yönetim paneli
-- ✅ **Akıllı Filtreleme**: %75+ güvenilirlik eşiği
+- ✅ **Dinamik Eşik Sistemi**: Volatiliteye göre otomatik threshold ayarlama
+- ✅ **Akıllı Fiyat Formatı**: Tüm coin türleri için doğru fiyat gösterimi
 - ✅ **Otomatik Analiz**: Her 60 saniyede bir otomatik tarama
 - ✅ **Çoklu Coin Desteği**: 15+ popüler kripto para
 - ✅ **SQLite Veritabanı**: Sinyal geçmişi takibi
