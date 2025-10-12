@@ -713,6 +713,12 @@ function App() {
           ⚙️ Panel
         </button>
         <button 
+          className={`tab ${activeTab === 'telegram' ? 'active' : ''}`}
+          onClick={() => setActiveTab('telegram')}
+        >
+          💬 Telegram
+        </button>
+        <button 
           className={`tab ${activeTab === 'signals' ? 'active' : ''}`}
           onClick={() => setActiveTab('signals')}
         >
