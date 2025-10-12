@@ -113,6 +113,40 @@ function App() {
     );
   };
 
+  const addCoinToSettings = () => {
+    if (!newCoin.trim()) {
+      setMessage("⚠️ Lütfen coin sembolü girin");
+      return;
+    }
+
+    const coinSymbol = newCoin.trim().toUpperCase();
+    
+    // Coin zaten var mı kontrol et
+    if (coinSettings.some(cs => cs.coin === coinSymbol)) {
+      setMessage("⚠️ Bu coin zaten listede");
+      return;
+    }
+
+    // Yeni coin ekle (varsayılan değerlerle)
+    const newCoinSetting = {
+      coin: coinSymbol,
+      timeframe: config.timeframe || "24h",
+      threshold: parseFloat(config.threshold) || 4.0,
+      threshold_mode: config.threshold_mode || "dynamic"
+    };
+
+    setCoinSettings([...coinSettings, newCoinSetting]);
+    setNewCoin("");
+    setMessage(`✅ ${coinSymbol} eklendi - ayarları yapıp kaydedin`);
+  };
+
+  const removeCoinFromSettings = (coin) => {
+    if (window.confirm(`${coin} coin'ini listeden kaldırmak istediğinize emin misiniz?`)) {
+      setCoinSettings(coinSettings.filter(cs => cs.coin !== coin));
+      setMessage(`✅ ${coin} listeden kaldırıldı - değişiklikleri kaydedin`);
+    }
+  };
+
   const saveConfig = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");

@@ -13,7 +13,7 @@
   "coin_settings": [
     {
       "coin": "BTC",
-      "timeframe": "1h",
+      "timeframe": "15m",
       "threshold": 3.0,
       "threshold_mode": "dynamic"
     },
@@ -43,7 +43,7 @@
     },
     {
       "coin": "COAI",
-      "timeframe": "24h",
+      "timeframe": "30d",
       "threshold": 3.0,
       "threshold_mode": "dynamic"
     }
