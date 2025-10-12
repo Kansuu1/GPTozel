@@ -2103,3 +2103,288 @@ select.input {
 .coin-settings-table-wrapper {
   display: none;
 }
+
+/* =====================================================
+   DARK MODE STYLES
+   ===================================================== */
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --border-color: #dee2e6;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --gradient-start: #667eea;
+  --gradient-end: #764ba2;
+}
+
+body.dark-mode {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-card: #2a2a2a;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #404040;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .card {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+body.dark-mode .input,
+body.dark-mode .select-modern,
+body.dark-mode .interval-input-modern,
+body.dark-mode .threshold-input-modern {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .coin-card {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+body.dark-mode .coin-card-inactive {
+  background: var(--bg-secondary);
+}
+
+body.dark-mode .tab {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+body.dark-mode .tab.active {
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+}
+
+/* Header Dark Mode */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-title {
+  flex: 1;
+}
+
+.dark-mode-toggle {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1) rotate(20deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .dark-mode-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* =====================================================
+   MODERN INTERVAL CARDS
+   ===================================================== */
+
+.interval-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.interval-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.interval-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transition: opacity 0.3s ease;
+}
+
+.interval-card.interval-short::before {
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.interval-card.interval-medium::before {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.interval-card.interval-long::before {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.interval-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.interval-card:hover::before {
+  height: 4px;
+}
+
+.interval-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.interval-icon {
+  font-size: 1.5rem;
+}
+
+.timeframe-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.interval-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.interval-input-modern {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  color: #667eea;
+  transition: all 0.3s ease;
+}
+
+.interval-input-modern:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.interval-suffix {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.interval-recommendation {
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Dark Mode - Interval Cards */
+body.dark-mode .interval-card {
+  background: var(--bg-card);
+}
+
+body.dark-mode .timeframe-label {
+  color: var(--text-primary);
+}
+
+body.dark-mode .interval-input-modern {
+  background: var(--bg-secondary);
+  color: #8b9aff;
+  border-color: var(--border-color);
+}
+
+body.dark-mode .interval-suffix {
+  color: var(--text-secondary);
+}
+
+body.dark-mode .interval-recommendation {
+  color: var(--text-secondary);
+}
+
+/* Interval Legend */
+.interval-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-icon {
+  font-size: 1.3rem;
+}
+
+.legend-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+body.dark-mode .interval-legend {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+body.dark-mode .legend-text {
+  color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .interval-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+  
+  .interval-legend {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
