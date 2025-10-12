@@ -12,7 +12,7 @@ from db_mongodb import get_db
 logger = logging.getLogger(__name__)
 
 
-async def create_price_alarm(
+def create_price_alarm(
     coin: str,
     target_price: float,
     alarm_type: str,  # "target" (giriş fiyatı)
@@ -33,7 +33,7 @@ async def create_price_alarm(
         Alarm ID
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         alarm = {
             "coin": coin,
