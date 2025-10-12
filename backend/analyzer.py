@@ -136,12 +136,15 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 "success": None,
             }
             
-            # RSI ve MACD değerlerini ekle
+            # RSI, MACD ve EMA değerlerini ekle
             if indicators:
                 rec["rsi"] = indicators.get("rsi")
                 rec["rsi_signal"] = indicators.get("rsi_signal")
                 rec["macd"] = indicators.get("macd")
                 rec["macd_signal"] = indicators.get("macd_signal")
+                rec["ema9"] = indicators.get("ema9")
+                rec["ema21"] = indicators.get("ema21")
+                rec["ema_signal"] = indicators.get("ema_signal")
             
             # DB'ye kaydet
             rec_id = insert_signal_record(rec)
