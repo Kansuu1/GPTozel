@@ -134,7 +134,7 @@ async def analyze_single_coin(symbol: str, quote: dict):
             # Fiyat alarmı oluştur (sinyal giriş fiyatı için)
             entry_price = features.get("price", 0)
             if entry_price > 0:
-                alarm_id = await create_price_alarm(
+                alarm_id = create_price_alarm(
                     coin=symbol,
                     target_price=entry_price,
                     alarm_type="target",
