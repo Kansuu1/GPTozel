@@ -411,6 +411,29 @@ select.input {
   border-bottom: 1px solid #e0e0e0;
 }
 
+.signal-header-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.delete-signal-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.5;
+}
+
+.delete-signal-btn:hover {
+  opacity: 1;
+  background: #fee;
+  transform: scale(1.1);
+}
+
 .signal-coin {
   font-size: 1.3rem;
   font-weight: 700;
