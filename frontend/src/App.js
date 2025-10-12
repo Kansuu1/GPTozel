@@ -85,6 +85,7 @@ function App() {
       
       await axios.post(`${API}/config`, {
         threshold: parseInt(config.threshold),
+        threshold_mode: config.threshold_mode,
         selected_coins: config.selected_coins,
         timeframe: config.timeframe,
         max_concurrent_coins: parseInt(config.max_concurrent_coins),
