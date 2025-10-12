@@ -37,7 +37,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "ADA",
@@ -46,7 +46,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 3,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "SOL",
