@@ -51,13 +51,20 @@ async def analyze_cycle():
         async def handle_coin(sym):
             async with sem:
                 try:
-                    # Coin için özel ayarları al veya varsayılanları kullan
-                    coin_config = coin_settings_map.get(sym, {})
-                    timeframe = coin_config.get("timeframe", default_timeframe)
-                    manual_threshold = coin_config.get("threshold", default_threshold)
-                    threshold_mode = coin_config.get("threshold_mode", default_threshold_mode)
-                    
-                    logger.info(f"Analyzing {sym}: timeframe={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
+                    # Mod kontrolü: Coin-bazlı veya global ayarlar
+                    if use_coin_specific and sym in coin_settings_map:
+                        # Coin başına özel ayarlar aktif ve coin ayarı var
+                        coin_config = coin_settings_map[sym]
+                        timeframe = coin_config.get("timeframe")
+                        manual_threshold = coin_config.get("threshold")
+                        threshold_mode = coin_config.get("threshold_mode")
+                        logger.info(f"[COIN-BAZLI] Analyzing {sym}: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
+                    else:
+                        # Global ayarlar kullan
+                        timeframe = global_timeframe
+                        manual_threshold = global_threshold
+                        threshold_mode = global_threshold_mode
+                        logger.info(f"[GLOBAL] Analyzing {sym}: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
                     
                     quote = await cmc.get_quote(session, sym)
                     features = build_features_from_quote(quote)
