@@ -5,48 +5,27 @@
   "selected_coins": [
     "BTC",
     "ETH",
-    "COAI"
+    "XRP"
   ],
   "coin_settings": [
     {
       "coin": "BTC",
-      "timeframe": "30d",
+      "timeframe": "1h",
       "threshold": 3.0,
       "threshold_mode": "dynamic",
       "active": true
     },
     {
       "coin": "ETH",
-      "timeframe": "30d",
+      "timeframe": "1h",
       "threshold": 3.0,
       "threshold_mode": "dynamic",
       "active": true
     },
     {
-      "coin": "ADA",
-      "timeframe": "4h",
-      "threshold": 4.5,
-      "threshold_mode": "dynamic",
-      "active": false
-    },
-    {
-      "coin": "DOGE",
-      "timeframe": "15m",
-      "threshold": 6.0,
-      "threshold_mode": "dynamic",
-      "active": false
-    },
-    {
       "coin": "XRP",
-      "timeframe": "1h",
+      "timeframe": "4h",
       "threshold": 3.5,
-      "threshold_mode": "dynamic",
-      "active": false
-    },
-    {
-      "coin": "COAI",
-      "timeframe": "7d",
-      "threshold": 5.0,
       "threshold_mode": "dynamic",
       "active": true
     }
