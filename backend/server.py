@@ -308,7 +308,7 @@ async def update_fetch_intervals(payload: FetchIntervals, request: Request):
         raise HTTPException(status_code=400, detail="Geçerli interval değeri bulunamadı")
     
     # Update config
-    cfg = update_config({"fetch_intervals": valid_intervals})
+    update_config({"fetch_intervals": valid_intervals})
     
     # Analyzer'ı yeniden başlat (yeni interval'lerle)
     logger.info("🔄 Interval değişti, analyzer yeniden başlatılıyor...")
