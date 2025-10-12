@@ -23,6 +23,9 @@ function App() {
   const [newCoin, setNewCoin] = useState("");
   const [coinSettings, setCoinSettings] = useState([]);
   const [fetchIntervals, setFetchIntervals] = useState({});
+  const [indicators, setIndicators] = useState({});  // RSI/MACD göstergeleri
+  const [alarms, setAlarms] = useState([]);  // Fiyat alarmları
+  const [chartData, setChartData] = useState(null);  // Signal grafik verileri
   const [darkMode, setDarkMode] = useState(() => {
     // localStorage'dan dark mode tercihini yükle
     const saved = localStorage.getItem('darkMode');
