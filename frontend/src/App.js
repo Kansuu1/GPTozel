@@ -1063,7 +1063,7 @@ function App() {
                     Yeni coin ekledikten sonra ayarlarını yapıp "Coin Ayarlarını Kaydet" butonuna basın
                   </small>
                 </div>
-              </div>
+                </>
               ) : (
                 <p className="no-data">Coin ayarları yükleniyor...</p>
               )}
