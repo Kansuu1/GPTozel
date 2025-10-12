@@ -823,14 +823,40 @@ async def get_alarms_endpoint(coin: Optional[str] = None):
     try:
         alarms = get_active_alarms(coin=coin.upper() if coin else None)
         stats = get_alarm_statistics()
+        cfg = read_config()
         
         return {
             "alarms": alarms,
-            "statistics": stats
+            "statistics": stats,
+            "alarms_enabled": cfg.get("alarms_enabled", True)
         }
     
     except Exception as e:
         logger.error(f"Alarmlar hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/alarms/toggle")
+async def toggle_alarms_endpoint(payload: dict, request: Request):
+    """Alarm sistemini aktif/pasif yap"""
+    require_admin(request)
+    
+    try:
+        enabled = payload.get("enabled", True)
+        cfg = read_config()
+        cfg = update_config({"alarms_enabled": bool(enabled)})
+        
+        status_text = "aktif" if enabled else "pasif"
+        logger.info(f"🔔 Alarm sistemi {status_text} yapıldı")
+        
+        return {
+            "status": "ok",
+            "alarms_enabled": enabled,
+            "message": f"Alarm sistemi {status_text}"
+        }
+    
+    except Exception as e:
+        logger.error(f"Alarm toggle hatası: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
