@@ -107,12 +107,42 @@ function App() {
     setLoading(false);
   };
 
-  const updateCoinSetting = (coin, field, value) => {
+  const updateCoinSetting = async (coin, field, value) => {
     setCoinSettings(prevSettings => 
       prevSettings.map(cs => 
         cs.coin === coin ? { ...cs, [field]: value } : cs
       )
     );
+
+    // Dinamik moda geçildiğinde veya timeframe değiştiğinde threshold'u hesapla
+    const coinSetting = coinSettings.find(cs => cs.coin === coin);
+    
+    if (field === 'threshold_mode' && value === 'dynamic') {
+      // Modu dinamik yaptık, threshold hesapla
+      await updateDynamicThreshold(coin, coinSetting?.timeframe || '24h');
+    } else if (field === 'timeframe' && coinSetting?.threshold_mode === 'dynamic') {
+      // Timeframe değişti ve mod dinamik, threshold hesapla
+      await updateDynamicThreshold(coin, value);
+    }
+  };
+
+  const updateDynamicThreshold = async (coin, timeframe) => {
+    try {
+      const res = await axios.get(`${API}/calculate-threshold`, {
+        params: { coin, timeframe }
+      });
+      
+      if (res.data.threshold) {
+        // Hesaplanan threshold'u coin setting'e uygula
+        setCoinSettings(prevSettings => 
+          prevSettings.map(cs => 
+            cs.coin === coin ? { ...cs, threshold: res.data.threshold } : cs
+          )
+        );
+      }
+    } catch (e) {
+      console.error('Threshold hesaplama hatası:', e);
+    }
   };
 
   const addCoinToSettings = () => {
