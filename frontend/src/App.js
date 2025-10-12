@@ -228,31 +228,64 @@ function App() {
         {activeTab === 'panel' && (
           <div className="panel-section">
             <div className="card">
-              <h3>🔐 Admin Token</h3>
-              <div className="token-input-group">
-                <input
-                  type="password"
-                  className="input"
-                  value={adminToken}
-                  onChange={(e) => setAdminToken(e.target.value)}
-                  placeholder="Admin token girin (örn: mmkansu)"
-                />
-                {adminToken && (
-                  <button 
-                    className="btn btn-small btn-secondary"
-                    onClick={() => {
-                      localStorage.removeItem("admin_token");
-                      setAdminToken("");
-                      setMessage("🔓 Token temizlendi");
-                    }}
-                  >
-                    🗑 Temizle
-                  </button>
-                )}
+              <h3>🔐 Yetkilendirme</h3>
+              
+              <div className="form-group">
+                <label>Admin Token</label>
+                <div className="token-input-group">
+                  <input
+                    type="password"
+                    className="input"
+                    value={adminToken}
+                    onChange={(e) => setAdminToken(e.target.value)}
+                    placeholder="Admin token (örn: mmkansu)"
+                  />
+                  {adminToken && (
+                    <button 
+                      className="btn btn-small btn-secondary"
+                      onClick={() => {
+                        localStorage.removeItem("admin_token");
+                        setAdminToken("");
+                        setMessage("🔓 Admin token temizlendi");
+                      }}
+                    >
+                      🗑
+                    </button>
+                  )}
+                </div>
+                <small>
+                  {adminToken ? "✅ Token kaydedildi" : "⚠️ İlk kullanımda token girin"}
+                </small>
               </div>
-              <small>
-                {adminToken ? "✅ Token kaydedildi" : "⚠️ İlk kullanımda token girin"}
-              </small>
+
+              <div className="form-group">
+                <label>📊 CoinMarketCap API Key</label>
+                <div className="token-input-group">
+                  <input
+                    type="password"
+                    className="input"
+                    value={config.cmc_api_key || ""}
+                    onChange={(e) => setConfig({...config, cmc_api_key: e.target.value})}
+                    placeholder="API Key (örn: ad7e6f5c-...)"
+                  />
+                  {config.cmc_api_key && (
+                    <button 
+                      className="btn btn-small btn-info"
+                      onClick={() => {
+                        const input = document.querySelector('input[placeholder*="API Key"]');
+                        input.type = input.type === 'password' ? 'text' : 'password';
+                      }}
+                    >
+                      👁
+                    </button>
+                  )}
+                </div>
+                <small>
+                  {config.cmc_api_key && config.cmc_api_key !== "*****" 
+                    ? "✅ API Key ayarlanmış" 
+                    : "💡 CMC Pro plan için yeni API key girebilirsiniz"}
+                </small>
+              </div>
             </div>
 
             <div className="card">
