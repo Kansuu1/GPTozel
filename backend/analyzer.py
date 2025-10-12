@@ -98,6 +98,26 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 prob = prob * 0.8  # %20 azalt
                 logger.info(f"[{symbol}] RSI+MACD negatif, prob azaltıldı: {prob:.1f}%")
         
+        # EMA filtresi (Pasif mod: %50 etkili)
+        if indicators.get('ema_signal') is not None:
+            ema_signal = indicators['ema_signal']
+            
+            # EMA aynı yönde ise sinyali güçlendir (%5 artır - pasif mod)
+            if sig == "LONG" and ema_signal == "BULLISH":
+                prob = min(prob * 1.05, 100)  # %5 artır
+                logger.info(f"[{symbol}] EMA bullish, prob güçlendirildi: {prob:.1f}%")
+            elif sig == "SHORT" and ema_signal == "BEARISH":
+                prob = min(prob * 1.05, 100)  # %5 artır
+                logger.info(f"[{symbol}] EMA bearish, prob güçlendirildi: {prob:.1f}%")
+            
+            # EMA ters yönde ise sinyali zayıflat (%5 azalt - pasif mod)
+            elif sig == "LONG" and ema_signal == "BEARISH":
+                prob = prob * 0.95  # %5 azalt
+                logger.info(f"[{symbol}] EMA ters yönde, prob zayıflatıldı: {prob:.1f}%")
+            elif sig == "SHORT" and ema_signal == "BULLISH":
+                prob = prob * 0.95  # %5 azalt
+                logger.info(f"[{symbol}] EMA ters yönde, prob zayıflatıldı: {prob:.1f}%")
+        
         logger.info(f"[{symbol}] Analiz: Signal={sig}, Prob={prob:.1f}%, Threshold={threshold:.1f}%")
         
         # Threshold aşıldıysa sinyal üret
