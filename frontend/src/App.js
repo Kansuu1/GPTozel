@@ -816,6 +816,15 @@ function App() {
                   {loading ? '⏳ Kaydediliyor...' : '💾 Sıklıkları Kaydet'}
                 </button>
               </div>
+
+              <div className="restart-section">
+                <p className="restart-info">
+                  ⚠️ <strong>Önemli:</strong> Interval veya coin ayarları değiştirdikten sonra, değişikliklerin uygulanması için backend'i yeniden başlatmanız gerekir.
+                </p>
+                <button className="btn btn-warning" onClick={restartBackend} disabled={loading}>
+                  {loading ? '⏳ Başlatılıyor...' : '🔄 Backend\'i Yeniden Başlat'}
+                </button>
+              </div>
             </div>
 
 
