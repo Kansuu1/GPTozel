@@ -121,6 +121,17 @@ curl http://localhost:8001/api/signals?limit=20
 - "Coin Başına Özel Ayarlar" kartı görünür
 - Her coin için:
   - **Zaman Dilimi**: 15m, 1h, 4h, 12h, 24h, 7d, 30d
+  - **Eşik (%)**: Manuel threshold değeri
+  - **Mod**: Manuel veya Dinamik
+  - **Sil Butonu** (🗑️): Coin'i listeden çıkar
+
+**3. Coin Ekleme/Çıkarma:**
+- **Yeni Coin Ekle**: Alt kısımda input ve "➕ Ekle" butonu
+- Coin sembolü girin (örn: ADA, DOGE, XRP)
+- Enter veya "Ekle" butonuyla listeye ekleyin
+- Varsayılan ayarlarla eklenir, sonra özelleştirebilirsiniz
+- **Sil**: Her coin satırında 🗑️ butonu ile çıkarabilirsiniz
+- Değişiklikleri kaydetmeyi unutmayın!
 
 
 ### Mod Karşılaştırması
@@ -158,9 +169,6 @@ Sonuç:
   - PEPE → 15m hızlı analiz, yüksek threshold
   (Her coin optimize ayarlarla analiz edilir)
 ```
-
-  - **Eşik (%)**: Manuel threshold değeri
-  - **Mod**: Manuel veya Dinamik
 
 **3. Önemli:**
 - Coin-bazlı mod aktifken global ayarlar otomatik devre dışı kalır
