@@ -31,7 +31,10 @@ def save_price_point(coin: str, price: float, volume_24h: float = 0):
         }
         
         result = db.price_history.insert_one(price_point)
-        logger.debug(f"✅ [{coin}] Fiyat kaydedildi: ${price:.4f} (ID: {result.inserted_id})")
+        # İlk birkaç kayıt için log
+        count = db.price_history.count_documents({"coin": coin})
+        if count <= 5 or count % 10 == 0:
+            logger.info(f"💾 [{coin}] Fiyat kaydedildi: ${price:.4f} (Toplam: {count} kayıt)")
         
         # Eski verileri temizle (90 günden eski)
         cutoff = datetime.now(timezone.utc) - timedelta(days=90)
@@ -40,7 +43,7 @@ def save_price_point(coin: str, price: float, volume_24h: float = 0):
             "timestamp": {"$lt": cutoff}
         })
         if deleted.deleted_count > 0:
-            logger.debug(f"🗑️ [{coin}] {deleted.deleted_count} eski kayıt silindi")
+            logger.info(f"🗑️ [{coin}] {deleted.deleted_count} eski kayıt silindi")
         
     except Exception as e:
         logger.error(f"❌ Fiyat kaydetme hatası [{coin}]: {e}", exc_info=True)
