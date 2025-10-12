@@ -202,21 +202,28 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
     
     # Yeni ayarları doğrula ve formatla
     new_settings = []
+    coin_list = []
     for setting in payload.coin_settings:
+        coin_symbol = setting.coin.strip().upper()
         new_settings.append({
-            "coin": setting.coin.strip().upper(),
+            "coin": coin_symbol,
             "timeframe": setting.timeframe.strip(),
             "threshold": float(setting.threshold),
             "threshold_mode": setting.threshold_mode.strip().lower()
         })
+        coin_list.append(coin_symbol)
     
-    # Config'i güncelle
-    cfg = update_config({"coin_settings": new_settings})
+    # Config'i güncelle - hem coin_settings hem de selected_coins
+    cfg = update_config({
+        "coin_settings": new_settings,
+        "selected_coins": coin_list
+    })
     
     return {
         "status": "ok",
         "message": f"{len(new_settings)} coin ayarı güncellendi",
-        "coin_settings": new_settings
+        "coin_settings": new_settings,
+        "selected_coins": coin_list
     }
 
 
