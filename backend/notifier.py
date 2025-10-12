@@ -29,19 +29,20 @@ async def send_telegram_message_async(text: str, parse_mode="HTML", buttons=None
 def format_price(price):
     """
     Fiyatı akıllıca formatla
-    - Büyük fiyatlar (>1): 2 ondalık
-    - Orta fiyatlar (0.01-1): 4 ondalık
-    - Küçük fiyatlar (<0.01): 8 ondalık veya bilimsel gösterim
+    - Büyük fiyatlar (>=1): 2 ondalık (örn: $1,234.56)
+    - Orta fiyatlar (0.01-1): 4 ondalık (örn: $0.1234)
+    - Küçük fiyatlar (0.00001-0.01): 6 ondalık (örn: $0.001234)
+    - Çok küçük (<0.00001): 8 ondalık (örn: $0.00000123)
     """
     if price >= 1:
         return f"${price:,.2f}"
     elif price >= 0.01:
         return f"${price:.4f}"
     elif price >= 0.00001:
-        return f"${price:.8f}"
+        return f"${price:.6f}"
     else:
-        # Çok küçük değerler için bilimsel gösterim
-        return f"${price:.2e}"
+        # Çok küçük değerler için 8-10 ondalık
+        return f"${price:.10f}".rstrip('0').rstrip('.')
 
 def format_signal_message(rec: dict):
     txt = f"📊 <b>MM TRADING BOT PRO</b>\n\n"
