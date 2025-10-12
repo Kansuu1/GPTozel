@@ -42,6 +42,10 @@ async def analyze_cycle():
                 try:
                     quote = await cmc.get_quote(session, sym)
                     features = build_features_from_quote(quote)
+                    
+                    # Dinamik veya manuel threshold kullan
+                    threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
+                    
                     sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
                     prob = float(prob)
                     
