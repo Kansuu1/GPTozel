@@ -1,5 +1,7 @@
 # backend/analyzer.py
-import os, asyncio, aiohttp
+import os
+import asyncio
+import aiohttp
 from datetime import datetime, timezone, timedelta
 from cmc_client import CMCClient
 from feature_store import build_features_from_quote
