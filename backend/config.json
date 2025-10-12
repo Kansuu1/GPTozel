@@ -35,18 +35,18 @@
       "timeframe": "4h",
       "threshold": 3.5,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "ADA",
       "timeframe": "1h",
       "threshold": 5.0,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 3,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "SOL",
@@ -62,9 +62,9 @@
       "timeframe": "1h",
       "threshold": 2.8,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 1,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "COAI",
