@@ -15,13 +15,15 @@
       "coin": "BTC",
       "timeframe": "30d",
       "threshold": 3.0,
-      "threshold_mode": "dynamic"
+      "threshold_mode": "dynamic",
+      "active": true
     },
     {
       "coin": "ETH",
       "timeframe": "30d",
       "threshold": 3.0,
-      "threshold_mode": "dynamic"
+      "threshold_mode": "dynamic",
+      "active": true
     },
     {
       "coin": "ADA",
