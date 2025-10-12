@@ -1359,6 +1359,173 @@ function App() {
           </div>
         )}
 
+        {activeTab === 'telegram' && (
+          <div className="telegram-section">
+            <div className="card">
+              <h3>💬 Telegram Entegrasyon Ayarları</h3>
+              <p className="card-description">
+                Telegram bot token ve chat ID'nizi buradan yönetebilirsiniz
+              </p>
+
+              <div className="space-y-4 mt-6">
+                {/* Bot Token */}
+                <div className="form-group">
+                  <label className="block text-sm font-medium mb-2">
+                    🤖 Telegram Bot Token
+                  </label>
+                  <input
+                    type="text"
+                    className="input-modern w-full"
+                    placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+                    value={telegramConfig.telegram_token}
+                    onChange={(e) => setTelegramConfig({
+                      ...telegramConfig,
+                      telegram_token: e.target.value
+                    })}
+                  />
+                  <small className="text-gray-600 dark:text-gray-400 mt-1 block">
+                    Bot token'ınızı <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@BotFather</a>'dan alabilirsiniz
+                  </small>
+                </div>
+
+                {/* Chat ID */}
+                <div className="form-group">
+                  <label className="block text-sm font-medium mb-2">
+                    💬 Telegram Chat ID
+                  </label>
+                  <input
+                    type="text"
+                    className="input-modern w-full"
+                    placeholder="-1001234567890"
+                    value={telegramConfig.telegram_chat_id}
+                    onChange={(e) => setTelegramConfig({
+                      ...telegramConfig,
+                      telegram_chat_id: e.target.value
+                    })}
+                  />
+                  <small className="text-gray-600 dark:text-gray-400 mt-1 block">
+                    Chat ID'nizi <a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@userinfobot</a> ile öğrenebilirsiniz
+                  </small>
+                </div>
+
+                {/* Mevcut Ayarlar Göster */}
+                {config.telegram_token && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="text-sm space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">🤖 Bot Token:</span>
+                        <code className="bg-white dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                          {config.telegram_token === '*****' ? '*****' : config.telegram_token.substring(0, 20) + '...'}
+                        </code>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">💬 Chat ID:</span>
+                        <code className="bg-white dark:bg-gray-800 px-2 py-1 rounded text-xs">
+                          {config.telegram_chat_id}
+                        </code>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 flex-wrap">
+                  <button
+                    className="btn btn-primary"
+                    onClick={saveTelegramConfig}
+                    disabled={loading || !telegramConfig.telegram_token || !telegramConfig.telegram_chat_id}
+                  >
+                    {loading ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
+                  </button>
+
+                  <button
+                    className="btn btn-secondary"
+                    onClick={testTelegram}
+                    disabled={loading || !config.telegram_token}
+                  >
+                    {loading ? '⏳ Test ediliyor...' : '🔔 Test Bildirimi Gönder'}
+                  </button>
+                </div>
+
+                {/* Info Box */}
+                <div className="info-box mt-4">
+                  <h4 className="font-medium mb-2">ℹ️ Nasıl Kullanılır?</h4>
+                  <ol className="list-decimal list-inside space-y-1 text-sm">
+                    <li>Telegram'da <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@BotFather</a> botunu açın</li>
+                    <li>/newbot komutu ile yeni bot oluşturun</li>
+                    <li>Size verilen token'ı yukarıdaki alana yapıştırın</li>
+                    <li>Botunuzu bir gruba ekleyin veya direkt mesaj gönderin</li>
+                    <li><a href="https://t.me/userinfobot" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@userinfobot</a> ile Chat ID'nizi öğrenin</li>
+                    <li>Chat ID'yi yukarıdaki alana girin ve kaydedin</li>
+                    <li>"Test Bildirimi Gönder" butonu ile test edin</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            {/* Alarmlar Kartı */}
+            <div className="card mt-6">
+              <h3>🔔 Aktif Fiyat Alarmları</h3>
+              <p className="card-description">
+                Sinyal üretildiğinde otomatik oluşturulan fiyat alarmları
+              </p>
+
+              {alarms.length > 0 ? (
+                <div className="overflow-x-auto mt-4">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-800">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Coin
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Hedef Fiyat
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Tip
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Durum
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                      {alarms.map((alarm) => (
+                        <tr key={alarm._id}>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {alarm.coin}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                            ${alarm.target_price.toFixed(4)}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              alarm.signal_type === 'LONG' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                              'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                            }`}>
+                              {alarm.signal_type}
+                            </span>
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm">
+                            <span className="text-yellow-600 dark:text-yellow-400">
+                              ⏳ Bekliyor
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <p>📭 Henüz aktif alarm yok</p>
+                  <p className="text-sm mt-2">Sinyal üretildiğinde otomatik olarak alarm oluşturulacak</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {activeTab === 'dashboard' && (
           <DashboardSection />
         )}
