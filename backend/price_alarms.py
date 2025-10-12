@@ -78,6 +78,12 @@ def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
         Tetiklenen alarmlar listesi
     """
     try:
+        # Alarm sistemi pasifse kontrol yapma
+        from data_sync import read_config
+        cfg = read_config()
+        if not cfg.get("alarms_enabled", True):
+            return []
+        
         db = get_db()
         
         # Aktif alarmları al
