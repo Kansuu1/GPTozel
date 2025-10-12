@@ -733,8 +733,17 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
                 
                 logger.info(f"✅ [{symbol}] Veri çekildi - Fiyat: ${quote.get('price', 0):.2f}")
                 
+                # 🆕 HEMEN ANALİZ YAP VE SİNYAL ÜRET
+                from analyzer import analyze_single_coin
+                signal_generated = await analyze_single_coin(symbol, quote)
+                
+                if signal_generated:
+                    logger.info(f"🎯 [{symbol}] Sinyal üretildi ve gönderildi!")
+                else:
+                    logger.debug(f"📊 [{symbol}] Analiz tamamlandı, sinyal üretilmedi")
+                
         except Exception as e:
-            logger.error(f"❌ [{symbol}] Veri çekme hatası: {e}")
+            logger.error(f"❌ [{symbol}] Veri çekme/analiz hatası: {e}")
         
         # Interval kadar bekle
         await asyncio.sleep(interval_minutes * 60)
