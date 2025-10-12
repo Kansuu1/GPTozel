@@ -29,25 +29,29 @@
       "coin": "ADA",
       "timeframe": "4h",
       "threshold": 4.5,
-      "threshold_mode": "dynamic"
+      "threshold_mode": "dynamic",
+      "active": true
     },
     {
       "coin": "DOGE",
       "timeframe": "15m",
       "threshold": 6.0,
-      "threshold_mode": "dynamic"
+      "threshold_mode": "dynamic",
+      "active": true
     },
     {
       "coin": "XRP",
       "timeframe": "1h",
       "threshold": 3.5,
-      "threshold_mode": "dynamic"
+      "threshold_mode": "dynamic",
+      "active": true
     },
     {
       "coin": "COAI",
       "timeframe": "7d",
       "threshold": 5.0,
-      "threshold_mode": "dynamic"
+      "threshold_mode": "dynamic",
+      "active": true
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
