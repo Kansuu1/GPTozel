@@ -101,6 +101,8 @@ async def post_config(payload: ConfigIn, request: Request):
         mode = payload.threshold_mode.strip().lower()
         if mode in ["manual", "dynamic"]:
             updates["threshold_mode"] = mode
+    if payload.use_coin_specific_settings is not None:
+        updates["use_coin_specific_settings"] = bool(payload.use_coin_specific_settings)
     if payload.selected_coins is not None:
         updates["selected_coins"] = [c.strip().upper() for c in payload.selected_coins if c.strip()]
     if payload.timeframe is not None:
