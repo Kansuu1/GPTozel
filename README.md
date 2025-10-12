@@ -13,6 +13,9 @@ CoinMarketCap API ve Telegram entegrasyonlu, profesyonel kripto para analiz botu
 - ✅ **Otomatik Analiz**: Her 60 saniyede bir otomatik tarama
 - ✅ **Çoklu Coin Desteği**: 15+ popüler kripto para
 - ✅ **SQLite Veritabanı**: Sinyal geçmişi takibi
+- ✅ **Coin Başına Fetch Interval**: Her coin için ayrı veri çekme aralığı (dakika)
+- ✅ **Active/Passive Status**: Pasif coinler API kotası harcamaz
+- ✅ **Gerçek Zamanlı Güncelleme**: Son veri çekme zamanı gösterimi
 
 ## 🚀 Hızlı Başlangıç
 
