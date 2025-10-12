@@ -71,6 +71,7 @@ class CoinSetting(BaseModel):
     timeframe: str
     threshold: float
     threshold_mode: str
+    active: bool = True
 
 class CoinSettingsUpdate(BaseModel):
     coin_settings: List[CoinSetting]
