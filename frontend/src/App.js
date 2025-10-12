@@ -907,11 +907,13 @@ function App() {
                   <table className="coin-settings-table">
                     <thead>
                       <tr>
-                        <th>Durum</th>
+                        <th>Status</th>
                         <th>Coin</th>
                         <th>Zaman Dilimi</th>
                         <th>Eşik (%)</th>
                         <th>Mod</th>
+                        <th>Interval (dk)</th>
+                        <th>Son Güncelleme</th>
                         <th>İşlem</th>
                       </tr>
                     </thead>
