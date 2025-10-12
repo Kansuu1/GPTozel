@@ -120,7 +120,7 @@ def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
         return []
 
 
-async def get_active_alarms(coin: Optional[str] = None) -> List[Dict]:
+def get_active_alarms(coin: Optional[str] = None) -> List[Dict]:
     """
     Aktif alarmları getir
     
@@ -131,13 +131,13 @@ async def get_active_alarms(coin: Optional[str] = None) -> List[Dict]:
         Aktif alarmlar listesi
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         query = {"is_active": True, "triggered": False}
         if coin:
             query["coin"] = coin
         
-        alarms = await db.price_alarms.find(query).sort("created_at", -1).to_list(length=100)
+        alarms = list(db.price_alarms.find(query).sort("created_at", -1).limit(100))
         
         # ObjectId'yi string'e çevir
         for alarm in alarms:
