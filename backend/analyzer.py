@@ -266,4 +266,14 @@ async def analyze_coin_group(coin_settings: list, timeframe: str):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    asyncio.run(run_loop())
+    
+    # Config'e göre karar ver: interval-based veya eski mod
+    cfg = read_config()
+    use_intervals = cfg.get("use_fetch_intervals", True)  # Varsayılan: interval kullan
+    
+    if use_intervals:
+        logger.info("🚀 Interval-based analyzer başlatılıyor...")
+        asyncio.run(analyze_with_intervals())
+    else:
+        logger.info("⏱ Classic analyzer başlatılıyor (60s loop)...")
+        asyncio.run(run_loop())
