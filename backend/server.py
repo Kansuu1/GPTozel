@@ -824,29 +824,29 @@ async def startup_event():
     from cleanup_scheduler import start_scheduler as start_cleanup
     asyncio.create_task(start_cleanup())
     
-    # Price tracker'ı başlat
-    try:
-        from price_tracker import start_price_tracking
-        asyncio.create_task(start_price_tracking())
-    except ImportError:
-        logger.warning("Price tracker bulunamadı")
+    # ❌ Price tracker DEVRE DIȘI - Coin-based fetch kullanıyoruz
+    # try:
+    #     from price_tracker import start_price_tracking
+    #     asyncio.create_task(start_price_tracking())
+    # except ImportError:
+    #     logger.warning("Price tracker bulunamadı")
+    logger.info("⚠️ Price tracker devre dışı - Coin-based fetch aktif")
     
-    # Analyzer'ı başlat (interval-based veya classic)
-    from analyzer import analyze_with_intervals, run_loop
-    from data_sync import read_config
+    # ❌ Interval-based analyzer DEVRE DIȘI - Coin-based fetch kullanıyoruz
+    # from analyzer import analyze_with_intervals, run_loop
+    # from data_sync import read_config
+    # cfg = read_config()
+    # use_intervals = cfg.get("use_fetch_intervals", True)
+    # if use_intervals:
+    #     logger.info("🚀 Interval-based analyzer başlatılıyor...")
+    #     asyncio.create_task(analyze_with_intervals())
+    # else:
+    #     logger.info("⏱ Classic analyzer başlatılıyor...")
+    #     asyncio.create_task(run_loop())
+    logger.info("⚠️ Interval-based analyzer devre dışı - Coin-based fetch aktif")
     
-    cfg = read_config()
-    use_intervals = cfg.get("use_fetch_intervals", True)
-    
-    if use_intervals:
-        logger.info("🚀 Interval-based analyzer başlatılıyor...")
-        asyncio.create_task(analyze_with_intervals())
-    else:
-        logger.info("⏱ Classic analyzer başlatılıyor...")
-        asyncio.create_task(run_loop())
-    
-    # Coin-bazlı fetch task'larını başlat
-    logger.info("🔄 Coin-bazlı fetch task'ları başlatılıyor...")
+    # ✅ Coin-bazlı fetch task'larını başlat - TEK KAYNAK SISTEM
+    logger.info("🔄 Coin-bazlı fetch task'ları başlatılıyor (TEK KAYNAK)...")
     await start_all_fetch_tasks()
 
 async def run_analyzer_loop():
