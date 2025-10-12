@@ -818,6 +818,60 @@ async def delete_alarm_endpoint(alarm_id: str, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/manual-prices")
+async def get_manual_prices_endpoint():
+    """Manuel fiyat override'larını getir"""
+    try:
+        overrides = get_all_manual_prices()
+        return {"manual_prices": overrides}
+    except Exception as e:
+        logger.error(f"Manuel fiyatlar hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/manual-price")
+async def set_manual_price_endpoint(request: Request, coin: str, price: float):
+    """Manuel fiyat belirle"""
+    require_admin(request)
+    
+    try:
+        if price <= 0:
+            raise HTTPException(status_code=400, detail="Fiyat pozitif olmalı")
+        
+        success = set_manual_price(coin.upper(), price, source="user_override")
+        
+        if success:
+            return {"status": "ok", "message": f"{coin} için manuel fiyat belirlendi: ${price}"}
+        else:
+            raise HTTPException(status_code=500, detail="Manuel fiyat belirlenemedi")
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Manuel fiyat belirleme hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/manual-price/{coin}")
+async def remove_manual_price_endpoint(coin: str, request: Request):
+    """Manuel fiyat override'ı kaldır"""
+    require_admin(request)
+    
+    try:
+        success = remove_manual_price(coin.upper())
+        
+        if success:
+            return {"status": "ok", "message": f"{coin} manuel fiyatı kaldırıldı"}
+        else:
+            raise HTTPException(status_code=404, detail="Manuel fiyat bulunamadı")
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Manuel fiyat kaldırma hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/signals/chart")
 async def get_signals_chart(days: int = 7, coin: Optional[str] = None):
     """Signal geçmişi grafik verileri"""
