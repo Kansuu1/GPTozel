@@ -2391,6 +2391,120 @@ body.dark-mode .legend-text {
   color: var(--text-secondary);
 }
 
+/* Additional Dark Mode Text Fixes */
+body.dark-mode .form-group label,
+body.dark-mode .section-label,
+body.dark-mode .setting-item label,
+body.dark-mode .interval-label,
+body.dark-mode .help-text {
+  color: var(--text-secondary) !important;
+}
+
+body.dark-mode .coin-name,
+body.dark-mode .selected-coin-item,
+body.dark-mode strong {
+  color: var(--text-primary) !important;
+}
+
+body.dark-mode .message {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .btn {
+  border: 1px solid var(--border-color);
+}
+
+body.dark-mode .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+body.dark-mode .btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+body.dark-mode .btn-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  color: white;
+  border: none;
+}
+
+body.dark-mode .btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+}
+
+body.dark-mode .signal-card {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .signal-header h3 {
+  color: #ffffff;
+}
+
+body.dark-mode .signal-meta,
+body.dark-mode .signal-details {
+  color: var(--text-secondary);
+}
+
+body.dark-mode .stat-card {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .stat-value {
+  color: #ffffff;
+}
+
+body.dark-mode .stat-label {
+  color: var(--text-secondary);
+}
+
+body.dark-mode .no-data,
+body.dark-mode .no-coins {
+  color: var(--text-secondary);
+}
+
+body.dark-mode .selected-coin-item {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+body.dark-mode .coin-btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+body.dark-mode .coin-btn.selected {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+body.dark-mode .restart-info {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--text-primary);
+  border-left: 4px solid #ef4444;
+}
+
+body.dark-mode .interval-info {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--text-primary);
+}
+
+body.dark-mode .interval-info li {
+  color: var(--text-secondary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .header-content {
