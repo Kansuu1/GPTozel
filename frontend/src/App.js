@@ -1679,7 +1679,11 @@ function App() {
                     {alarmsActive ? '✅ Aktif' : '⛔ Pasif'}
                   </span>
                   <button
-                    onClick={() => setAlarmsActive(!alarmsActive)}
+                    onClick={() => {
+                      const newValue = !alarmsActive;
+                      setAlarmsActive(newValue);
+                      toggleAlarms(newValue);
+                    }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                       alarmsActive 
                         ? 'bg-green-600 focus:ring-green-500' 
