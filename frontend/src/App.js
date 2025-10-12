@@ -150,6 +150,57 @@ function App() {
     }
   };
 
+  const loadFetchIntervals = async () => {
+    try {
+      const res = await axios.get(`${API}/fetch-intervals`);
+      setFetchIntervals(res.data.fetch_intervals || {});
+    } catch (e) {
+      console.error("Fetch intervals yükleme hatası:", e);
+    }
+  };
+
+  const saveFetchIntervals = async () => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+    try {
+      await axios.post(`${API}/fetch-intervals`, {
+        intervals: fetchIntervals
+      }, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ Veri çekme sıklıkları kaydedildi!");
+    } catch (e) {
+      setMessage("❌ Kaydetme hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
+  const updateFetchInterval = (timeframe, minutes) => {
+    setFetchIntervals(prev => ({
+      ...prev,
+      [timeframe]: parseInt(minutes) || 1
+    }));
+  };
+
+  const resetToDefaults = () => {
+    const defaults = {
+      "15m": 1,
+      "1h": 2,
+      "4h": 5,
+      "12h": 10,
+      "24h": 15,
+      "7d": 30,
+      "30d": 60
+    };
+    setFetchIntervals(defaults);
+    setMessage("✅ Varsayılan değerler yüklendi");
+  };
+
   const saveConfig = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");
