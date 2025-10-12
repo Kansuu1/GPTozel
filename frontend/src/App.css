@@ -2124,9 +2124,9 @@ body.dark-mode {
   --bg-primary: #1a1a1a;
   --bg-secondary: #2d2d2d;
   --bg-card: #2a2a2a;
-  --text-primary: #e0e0e0;
-  --text-secondary: #a0a0a0;
-  --border-color: #404040;
+  --text-primary: #f0f0f0;
+  --text-secondary: #b0b0b0;
+  --border-color: #505050;
   --shadow: rgba(0, 0, 0, 0.5);
 }
 
@@ -2140,18 +2140,35 @@ body.dark-mode .card {
   box-shadow: 0 4px 12px var(--shadow);
 }
 
+body.dark-mode .card h3 {
+  color: #ffffff;
+}
+
+body.dark-mode .card-description,
+body.dark-mode .card p,
+body.dark-mode label,
+body.dark-mode small {
+  color: var(--text-secondary) !important;
+}
+
 body.dark-mode .input,
 body.dark-mode .select-modern,
 body.dark-mode .interval-input-modern,
-body.dark-mode .threshold-input-modern {
+body.dark-mode .threshold-input-modern,
+body.dark-mode select,
+body.dark-mode textarea {
   background: var(--bg-secondary);
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   border-color: var(--border-color);
 }
 
 body.dark-mode .coin-card {
   background: var(--bg-card);
   color: var(--text-primary);
+}
+
+body.dark-mode .coin-card h4 {
+  color: #ffffff;
 }
 
 body.dark-mode .coin-card-inactive {
@@ -2161,11 +2178,13 @@ body.dark-mode .coin-card-inactive {
 body.dark-mode .tab {
   background: var(--bg-secondary);
   color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 body.dark-mode .tab.active {
   background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
   color: white;
+  border: 1px solid transparent;
 }
 
 /* Header Dark Mode */
