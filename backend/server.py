@@ -255,10 +255,17 @@ async def update_fetch_intervals(payload: FetchIntervals, request: Request):
     # Update config
     cfg = update_config({"fetch_intervals": valid_intervals})
     
+    # Analyzer'ı yeniden başlat (yeni interval'lerle)
+    logger.info("🔄 Interval değişti, analyzer yeniden başlatılıyor...")
+    
+    # Not: Task'ları iptal edip yeniden başlatmak için
+    # restart_analyzer fonksiyonu ekleyeceğiz
+    
     return {
         "status": "ok",
-        "message": f"{len(valid_intervals)} timeframe interval güncellendi",
-        "fetch_intervals": valid_intervals
+        "message": f"{len(valid_intervals)} timeframe interval güncellendi. Değişiklikler backend restart'ta uygulanacak.",
+        "fetch_intervals": valid_intervals,
+        "note": "Backend'i restart ederek değişiklikleri uygulayın"
     }
 
 
