@@ -327,6 +327,37 @@ function App() {
     setMessage("✅ Varsayılan değerler yüklendi");
   };
 
+  // Yeni fonksiyonlar: Alarmlar, Göstergeler, Grafik verileri
+  const loadAlarms = async () => {
+    try {
+      const res = await axios.get(`${API}/alarms`);
+      setAlarms(res.data.alarms || []);
+    } catch (e) {
+      console.error("Alarmlar yükleme hatası:", e);
+    }
+  };
+
+  const loadIndicators = async (symbol) => {
+    try {
+      const res = await axios.get(`${API}/indicators/${symbol}`);
+      setIndicators(prev => ({
+        ...prev,
+        [symbol]: res.data.indicators
+      }));
+    } catch (e) {
+      console.error(`[${symbol}] Göstergeler yükleme hatası:`, e);
+    }
+  };
+
+  const loadChartData = async (days = 7) => {
+    try {
+      const res = await axios.get(`${API}/signals/chart?days=${days}`);
+      setChartData(res.data);
+    } catch (e) {
+      console.error("Grafik verileri yükleme hatası:", e);
+    }
+  };
+
   const saveConfig = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");
