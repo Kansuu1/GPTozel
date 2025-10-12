@@ -18,9 +18,13 @@ CoinMarketCap API ve Telegram entegrasyonlu, profesyonel kripto para analiz botu
 ### Web Paneli Kullanımı
 
 1. Tarayıcınızda panele gidin
-2. **Admin Token**: `cryptobot_admin_2024`
+2. **Admin Token**: Token'ınızı girin
 3. Panel sekmesinden:
-   - Eşik değerini ayarlayın (varsayılan: 75%)
+   - **Eşik Tipi** seçin:
+     - **Manuel**: Sabit eşik değeri kullanır
+     - **Dinamik**: Volatiliteye göre otomatik eşik hesaplar
+   - Eşik değerini ayarlayın (manuel mod için)
+   - Zaman dilimi seçin (15m - 30d)
    - Analiz edilecek coinleri seçin
    - "Ayarları Kaydet" butonuna tıklayın
 4. "Telegram Test" ile bağlantıyı test edin
