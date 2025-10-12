@@ -569,6 +569,108 @@ async def download_export(filename: str):
         raise HTTPException(status_code=404, detail="Dosya bulunamadı")
     return FileResponse(p, media_type="application/octet-stream", filename=filename)
 
+@app.get("/api/coin/{symbol}/latest")
+async def get_coin_latest(symbol: str):
+    """Belirli bir coin için en son çekilen veriyi döndür"""
+    symbol = symbol.upper()
+    
+    if symbol not in coin_data_cache:
+        return {"error": "Coin bulunamadı veya henüz veri çekilmedi", "symbol": symbol}
+    
+    cache_entry = coin_data_cache[symbol]
+    
+    # Son çekme zamanından bu yana geçen süreyi hesapla
+    last_fetch = cache_entry.get("last_fetch")
+    if last_fetch:
+        elapsed_seconds = (datetime.now() - last_fetch).total_seconds()
+        elapsed_minutes = int(elapsed_seconds / 60)
+        time_ago = f"{elapsed_minutes} dakika önce" if elapsed_minutes > 0 else "Az önce"
+    else:
+        time_ago = "Bilinmiyor"
+    
+    return {
+        "symbol": symbol,
+        "status": cache_entry.get("status", "unknown"),
+        "data": cache_entry.get("data", {}),
+        "last_fetch": last_fetch.isoformat() if last_fetch else None,
+        "time_ago": time_ago
+    }
+
+@app.get("/api/fetch-status")
+async def get_fetch_status():
+    """Tüm coinlerin fetch durumunu döndür"""
+    status_list = []
+    
+    for symbol, cache_entry in coin_data_cache.items():
+        last_fetch = cache_entry.get("last_fetch")
+        
+        if last_fetch:
+            elapsed_seconds = (datetime.now() - last_fetch).total_seconds()
+            elapsed_minutes = int(elapsed_seconds / 60)
+            time_ago = f"{elapsed_minutes} dakika önce" if elapsed_minutes > 0 else "Az önce"
+        else:
+            time_ago = "Henüz çekilmedi"
+        
+        status_list.append({
+            "symbol": symbol,
+            "status": cache_entry.get("status", "unknown"),
+            "last_fetch": last_fetch.isoformat() if last_fetch else None,
+            "time_ago": time_ago,
+            "has_data": bool(cache_entry.get("data"))
+        })
+    
+    return {"coins": status_list, "total": len(status_list)}
+
+@app.post("/api/update-coin")
+async def update_coin_config(setting: CoinSetting, request: Request):
+    """Tek bir coin'in ayarlarını güncelle"""
+    require_admin(request)
+    
+    cfg = read_config()
+    coin_settings = cfg.get("coin_settings", [])
+    
+    # Coin'i bul ve güncelle
+    found = False
+    for i, cs in enumerate(coin_settings):
+        if cs["coin"] == setting.coin.upper():
+            coin_settings[i] = {
+                "coin": setting.coin.upper(),
+                "timeframe": setting.timeframe,
+                "threshold": float(setting.threshold),
+                "threshold_mode": setting.threshold_mode,
+                "active": setting.active,
+                "fetch_interval_minutes": setting.fetch_interval_minutes or 2,
+                "status": setting.status or "active"
+            }
+            found = True
+            break
+    
+    # Bulunamazsa ekle
+    if not found:
+        coin_settings.append({
+            "coin": setting.coin.upper(),
+            "timeframe": setting.timeframe,
+            "threshold": float(setting.threshold),
+            "threshold_mode": setting.threshold_mode,
+            "active": setting.active,
+            "fetch_interval_minutes": setting.fetch_interval_minutes or 2,
+            "status": setting.status or "active"
+        })
+    
+    # Config'i kaydet
+    cfg = update_config({"coin_settings": coin_settings})
+    
+    logger.info(f"🔄 {setting.coin} ayarları güncellendi: interval={setting.fetch_interval_minutes}dk, status={setting.status}")
+    
+    # Fetch task'ı yeniden başlat
+    await restart_coin_fetch_task(setting.coin.upper())
+    
+    return {
+        "status": "ok",
+        "message": f"{setting.coin} ayarları güncellendi",
+        "coin": setting.dict()
+    }
+
 @app.on_event("startup")
 async def startup_event():
     """Uygulama başlangıcında çalışacak"""
