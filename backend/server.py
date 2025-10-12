@@ -167,6 +167,109 @@ async def get_signals(limit: int = 50):
         })
     return {"signals": out}
 
+
+@app.get("/api/performance-dashboard")
+async def get_performance_dashboard():
+    """Performance dashboard verileri"""
+    db = SessionLocal()
+    try:
+        # Toplam sinyal sayısı
+        total_signals = db.query(SignalHistory).count()
+        
+        # Başarılı ve başarısız sinyaller
+        successful_signals = db.query(SignalHistory).filter(SignalHistory.success == True).count()
+        failed_signals = db.query(SignalHistory).filter(SignalHistory.success == False).count()
+        pending_signals = db.query(SignalHistory).filter(SignalHistory.success == None).count()
+        
+        # Ortalama başarı yüzdesi
+        success_rate = (successful_signals / total_signals * 100) if total_signals > 0 else 0
+        
+        # En yüksek kazanç ve kayıp
+        max_gain = db.query(func.max(SignalHistory.reward)).filter(SignalHistory.reward != None).scalar() or 0
+        max_loss = db.query(func.min(SignalHistory.reward)).filter(SignalHistory.reward != None).scalar() or 0
+        
+        # Ortalama reward
+        avg_reward = db.query(func.avg(SignalHistory.reward)).filter(SignalHistory.reward != None).scalar() or 0
+        
+        # Top 5 kazançlı sinyal
+        top_profitable = db.query(SignalHistory).filter(
+            SignalHistory.reward != None,
+            SignalHistory.reward > 0
+        ).order_by(desc(SignalHistory.reward)).limit(5).all()
+        
+        top_profitable_list = [{
+            "id": s.id,
+            "coin": s.coin,
+            "signal_type": s.signal_type,
+            "reward": round(s.reward, 2) if s.reward else 0,
+            "probability": round(s.probability, 2) if s.probability else 0,
+            "timeframe": s.timeframe,
+            "created_at": s.created_at.isoformat() if s.created_at else None
+        } for s in top_profitable]
+        
+        # Son 6 aylık sinyal dağılımı
+        six_months_ago = datetime.now() - timedelta(days=180)
+        monthly_signals = db.query(
+            func.strftime('%Y-%m', SignalHistory.created_at).label('month'),
+            func.count(SignalHistory.id).label('count')
+        ).filter(
+            SignalHistory.created_at >= six_months_ago
+        ).group_by('month').order_by('month').all()
+        
+        monthly_data = [{"month": m[0], "count": m[1]} for m in monthly_signals]
+        
+        # Coin bazlı performans (başarı oranı)
+        coin_performance = db.query(
+            SignalHistory.coin,
+            func.count(SignalHistory.id).label('total'),
+            func.sum(func.cast(SignalHistory.success, Integer)).label('successful')
+        ).group_by(SignalHistory.coin).all()
+        
+        coin_stats = []
+        for cp in coin_performance:
+            total = cp[1]
+            successful = cp[2] or 0
+            success_rate_coin = (successful / total * 100) if total > 0 else 0
+            coin_stats.append({
+                "coin": cp[0],
+                "total_signals": total,
+                "successful": successful,
+                "success_rate": round(success_rate_coin, 2)
+            })
+        
+        # En iyi performans gösteren coinler (başarı oranına göre)
+        coin_stats_sorted = sorted(coin_stats, key=lambda x: x['success_rate'], reverse=True)[:10]
+        
+        # Signal type dağılımı (LONG vs SHORT)
+        signal_type_dist = db.query(
+            SignalHistory.signal_type,
+            func.count(SignalHistory.id).label('count')
+        ).group_by(SignalHistory.signal_type).all()
+        
+        signal_types = [{"type": st[0], "count": st[1]} for st in signal_type_dist]
+        
+        return {
+            "summary": {
+                "total_signals": total_signals,
+                "successful_signals": successful_signals,
+                "failed_signals": failed_signals,
+                "pending_signals": pending_signals,
+                "success_rate": round(success_rate, 2),
+                "max_gain": round(max_gain, 2) if max_gain else 0,
+                "max_loss": round(max_loss, 2) if max_loss else 0,
+                "avg_reward": round(avg_reward, 2) if avg_reward else 0
+            },
+            "top_profitable": top_profitable_list,
+            "monthly_signals": monthly_data,
+            "coin_performance": coin_stats_sorted,
+            "signal_type_distribution": signal_types
+        }
+    except Exception as e:
+        logger.error(f"Performance dashboard error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close()
+
 @app.post("/api/analyze_now")
 async def analyze_now(background_tasks: BackgroundTasks, request: Request):
     """Manuel analiz tetikleme"""
