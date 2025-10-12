@@ -826,8 +826,10 @@ async def startup_event():
     logger.info("✅ Veritabanı hazır")
     
     # Eski sinyalleri temizle
-    from cleanup_scheduler import start_scheduler as start_cleanup
-    asyncio.create_task(start_cleanup())
+    # TODO: cleanup_scheduler MongoDB'ye uyarlanacak
+    # from cleanup_scheduler import start_scheduler as start_cleanup
+    # asyncio.create_task(start_cleanup())
+    logger.info("⚠️ Cleanup scheduler geçici olarak devre dışı (MongoDB migration)")
     
     # ❌ Price tracker DEVRE DIȘI - Coin-based fetch kullanıyoruz
     # try:
