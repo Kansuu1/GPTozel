@@ -101,3 +101,118 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  MM TRADING BOT PRO - CoinMarketCap & Telegram entegrasyonlu kripto analiz botu
+  
+  Son özellik: Coin Başına Fetch Interval & Status Yönetimi
+  - Her coin için ayrı veri çekme aralığı (dakika)
+  - Active/Passive status sistemi
+  - Gerçek zamanlı son güncelleme gösterimi
+  - Sinyaller en son çekilen veri üzerinden üretilir
+
+backend:
+  - task: "Coin başına fetch interval sistemi"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Fetch interval ve status alanları eklendi. Her coin için bağımsız async loop çalışıyor."
+  
+  - task: "Global coin data cache"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "coin_data_cache global dictionary oluşturuldu. En son çekilen veriler saklanıyor."
+  
+  - task: "Fetch status endpoint"
+    implemented: true
+    working: true
+    file: "backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "GET /api/fetch-status ve GET /api/coin/{symbol}/latest endpoint'leri çalışıyor."
+  
+  - task: "Analyzer cache entegrasyonu"
+    implemented: true
+    working: true
+    file: "backend/analyzer.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Analyzer önce cache'den veri alıyor, yoksa API'den çekiyor. Sinyaller en son veri üzerinden."
+
+frontend:
+  - task: "Status toggle button (Active/Passive)"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Her coin için 🟢/⚫ status toggle button eklendi."
+  
+  - task: "Fetch interval input field"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Dakika cinsinden interval input eklendi."
+  
+  - task: "Son güncelleme zamanı gösterimi"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "time_ago alanı ile 'X dakika önce' formatında gösterim yapılıyor. 10 saniyede bir refresh."
+
+metadata:
+  created_by: "main_agent"
+  version: "2.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Status toggle functionality test"
+    - "Fetch interval değişikliği test"
+    - "Son güncelleme zamanı güncelleme test"
+    - "Cache sistemi test"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Fetch interval & status yönetimi özelliği tamamlandı. Backend'de her coin için bağımsız fetch loop çalışıyor. Frontend'de status toggle, interval input ve son güncelleme zamanı gösteriliyor. API test edildi ve çalışıyor. Frontend test bekleniyor."
