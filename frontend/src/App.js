@@ -625,6 +625,84 @@ function App() {
               </div>
             </div>
 
+
+
+            <div className="card">
+              <h3>⚙️ Coin Başına Özel Ayarlar</h3>
+              <p className="card-description">
+                Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
+              </p>
+              
+              {coinSettings.length > 0 ? (
+                <div className="coin-settings-table-wrapper">
+                  <table className="coin-settings-table">
+                    <thead>
+                      <tr>
+                        <th>Coin</th>
+                        <th>Zaman Dilimi</th>
+                        <th>Eşik (%)</th>
+                        <th>Mod</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {coinSettings.map((cs) => (
+                        <tr key={cs.coin}>
+                          <td className="coin-name-cell">
+                            <strong>{cs.coin}</strong>
+                          </td>
+                          <td>
+                            <select
+                              className="input-small"
+                              value={cs.timeframe}
+                              onChange={(e) => updateCoinSetting(cs.coin, 'timeframe', e.target.value)}
+                            >
+                              <option value="15m">15m</option>
+                              <option value="1h">1h</option>
+                              <option value="4h">4h</option>
+                              <option value="12h">12h</option>
+                              <option value="24h">24h</option>
+                              <option value="7d">7d</option>
+                              <option value="30d">30d</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              className="input-small"
+                              value={cs.threshold}
+                              onChange={(e) => updateCoinSetting(cs.coin, 'threshold', parseFloat(e.target.value))}
+                              min="0"
+                              max="100"
+                              step="0.5"
+                              disabled={cs.threshold_mode === 'dynamic'}
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="input-small"
+                              value={cs.threshold_mode}
+                              onChange={(e) => updateCoinSetting(cs.coin, 'threshold_mode', e.target.value)}
+                            >
+                              <option value="manual">Manuel</option>
+                              <option value="dynamic">Dinamik</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="no-data">Coin ayarları yükleniyor...</p>
+              )}
+
+              <div className="button-group" style={{marginTop: '20px'}}>
+                <button className="btn btn-primary" onClick={saveCoinSettings} disabled={loading}>
+                  {loading ? '⏳ Kaydediliyor...' : '💾 Coin Ayarlarını Kaydet'}
+                </button>
+              </div>
+            </div>
+
             <div className="button-group">
               <button className="btn btn-primary" onClick={saveConfig} disabled={loading}>
                 {loading ? '⏳ Kaydediliyor...' : '💾 Ayarları Kaydet'}
