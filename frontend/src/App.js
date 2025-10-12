@@ -1433,7 +1433,7 @@ function App() {
                   <button
                     className="btn btn-primary"
                     onClick={saveTelegramConfig}
-                    disabled={loading || !telegramConfig.telegram_token || !telegramConfig.telegram_chat_id}
+                    disabled={loading}
                   >
                     {loading ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
                   </button>
@@ -1441,7 +1441,7 @@ function App() {
                   <button
                     className="btn btn-secondary"
                     onClick={testTelegram}
-                    disabled={loading || !config.telegram_token}
+                    disabled={loading}
                   >
                     {loading ? '⏳ Test ediliyor...' : '🔔 Test Bildirimi Gönder'}
                   </button>
