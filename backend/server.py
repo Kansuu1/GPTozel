@@ -654,17 +654,32 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
                     for alarm in triggered_alarms:
                         target = alarm['target_price']
                         signal_type = alarm.get('signal_type', 'UNKNOWN')
+                        alarm_type = alarm.get('alarm_type', 'target')
+                        
+                        # Alarm tipine göre mesaj
+                        if alarm_type == "tp":
+                            alarm_icon = "🎯"
+                            alarm_title = "TAKE PROFIT ALARMI!"
+                            alarm_detail = "✅ Hedef kar seviyesine ulaşıldı!"
+                        elif alarm_type == "sl":
+                            alarm_icon = "🛑"
+                            alarm_title = "STOP LOSS ALARMI!"
+                            alarm_detail = "⚠️ Zarar durdurma seviyesine ulaşıldı!"
+                        else:
+                            alarm_icon = "🔔"
+                            alarm_title = "FİYAT ALARMI!"
+                            alarm_detail = "✅ Hedef seviyeye ulaşıldı!"
                         
                         # Telegram bildirimi gönder
-                        alarm_msg = f"🔔 FİYAT ALARMI!\n\n"
+                        alarm_msg = f"{alarm_icon} {alarm_title}\n\n"
                         alarm_msg += f"💎 Coin: {symbol}\n"
                         alarm_msg += f"🎯 Hedef Fiyat: ${target:.4f}\n"
                         alarm_msg += f"💵 Güncel Fiyat: ${current_price:.4f}\n"
                         alarm_msg += f"📊 Sinyal: {signal_type}\n"
-                        alarm_msg += f"✅ Giriş noktasına ulaşıldı!\n"
+                        alarm_msg += f"{alarm_detail}\n"
                         
                         await send_telegram_message_async(alarm_msg)
-                        logger.info(f"🔔 [{symbol}] Alarm bildirimi gönderildi!")
+                        logger.info(f"🔔 [{symbol}] {alarm_type.upper()} alarm bildirimi gönderildi!")
                 
                 # 🆕 HEMEN ANALİZ YAP VE SİNYAL ÜRET
                 from analyzer import analyze_single_coin

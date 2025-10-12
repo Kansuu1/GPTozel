@@ -19,7 +19,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 2,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "ETH",
@@ -28,7 +28,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 2,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "XRP",
@@ -55,7 +55,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 3,
-      "status": "passive"
+      "status": "active"
     },
     {
       "coin": "PEPE",
