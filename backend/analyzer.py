@@ -73,7 +73,7 @@ async def analyze_single_coin(symbol: str, quote: dict):
         threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
         
         # RSI ve MACD göstergelerini hesapla
-        prices = await get_recent_prices(symbol, count=50)
+        prices = get_recent_prices(symbol, count=50)
         indicators = {}
         if len(prices) >= 26:  # MACD için minimum
             indicators = calculate_indicators(prices)
