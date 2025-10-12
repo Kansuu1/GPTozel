@@ -404,24 +404,6 @@ async def restart_backend(request: Request):
         raise HTTPException(status_code=500, detail="Restart başarısız")
 
 
-    
-    # Config'i güncelle - hem coin_settings hem de selected_coins
-    cfg = update_config({
-        "coin_settings": new_settings,
-        "selected_coins": coin_list
-    })
-    
-    logger.info("🔄 Coin ayarları güncellendi. Değişiklikler backend restart'ta uygulanacak.")
-    
-    return {
-        "status": "ok",
-        "message": f"{len(new_settings)} coin ayarı güncellendi. Değişiklikler backend restart'ta uygulanacak.",
-        "coin_settings": new_settings,
-        "selected_coins": coin_list,
-        "note": "Backend'i restart ederek değişiklikleri uygulayın"
-    }
-
-
 @app.get("/api/signals")
 async def get_signals(limit: int = 50):
     recs = fetch_recent_signals(limit)
