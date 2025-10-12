@@ -264,15 +264,6 @@ async def analyze_coin_group(coin_settings: list, timeframe: str):
         tasks = [handle_coin(cs) for cs in coin_settings]
         await asyncio.gather(*tasks)
 
-    """Ana döngü: Her 60 saniyede bir analiz çalıştırır"""
-    logger.info("Analyzer loop başlatılıyor...")
-    while True:
-        try:
-            await analyze_cycle()
-        except Exception as e:
-            logger.error(f"Analyzer cycle hatası: {e}")
-        await asyncio.sleep(60)
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     asyncio.run(run_loop())
