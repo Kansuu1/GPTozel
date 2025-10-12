@@ -948,16 +948,23 @@ function App() {
                             </select>
                           </td>
                           <td>
-                            <input
-                              type="number"
-                              className="input-small"
-                              value={cs.threshold}
-                              onChange={(e) => updateCoinSetting(cs.coin, 'threshold', parseFloat(e.target.value))}
-                              min="0"
-                              max="100"
-                              step="0.5"
-                              disabled={cs.threshold_mode === 'dynamic'}
-                            />
+                            <div className="threshold-input-wrapper">
+                              <input
+                                type="number"
+                                className="input-small"
+                                value={cs.threshold}
+                                onChange={(e) => updateCoinSetting(cs.coin, 'threshold', parseFloat(e.target.value))}
+                                min="0"
+                                max="100"
+                                step="0.5"
+                                disabled={cs.threshold_mode === 'dynamic'}
+                              />
+                              {cs.threshold_mode === 'dynamic' && (
+                                <span className="dynamic-indicator" title="Dinamik olarak hesaplandı">
+                                  🤖
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td>
                             <select
