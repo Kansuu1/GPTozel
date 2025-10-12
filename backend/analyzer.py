@@ -101,14 +101,15 @@ async def analyze_single_coin(symbol: str, quote: dict):
             
             # Telegram bildirimi gönder
             msg = format_signal_message(rec)
-            telegram_token = cfg.get("telegram_token") or os.getenv("TELEGRAM_BOT_TOKEN")
-            telegram_chat = cfg.get("telegram_chat_id") or os.getenv("TELEGRAM_CHAT_ID")
             
-            if telegram_token and telegram_chat:
-                await send_telegram_message_async(telegram_token, telegram_chat, msg)
-                logger.info(f"🚀 [{symbol}] Sinyal üretildi ve Telegram'a gönderildi! (Prob: {prob:.1f}%)")
-            else:
-                logger.warning(f"⚠️ [{symbol}] Sinyal üretildi ama Telegram config eksik")
+            try:
+                result = await send_telegram_message_async(msg)
+                if result and result.get('ok'):
+                    logger.info(f"🚀 [{symbol}] Sinyal üretildi ve Telegram'a gönderildi! (Prob: {prob:.1f}%)")
+                else:
+                    logger.error(f"❌ [{symbol}] Telegram gönderimi başarısız: {result}")
+            except Exception as e:
+                logger.error(f"❌ [{symbol}] Telegram hatası: {e}")
                 
             return True  # Sinyal üretildi
         else:
