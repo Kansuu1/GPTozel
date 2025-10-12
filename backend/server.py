@@ -712,12 +712,11 @@ async def fetch_coin_data_loop(symbol: str, interval_minutes: int):
                 logger.warning(f"[{symbol}] Config'de bulunamadı, loop sonlandırılıyor")
                 break
             
-            # Status kontrolü - passive ise veri çekme
+            # Status kontrolü - passive ise LOOP'U SONLANDIR
             status = coin_config.get("status", "active")
             if status == "passive":
-                logger.debug(f"[{symbol}] Passive durumda, veri çekilmiyor")
-                await asyncio.sleep(interval_minutes * 60)
-                continue
+                logger.info(f"⚫ [{symbol}] Passive oldu, fetch loop sonlandırılıyor")
+                break  # Loop'tan çık, task bitsin
             
             # Veri çek
             async with aiohttp.ClientSession() as session:
