@@ -9,6 +9,44 @@
     "TRUMP",
     "COAI"
   ],
+  "coin_settings": [
+    {
+      "coin": "BTC",
+      "timeframe": "1h",
+      "threshold": 3.0,
+      "threshold_mode": "dynamic"
+    },
+    {
+      "coin": "ETH",
+      "timeframe": "1h",
+      "threshold": 3.0,
+      "threshold_mode": "dynamic"
+    },
+    {
+      "coin": "SOL",
+      "timeframe": "15m",
+      "threshold": 5.0,
+      "threshold_mode": "dynamic"
+    },
+    {
+      "coin": "PEPE",
+      "timeframe": "15m",
+      "threshold": 6.0,
+      "threshold_mode": "dynamic"
+    },
+    {
+      "coin": "TRUMP",
+      "timeframe": "4h",
+      "threshold": 4.0,
+      "threshold_mode": "manual"
+    },
+    {
+      "coin": "COAI",
+      "timeframe": "15m",
+      "threshold": 5.5,
+      "threshold_mode": "dynamic"
+    }
+  ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
   "telegram_token": "8489964512:AAGTLTRkv9VKK1fy9Mb6nvGSlKsuYxoPMRM",
   "telegram_chat_id": "-1003097160408",
