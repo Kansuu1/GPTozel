@@ -259,7 +259,7 @@ async def analyze_coin_group(coin_settings: list, timeframe: str):
                             "features": features,
                             "stop_loss": sl,
                             "tp": tp,
-                            "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+                            "created_at": datetime.now(timezone.utc)  # datetime object olmalı
                         }
                         
                         insert_signal_record(rec)
