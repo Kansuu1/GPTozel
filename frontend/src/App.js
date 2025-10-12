@@ -208,6 +208,150 @@ function App() {
     setMessage("✅ " + coin + " eklendi");
   };
 
+  // Dashboard Component
+  const DashboardSection = () => {
+    const [dashData, setDashData] = useState(null);
+    const [dashLoading, setDashLoading] = useState(true);
+
+    useEffect(() => {
+      loadDashboard();
+      const interval = setInterval(loadDashboard, 60000);
+      return () => clearInterval(interval);
+    }, []);
+
+    const loadDashboard = async () => {
+      try {
+        setDashLoading(true);
+        const res = await axios.get(`${API}/performance-dashboard`);
+        setDashData(res.data);
+      } catch (e) {
+        console.error("Dashboard yükleme hatası:", e);
+      } finally {
+        setDashLoading(false);
+      }
+    };
+
+    if (dashLoading && !dashData) {
+      return <div className="dashboard-loading"><p>📊 Dashboard yükleniyor...</p></div>;
+    }
+
+    if (!dashData || !dashData.summary) {
+      return <div className="dashboard-error"><p>⚠️ Dashboard verisi yüklenemedi</p></div>;
+    }
+
+    const { summary, top_profitable, coin_performance } = dashData;
+
+    return (
+      <div className="dashboard-section">
+        <div className="card">
+          <h3>📊 Performance Dashboard</h3>
+          
+          <div className="stats-grid-simple">
+            <div className="stat-card-simple">
+              <div className="stat-label">Toplam Sinyal</div>
+              <div className="stat-value">{summary.total_signals}</div>
+            </div>
+            <div className="stat-card-simple success">
+              <div className="stat-label">Başarılı</div>
+              <div className="stat-value">{summary.successful_signals}</div>
+            </div>
+            <div className="stat-card-simple failed">
+              <div className="stat-label">Başarısız</div>
+              <div className="stat-value">{summary.failed_signals}</div>
+            </div>
+            <div className="stat-card-simple pending">
+              <div className="stat-label">Beklemede</div>
+              <div className="stat-value">{summary.pending_signals}</div>
+            </div>
+            <div className="stat-card-simple rate">
+              <div className="stat-label">Başarı Oranı</div>
+              <div className="stat-value">{summary.success_rate}%</div>
+            </div>
+            <div className="stat-card-simple gain">
+              <div className="stat-label">Max Kazanç</div>
+              <div className="stat-value">{summary.max_gain}%</div>
+            </div>
+            <div className="stat-card-simple loss">
+              <div className="stat-label">Max Kayıp</div>
+              <div className="stat-value">{summary.max_loss}%</div>
+            </div>
+            <div className="stat-card-simple avg">
+              <div className="stat-label">Ort. Getiri</div>
+              <div className="stat-value">{summary.avg_reward}%</div>
+            </div>
+          </div>
+        </div>
+
+        {top_profitable && top_profitable.length > 0 && (
+          <div className="card">
+            <h3>🏆 Top 5 Kazançlı Sinyal</h3>
+            <div className="dashboard-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Coin</th>
+                    <th>Yön</th>
+                    <th>Kazanç %</th>
+                    <th>Güvenilirlik</th>
+                    <th>Tarih</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {top_profitable.map((sig, idx) => (
+                    <tr key={idx}>
+                      <td><strong>{sig.coin}</strong></td>
+                      <td>
+                        <span className={`signal-type ${sig.signal_type?.toLowerCase()}`}>
+                          {sig.signal_type === 'LONG' ? '📈 LONG' : '📉 SHORT'}
+                        </span>
+                      </td>
+                      <td className="gain-text">+{sig.reward}%</td>
+                      <td>{sig.probability}%</td>
+                      <td>{sig.created_at ? new Date(sig.created_at).toLocaleDateString('tr-TR') : '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {coin_performance && coin_performance.length > 0 && (
+          <div className="card">
+            <h3>🪙 Coin Performansı (Top 10)</h3>
+            <div className="dashboard-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Coin</th>
+                    <th>Toplam Sinyal</th>
+                    <th>Başarılı</th>
+                    <th>Başarı Oranı</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {coin_performance.map((cp, idx) => (
+                    <tr key={idx}>
+                      <td><strong>{cp.coin}</strong></td>
+                      <td>{cp.total_signals}</td>
+                      <td>{cp.successful}</td>
+                      <td>
+                        <div className="progress-bar">
+                          <div className="progress-fill" style={{ width: `${cp.success_rate}%` }}></div>
+                          <span className="progress-text">{cp.success_rate}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="app-container">
       <header className="header">
