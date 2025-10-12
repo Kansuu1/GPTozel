@@ -23,6 +23,21 @@ function App() {
   const [newCoin, setNewCoin] = useState("");
   const [coinSettings, setCoinSettings] = useState([]);
   const [fetchIntervals, setFetchIntervals] = useState({});
+  const [darkMode, setDarkMode] = useState(() => {
+    // localStorage'dan dark mode tercihini yükle
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Dark mode değiştiğinde localStorage'a kaydet ve body'ye class ekle
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [darkMode]);
 
   // Load admin token from localStorage on mount
   useEffect(() => {
