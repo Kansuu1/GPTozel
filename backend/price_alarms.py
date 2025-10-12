@@ -33,6 +33,13 @@ def create_price_alarm(
         Alarm ID
     """
     try:
+        # Alarm sistemi pasifse alarm oluşturma
+        from data_sync import read_config
+        cfg = read_config()
+        if not cfg.get("alarms_enabled", True):
+            logger.info(f"⏸️ [{coin}] Alarm sistemi pasif - alarm oluşturulmadı")
+            return None
+        
         db = get_db()
         
         alarm = {
