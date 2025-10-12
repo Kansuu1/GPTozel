@@ -6,14 +6,13 @@
     "BTC",
     "ETH",
     "SOL",
-    "PEPE",
-    "TRUMP",
-    "COAI"
+    "ADA",
+    "DOGE"
   ],
   "coin_settings": [
     {
       "coin": "BTC",
-      "timeframe": "15m",
+      "timeframe": "1h",
       "threshold": 3.0,
       "threshold_mode": "dynamic"
     },
@@ -30,21 +29,15 @@
       "threshold_mode": "dynamic"
     },
     {
-      "coin": "PEPE",
-      "timeframe": "15m",
-      "threshold": 6.0,
+      "coin": "ADA",
+      "timeframe": "4h",
+      "threshold": 4.5,
       "threshold_mode": "dynamic"
     },
     {
-      "coin": "TRUMP",
-      "timeframe": "4h",
-      "threshold": 4.0,
-      "threshold_mode": "manual"
-    },
-    {
-      "coin": "COAI",
-      "timeframe": "30d",
-      "threshold": 3.0,
+      "coin": "DOGE",
+      "timeframe": "15m",
+      "threshold": 6.0,
       "threshold_mode": "dynamic"
     }
   ],
