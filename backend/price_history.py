@@ -11,7 +11,7 @@ from db_mongodb import get_db
 logger = logging.getLogger(__name__)
 
 
-async def save_price_point(coin: str, price: float, volume_24h: float = 0):
+def save_price_point(coin: str, price: float, volume_24h: float = 0):
     """
     Coin için fiyat noktası kaydet
     
@@ -21,7 +21,7 @@ async def save_price_point(coin: str, price: float, volume_24h: float = 0):
         volume_24h: 24 saatlik hacim
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         price_point = {
             "coin": coin,
