@@ -1711,10 +1711,13 @@ function App() {
                           Coin
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Alarm Tipi
+                        </th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Hedef Fiyat
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Tip
+                          Sinyal
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Durum
@@ -1726,6 +1729,17 @@ function App() {
                         <tr key={alarm._id}>
                           <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                             {alarm.coin}
+                          </td>
+                          <td className="px-4 py-4 whitespace-nowrap text-sm">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              alarm.alarm_type === 'tp' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                              alarm.alarm_type === 'sl' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                              'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                            }`}>
+                              {alarm.alarm_type === 'tp' ? '🎯 TP (Kar Al)' :
+                               alarm.alarm_type === 'sl' ? '🛑 SL (Zarar Kes)' :
+                               '📌 Giriş'}
+                            </span>
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                             ${alarm.target_price.toFixed(4)}
