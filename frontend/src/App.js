@@ -919,6 +919,7 @@ function App() {
                 )}
                 
                 {coinSettings.length > 0 ? (
+                <>
                 <div className="coin-settings-grid">
                   {coinSettings.map((cs) => {
                     const isActive = cs.status === 'active' || (cs.active !== false && !cs.status);
