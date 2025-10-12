@@ -95,6 +95,12 @@ function App() {
         res.data.cmc_api_key = "*****";
       }
       setConfig(res.data);
+      
+      // Telegram ayarlarını da yükle
+      setTelegramConfig({
+        telegram_token: res.data.telegram_token || "",
+        telegram_chat_id: res.data.telegram_chat_id || ""
+      });
     } catch (e) {
       console.error("Config yükleme hatası:", e);
     }
