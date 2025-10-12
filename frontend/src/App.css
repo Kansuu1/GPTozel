@@ -641,6 +641,157 @@ select.input {
   }
 }
 
+/* Dashboard Simple Styles */
+.dashboard-section {
+  padding: 10px 0;
+}
+
+.dashboard-loading, .dashboard-error {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.stats-grid-simple {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.stat-card-simple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.stat-card-simple:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card-simple.success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-card-simple.failed {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.stat-card-simple.pending {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.stat-card-simple.rate {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.stat-card-simple.gain {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-card-simple.loss {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.stat-card-simple.avg {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.stat-card-simple .stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.stat-card-simple .stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.dashboard-table {
+  overflow-x: auto;
+  margin-top: 15px;
+}
+
+.dashboard-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dashboard-table th {
+  background: #667eea;
+  color: white;
+  font-weight: 600;
+}
+
+.dashboard-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.gain-text {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.progress-bar {
+  position: relative;
+  width: 100%;
+  height: 24px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .stats-grid-simple {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .stat-card-simple .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-table {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 8px;
+  }
+}
+
 
 /* Performance Dashboard Styles */
 .dashboard-container {
