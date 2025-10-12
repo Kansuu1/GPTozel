@@ -480,12 +480,15 @@ async def startup_event():
     logger.info("✅ Veritabanı hazır")
     
     # Eski sinyalleri temizle
-    from cleanup_scheduler import schedule_daily_cleanup
-    asyncio.create_task(schedule_daily_cleanup())
+    from cleanup_scheduler import start_scheduler as start_cleanup
+    asyncio.create_task(start_cleanup())
     
     # Price tracker'ı başlat
-    from price_tracker import start_price_tracking
-    asyncio.create_task(start_price_tracking())
+    try:
+        from price_tracker import start_price_tracking
+        asyncio.create_task(start_price_tracking())
+    except ImportError:
+        logger.warning("Price tracker bulunamadı")
     
     # Analyzer'ı başlat (interval-based veya classic)
     from analyzer import analyze_with_intervals, run_loop
