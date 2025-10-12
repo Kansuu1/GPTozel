@@ -10,6 +10,12 @@ from data_sync import read_config
 from volatility_calculator import get_threshold
 import logging
 
+
+# Global task tracking
+running_tasks = {}
+task_running = False
+
+
 logger = logging.getLogger(__name__)
 
 init_db()
