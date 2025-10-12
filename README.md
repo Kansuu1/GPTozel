@@ -31,8 +31,12 @@ CoinMarketCap API ve Telegram entegrasyonlu, profesyonel kripto para analiz botu
    - Zaman dilimi seçin (15m - 30d)
    - Analiz edilecek coinleri seçin
    - "Ayarları Kaydet" butonuna tıklayın
-4. "Telegram Test" ile bağlantıyı test edin
-5. "Şimdi Analiz Et" ile manuel analiz başlatın
+4. **Coin Başına Özel Ayarlar**:
+   - **Status**: 🟢 Active (veri çeker) / ⚫ Passive (veri çekmez)
+   - **Interval**: Veri çekme sıklığı (dakika)
+   - **Son Güncelleme**: En son ne zaman veri çekildi
+5. "Telegram Test" ile bağlantıyı test edin
+6. "Şimdi Analiz Et" ile manuel analiz başlatın
 
 ### API Kullanımı
 
