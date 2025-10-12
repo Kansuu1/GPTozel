@@ -410,16 +410,16 @@ async def get_signals(limit: int = 50):
     out = []
     for r in recs:
         out.append({
-            "id": r.id,
-            "coin": r.coin,
-            "signal_type": r.signal_type,
-            "probability": r.probability,
-            "threshold_used": r.threshold_used,
-            "timeframe": r.timeframe,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
-            "features": r.features,
-            "tp": r.tp,
-            "stop_loss": r.stop_loss
+            "id": r.get("id") or str(r.get("_id")),
+            "coin": r.get("coin"),
+            "signal_type": r.get("signal_type"),
+            "probability": r.get("probability"),
+            "threshold_used": r.get("threshold_used"),
+            "timeframe": r.get("timeframe"),
+            "created_at": r.get("created_at").isoformat() if r.get("created_at") else None,
+            "features": r.get("features"),
+            "tp": r.get("tp"),
+            "stop_loss": r.get("stop_loss")
         })
     return {"signals": out}
 
