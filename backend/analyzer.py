@@ -100,7 +100,7 @@ async def analyze_single_coin(symbol: str, quote: dict):
             rec["created_at"] = turkey_time.strftime("%H:%M")
             
             # Telegram bildirimi gönder
-            msg = format_signal_message(rec, weight_desc, timeframe)
+            msg = format_signal_message(rec)
             telegram_token = cfg.get("telegram_token") or os.getenv("TELEGRAM_BOT_TOKEN")
             telegram_chat = cfg.get("telegram_chat_id") or os.getenv("TELEGRAM_CHAT_ID")
             
