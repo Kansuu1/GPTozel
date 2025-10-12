@@ -133,16 +133,17 @@ class CleanupScheduler:
             lambda: asyncio.create_task(self.monthly_cleanup())
         )
         
-        # Fiyat tracker'ı başlat (her 5 dakikada bir)
-        tracker = PriceTracker()
+        # ❌ Fiyat tracker DEVRE DIȘI - Coin-based fetch kullanıyoruz
+        # tracker = PriceTracker()
+        logger.info("⚠️ Price tracker devre dışı - Cleanup scheduler sadece temizlik yapıyor")
         
         while True:
             try:
                 # Scheduled job'ları çalıştır
                 schedule.run_pending()
                 
-                # Fiyat takibi yap
-                await tracker.track_all_signals()
+                # ❌ Fiyat takibi devre dışı
+                # await tracker.track_all_signals()
                 
                 # Kaçırılan temizlikleri kontrol et
                 self.check_missed_cleanup()
