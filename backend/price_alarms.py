@@ -97,7 +97,7 @@ def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
             
             if should_trigger:
                 # Alarmı tetikle
-                await db.price_alarms.update_one(
+                db.price_alarms.update_one(
                     {"_id": alarm["_id"]},
                     {
                         "$set": {
