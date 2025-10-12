@@ -96,6 +96,52 @@ function App() {
     setLoading(false);
   };
 
+  const deleteSignal = async (signalId) => {
+    if (!window.confirm("Bu sinyali silmek istediğinizden emin misiniz?")) return;
+    
+    try {
+      await axios.delete(`${API}/signals/${signalId}`, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ Sinyal silindi");
+      loadSignals();
+    } catch (e) {
+      setMessage("❌ Silme hatası: " + (e.response?.data?.detail || e.message));
+    }
+  };
+
+  const clearAllSignals = async () => {
+    if (!window.confirm("TÜM SİNYALLERİ silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!")) return;
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/signals/clear_all`, {}, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ " + res.data.message);
+      loadSignals();
+    } catch (e) {
+      setMessage("❌ Silme hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
+  const clearFailedSignals = async () => {
+    if (!window.confirm("Başarısız sinyalleri silmek istediğinizden emin misiniz?")) return;
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/signals/clear_failed`, {}, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ " + res.data.message);
+      loadSignals();
+    } catch (e) {
+      setMessage("❌ Silme hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
   const toggleCoin = (coin) => {
     const selected = config.selected_coins || [];
     const newSelected = selected.includes(coin)
