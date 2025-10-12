@@ -125,13 +125,13 @@ function App() {
       setCoinSettings(settings);
       
       // SADECE ACTIVE coinler için göstergeleri yükle
-      const activeCoins = settings.filter(cs => cs.status === 'active' || cs.active !== false);
+      const activeCoins = settings.filter(cs => cs.status === 'active');
       activeCoins.forEach(cs => {
         loadIndicators(cs.coin);
       });
       
       // Passive coinlerin indicator state'ini temizle
-      const passiveCoins = settings.filter(cs => cs.status === 'passive' || cs.active === false);
+      const passiveCoins = settings.filter(cs => cs.status === 'passive');
       setIndicators(prev => {
         const newIndicators = {...prev};
         passiveCoins.forEach(cs => {
