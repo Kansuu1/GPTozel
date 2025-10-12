@@ -76,7 +76,7 @@ def get_price_history(coin: str, hours: int = 24, limit: int = 500) -> List[floa
         return []
 
 
-async def get_recent_prices(coin: str, count: int = 50) -> List[float]:
+def get_recent_prices(coin: str, count: int = 50) -> List[float]:
     """
     Son N fiyat noktasını getir
     
@@ -88,13 +88,13 @@ async def get_recent_prices(coin: str, count: int = 50) -> List[float]:
         Fiyat listesi (eski → yeni)
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         cursor = db.price_history.find({
             "coin": coin
         }).sort("timestamp", -1).limit(count)
         
-        prices = [doc["price"] async for doc in cursor]
+        prices = [doc["price"] for doc in cursor]
         prices.reverse()  # Eski → yeni sırala
         
         return prices
