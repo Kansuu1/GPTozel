@@ -1525,6 +1525,103 @@ function App() {
               </div>
             </div>
 
+            {/* Manuel Fiyat Yönetimi */}
+            <div className="card mt-6">
+              <h3>💲 Manuel Fiyat Yönetimi</h3>
+              <p className="card-description">
+                Belirli coinler için manuel fiyat belirleyerek API fiyatlarını override edebilirsiniz
+              </p>
+
+              <div className="space-y-4 mt-6">
+                {/* Yeni Manuel Fiyat Ekle */}
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium mb-3">Yeni Manuel Fiyat Ekle</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input
+                      type="text"
+                      className="input-modern"
+                      placeholder="Coin (örn: COAI)"
+                      value={newManualPrice.coin}
+                      onChange={(e) => setNewManualPrice({...newManualPrice, coin: e.target.value.toUpperCase()})}
+                    />
+                    <input
+                      type="number"
+                      step="0.0001"
+                      className="input-modern"
+                      placeholder="Fiyat (örn: 10.8)"
+                      value={newManualPrice.price}
+                      onChange={(e) => setNewManualPrice({...newManualPrice, price: e.target.value})}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={addManualPrice}
+                      disabled={loading}
+                    >
+                      {loading ? '⏳ Kaydediliyor...' : '💾 Ekle'}
+                    </button>
+                  </div>
+                  <small className="text-gray-600 dark:text-gray-400 mt-2 block">
+                    ℹ️ Manuel fiyat, tüm API fiyatlarından (CMC, CoinGecko, DexScreener) önceliklidir
+                  </small>
+                </div>
+
+                {/* Mevcut Manuel Fiyatlar */}
+                {Object.keys(manualPrices).length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                      <thead className="bg-gray-50 dark:bg-gray-800">
+                        <tr>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Coin
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Manuel Fiyat
+                          </th>
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Durum
+                          </th>
+                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            İşlem
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                        {Object.entries(manualPrices).map(([coin, price]) => (
+                          <tr key={coin}>
+                            <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {coin}
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                              <span className="font-mono">${price.toFixed(4)}</span>
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap text-sm">
+                              <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                                📌 Aktif
+                              </span>
+                            </td>
+                            <td className="px-4 py-4 whitespace-nowrap text-right text-sm">
+                              <button
+                                className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                                onClick={() => removeManualPrice(coin)}
+                                disabled={loading}
+                              >
+                                🗑️ Kaldır
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <p>📭 Henüz manuel fiyat yok</p>
+                    <p className="text-sm mt-2">Yukarıdaki formu kullanarak ekleyebilirsiniz</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Alarmlar Kartı */}
             <div className="card mt-6">
               <h3>🔔 Aktif Fiyat Alarmları</h3>
