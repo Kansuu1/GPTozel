@@ -378,6 +378,65 @@ function App() {
     }
   };
 
+  const loadManualPrices = async () => {
+    try {
+      const res = await axios.get(`${API}/manual-prices`);
+      setManualPrices(res.data.manual_prices || {});
+    } catch (e) {
+      console.error("Manuel fiyatlar yükleme hatası:", e);
+    }
+  };
+
+  const addManualPrice = async () => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    if (!newManualPrice.coin || !newManualPrice.price) {
+      setMessage("❌ Lütfen coin ve fiyat girin!");
+      return;
+    }
+
+    const price = parseFloat(newManualPrice.price);
+    if (isNaN(price) || price <= 0) {
+      setMessage("❌ Geçerli bir fiyat girin!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${API}/manual-price?coin=${newManualPrice.coin.toUpperCase()}&price=${price}`, {}, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage(`✅ ${newManualPrice.coin.toUpperCase()} için manuel fiyat belirlendi: $${price}`);
+      setNewManualPrice({ coin: "", price: "" });
+      await loadManualPrices();
+    } catch (e) {
+      setMessage("❌ Hata: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
+  const removeManualPrice = async (coin) => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.delete(`${API}/manual-price/${coin}`, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage(`✅ ${coin} manuel fiyatı kaldırıldı`);
+      await loadManualPrices();
+    } catch (e) {
+      setMessage("❌ Hata: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
   const saveTelegramConfig = async () => {
     if (!adminToken) {
       setMessage("❌ Lütfen Admin Token girin!");
