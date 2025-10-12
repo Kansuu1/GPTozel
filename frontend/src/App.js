@@ -124,10 +124,20 @@ function App() {
       const settings = res.data.coin_settings || [];
       setCoinSettings(settings);
       
-      // Her coin için göstergeleri yükle (sadece active olanlar)
-      const activeCoins = settings.filter(cs => cs.status === 'active');
+      // SADECE ACTIVE coinler için göstergeleri yükle
+      const activeCoins = settings.filter(cs => cs.status === 'active' || cs.active !== false);
       activeCoins.forEach(cs => {
         loadIndicators(cs.coin);
+      });
+      
+      // Passive coinlerin indicator state'ini temizle
+      const passiveCoins = settings.filter(cs => cs.status === 'passive' || cs.active === false);
+      setIndicators(prev => {
+        const newIndicators = {...prev};
+        passiveCoins.forEach(cs => {
+          delete newIndicators[cs.coin];
+        });
+        return newIndicators;
       });
     } catch (e) {
       console.error("Coin ayarları yükleme hatası:", e);
