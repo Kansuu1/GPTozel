@@ -1,7 +1,7 @@
 {
   "threshold": 4,
   "threshold_mode": "dynamic",
-  "use_coin_specific_settings": false,
+  "use_coin_specific_settings": true,
   "selected_coins": [
     "BTC",
     "ETH",
