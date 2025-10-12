@@ -229,6 +229,12 @@ function App() {
         >
           📊 Sinyaller
         </button>
+        <button 
+          className={`tab ${activeTab === 'dashboard' ? 'active' : ''}`}
+          onClick={() => setActiveTab('dashboard')}
+        >
+          📈 Dashboard
+        </button>
       </div>
 
       <div className="content">
