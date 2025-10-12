@@ -700,6 +700,7 @@ function App() {
                         <th>Zaman Dilimi</th>
                         <th>Eşik (%)</th>
                         <th>Mod</th>
+                        <th>İşlem</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -745,10 +746,43 @@ function App() {
                               <option value="dynamic">Dinamik</option>
                             </select>
                           </td>
+                          <td>
+                            <button
+                              className="btn-delete-coin"
+                              onClick={() => removeCoinFromSettings(cs.coin)}
+                              title={`${cs.coin} sil`}
+                            >
+                              🗑️
+                            </button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+
+                  <div className="add-coin-section">
+                    <h4>➕ Yeni Coin Ekle</h4>
+                    <div className="add-coin-input-group">
+                      <input
+                        type="text"
+                        className="input"
+                        placeholder="Örn: ADA, DOGE, XRP"
+                        value={newCoin}
+                        onChange={(e) => setNewCoin(e.target.value.toUpperCase())}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            addCoinToSettings();
+                          }
+                        }}
+                      />
+                      <button className="btn btn-success" onClick={addCoinToSettings}>
+                        ➕ Ekle
+                      </button>
+                    </div>
+                    <small className="help-text">
+                      Yeni coin ekledikten sonra ayarlarını yapıp "Coin Ayarlarını Kaydet" butonuna basın
+                    </small>
+                  </div>
                 </div>
               ) : (
                 <p className="no-data">Coin ayarları yükleniyor...</p>
