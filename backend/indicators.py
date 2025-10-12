@@ -221,7 +221,10 @@ def calculate_indicators(prices: List[float]) -> dict:
             "macd": float,
             "macd_signal_line": float,
             "macd_histogram": float,
-            "macd_signal": str
+            "macd_signal": str,
+            "ema9": float,
+            "ema21": float,
+            "ema_signal": str
         }
     """
     result = {
@@ -230,7 +233,10 @@ def calculate_indicators(prices: List[float]) -> dict:
         "macd": None,
         "macd_signal_line": None,
         "macd_histogram": None,
-        "macd_signal": None
+        "macd_signal": None,
+        "ema9": None,
+        "ema21": None,
+        "ema_signal": None
     }
     
     # RSI hesapla
@@ -247,5 +253,15 @@ def calculate_indicators(prices: List[float]) -> dict:
         result["macd_signal_line"] = signal
         result["macd_histogram"] = histogram
         result["macd_signal"] = get_macd_signal(macd, signal, histogram)
+    
+    # EMA hesapla
+    ema9 = calculate_ema(prices, period=9)
+    ema21 = calculate_ema(prices, period=21)
+    
+    if ema9 is not None and ema21 is not None:
+        current_price = prices[-1] if prices else 0
+        result["ema9"] = ema9
+        result["ema21"] = ema21
+        result["ema_signal"] = get_ema_signal(ema9, ema21, current_price)
     
     return result
