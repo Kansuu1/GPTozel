@@ -726,6 +726,7 @@ function App() {
                 </button>
               </div>
             </div>
+            )}
 
             <div className="button-group">
               <button className="btn btn-primary" onClick={saveConfig} disabled={loading}>
