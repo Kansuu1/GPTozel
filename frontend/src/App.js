@@ -738,6 +738,52 @@ function App() {
 
 
 
+            <div className="card">
+              <h3>⏱ Veri Çekme Sıklığı</h3>
+              <p className="card-description">
+                Her timeframe için ne sıklıkla veri çekileceğini ayarlayın
+              </p>
+
+              <div className="intervals-grid">
+                {Object.entries(fetchIntervals).map(([timeframe, minutes]) => (
+                  <div key={timeframe} className="interval-item">
+                    <label className="interval-label">
+                      <span className="timeframe-badge">{timeframe}</span>
+                      <input
+                        type="number"
+                        className="input-interval"
+                        value={minutes}
+                        onChange={(e) => updateFetchInterval(timeframe, e.target.value)}
+                        min="1"
+                        max="120"
+                      />
+                      <span className="interval-unit">dakika</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="interval-info">
+                <p>💡 <strong>Önerilen Değerler:</strong></p>
+                <ul>
+                  <li>Kısa vade (15m, 1h): 1-2 dakika - Hızlı sinyaller</li>
+                  <li>Orta vade (4h, 12h, 24h): 5-15 dakika - Dengeli</li>
+                  <li>Uzun vade (7d, 30d): 30-60 dakika - API optimizasyonu</li>
+                </ul>
+              </div>
+
+              <div className="button-group">
+                <button className="btn btn-secondary" onClick={resetToDefaults}>
+                  🔄 Varsayılanlara Dön
+                </button>
+                <button className="btn btn-primary" onClick={saveFetchIntervals} disabled={loading}>
+                  {loading ? '⏳ Kaydediliyor...' : '💾 Sıklıkları Kaydet'}
+                </button>
+              </div>
+            </div>
+
+
+
             {config.use_coin_specific_settings && (
               <div className="card">
                 <h3>⚙️ Coin Başına Özel Ayarlar</h3>
