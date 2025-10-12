@@ -49,6 +49,7 @@ function App() {
     loadConfig();
     loadSignals();
     loadCoinSettings();
+    loadFetchIntervals();
     const interval = setInterval(loadSignals, 30000); // Refresh every 30s
     return () => clearInterval(interval);
   }, []);
