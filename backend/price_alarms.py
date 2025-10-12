@@ -58,7 +58,7 @@ def create_price_alarm(
         return None
 
 
-async def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
+def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
     """
     Coin için aktif alarmları kontrol et
     Tetiklenen alarmları döndür
@@ -71,14 +71,14 @@ async def check_price_alarms(coin: str, current_price: float) -> List[Dict]:
         Tetiklenen alarmlar listesi
     """
     try:
-        db = await get_db()
+        db = get_db()
         
         # Aktif alarmları al
-        alarms = await db.price_alarms.find({
+        alarms = list(db.price_alarms.find({
             "coin": coin,
             "is_active": True,
             "triggered": False
-        }).to_list(length=100)
+        }).limit(100))
         
         triggered_alarms = []
         
