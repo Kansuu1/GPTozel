@@ -104,7 +104,7 @@ def get_recent_prices(coin: str, count: int = 50) -> List[float]:
         return []
 
 
-async def get_price_statistics(coin: str, hours: int = 24) -> dict:
+def get_price_statistics(coin: str, hours: int = 24) -> dict:
     """
     Fiyat istatistikleri
     
@@ -121,7 +121,7 @@ async def get_price_statistics(coin: str, hours: int = 24) -> dict:
         }
     """
     try:
-        prices = await get_price_history(coin, hours=hours)
+        prices = get_price_history(coin, hours=hours)
         
         if not prices or len(prices) < 2:
             return None
