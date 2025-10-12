@@ -10,6 +10,66 @@ from typing import Optional, Dict
 logger = logging.getLogger(__name__)
 
 
+async def get_dexscreener_price(symbol: str, chain: str = "bsc") -> Optional[float]:
+    """
+    DexScreener API'den fiyat al (DEX'lerdeki gerçek fiyat)
+    
+    Args:
+        symbol: Coin sembolü
+        chain: Blockchain (bsc, ethereum, solana, vb.)
+    
+    Returns:
+        Fiyat veya None
+    """
+    # Contract address mapping (BSC için)
+    contracts = {
+        "COAI": {
+            "chain": "bsc",
+            "address": "0x0A8D6C86e1bcE73fE4D0bD531e1a567306836EA5"
+        }
+    }
+    
+    contract_info = contracts.get(symbol.upper())
+    if not contract_info:
+        return None
+    
+    try:
+        chain = contract_info["chain"]
+        address = contract_info["address"]
+        url = f"https://api.dexscreener.com/latest/dex/tokens/{address}"
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, timeout=aiohttp.ClientTimeout(total=10)) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    
+                    # En yüksek likiditeye sahip pair'i al
+                    pairs = data.get("pairs", [])
+                    if pairs:
+                        # Likiditeye göre sırala
+                        pairs_sorted = sorted(pairs, key=lambda x: float(x.get("liquidity", {}).get("usd", 0)), reverse=True)
+                        
+                        if pairs_sorted:
+                            best_pair = pairs_sorted[0]
+                            price = float(best_pair.get("priceUsd", 0))
+                            dex_name = best_pair.get("dexId", "Unknown")
+                            liquidity = best_pair.get("liquidity", {}).get("usd", 0)
+                            
+                            if price > 0:
+                                logger.info(f"[{symbol}] DexScreener fiyatı: ${price} (DEX: {dex_name}, Liq: ${liquidity:,.0f})")
+                                return price
+                    
+                    logger.warning(f"[{symbol}] DexScreener'da pair bulunamadı")
+                    return None
+                else:
+                    logger.warning(f"[{symbol}] DexScreener API hatası: {response.status}")
+                    return None
+    
+    except Exception as e:
+        logger.error(f"[{symbol}] DexScreener fiyat alma hatası: {e}")
+        return None
+
+
 async def get_binance_price(symbol: str) -> Optional[float]:
     """
     Binance API'den fiyat al (en gerçek zamanlı)
