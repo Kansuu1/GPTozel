@@ -57,6 +57,7 @@ def require_admin(request: Request):
 class ConfigIn(BaseModel):
     threshold: Optional[int] = None
     threshold_mode: Optional[str] = None
+    use_coin_specific_settings: Optional[bool] = None
     selected_coins: Optional[List[str]] = None
     timeframe: Optional[str] = None
     cmc_api_key: Optional[str] = None
