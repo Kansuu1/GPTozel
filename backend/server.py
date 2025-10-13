@@ -596,7 +596,8 @@ async def update_coin_config(setting: CoinSetting, request: Request):
                 "threshold_mode": setting.threshold_mode,
                 "active": setting.active,
                 "fetch_interval_minutes": setting.fetch_interval_minutes or 2,
-                "status": setting.status or "active"
+                "status": setting.status or "active",
+                "adaptive_timeframe_enabled": setting.adaptive_timeframe_enabled or False
             }
             found = True
             break
@@ -610,7 +611,8 @@ async def update_coin_config(setting: CoinSetting, request: Request):
             "threshold_mode": setting.threshold_mode,
             "active": setting.active,
             "fetch_interval_minutes": setting.fetch_interval_minutes or 2,
-            "status": setting.status or "active"
+            "status": setting.status or "active",
+            "adaptive_timeframe_enabled": setting.adaptive_timeframe_enabled or False
         })
     
     # Config'i kaydet
