@@ -158,6 +158,26 @@ def get_recent_prices_with_timestamps(coin: str, hours: int = 24) -> List[dict]:
         return []
 
 
+def get_price_count(coin: str) -> int:
+    """
+    Coin için toplam fiyat kayıt sayısını getir
+    
+    Args:
+        coin: Coin sembolü
+    
+    Returns:
+        Toplam kayıt sayısı
+    """
+    try:
+        db = get_db()
+        count = db.price_history.count_documents({"coin": coin})
+        return count
+    
+    except Exception as e:
+        logger.error(f"Fiyat sayısı okuma hatası [{coin}]: {e}")
+        return 0
+
+
 def get_price_statistics(coin: str, hours: int = 24) -> dict:
     """
     Fiyat istatistikleri
