@@ -1037,6 +1037,141 @@ async def remove_manual_price_endpoint(coin: str, request: Request):
 
 # ==================== SIGNAL MANAGEMENT ENDPOINTS ====================
 
+@app.post("/api/historical/import")
+async def import_historical_data(request: Request):
+    """
+    Coinler için geçmiş veri çek ve MongoDB'ye kaydet
+    
+    Request body: {
+        "coins": ["BTC", "ETH", "SOL"],
+        "days": 30,  # Kaç günlük veri (default: 30)
+        "interval": "1h"  # 1h, 4h, 24h (default: 1h)
+    }
+    """
+    require_admin(request)
+    
+    try:
+        from datetime import datetime, timedelta, timezone
+        from db_mongodb import get_db
+        import aiohttp
+        from cmc_client import CMCClient
+        
+        data = await request.json()
+        coins = data.get("coins", [])
+        days = data.get("days", 30)
+        interval = data.get("interval", "1h")
+        
+        if not coins:
+            raise HTTPException(status_code=400, detail="Coin listesi gerekli")
+        
+        # CoinMarketCap client
+        cmc_api_key = os.environ.get("CMC_API_KEY")
+        if not cmc_api_key:
+            raise HTTPException(status_code=500, detail="CMC_API_KEY bulunamadı")
+        
+        cmc_client = CMCClient(cmc_api_key)
+        db = get_db()
+        
+        # Tarih aralığı
+        time_end = datetime.now(timezone.utc)
+        time_start = time_end - timedelta(days=days)
+        
+        results = {}
+        
+        async with aiohttp.ClientSession() as session:
+            for coin in coins:
+                try:
+                    logger.info(f"📥 [{coin}] Geçmiş veri çekiliyor ({days} gün)...")
+                    
+                    # Historical data çek
+                    hist_data = await cmc_client.get_historical_quotes(
+                        session, 
+                        coin, 
+                        time_start.isoformat(),
+                        time_end.isoformat(),
+                        interval
+                    )
+                    
+                    # Parse ve kaydet
+                    imported = 0
+                    skipped = 0
+                    
+                    if "data" in hist_data and "quotes" in hist_data["data"]:
+                        quotes = hist_data["data"]["quotes"]
+                        
+                        for quote in quotes:
+                            timestamp_str = quote.get("timestamp")
+                            if not timestamp_str:
+                                continue
+                            
+                            timestamp = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+                            
+                            usd_quote = quote.get("quote", {}).get("USD", {})
+                            price = usd_quote.get("price", 0)
+                            volume_24h = usd_quote.get("volume_24h", 0)
+                            
+                            if price <= 0:
+                                continue
+                            
+                            # Zaten var mı?
+                            existing = db.price_history.find_one({
+                                "coin": coin,
+                                "timestamp": timestamp
+                            })
+                            
+                            if existing:
+                                skipped += 1
+                                continue
+                            
+                            # Kaydet
+                            price_point = {
+                                "coin": coin,
+                                "price": price,
+                                "volume_24h": volume_24h,
+                                "timestamp": timestamp,
+                                "source": "historical_import"
+                            }
+                            
+                            db.price_history.insert_one(price_point)
+                            imported += 1
+                        
+                        results[coin] = {
+                            "status": "success",
+                            "imported": imported,
+                            "skipped": skipped,
+                            "total": len(quotes)
+                        }
+                        
+                        logger.info(f"✅ [{coin}] {imported} yeni kayıt eklendi, {skipped} atlandı")
+                    
+                    else:
+                        results[coin] = {
+                            "status": "error",
+                            "message": "Veri bulunamadı (API limiti olabilir)"
+                        }
+                        logger.warning(f"⚠️ [{coin}] Geçmiş veri bulunamadı")
+                
+                except Exception as e:
+                    results[coin] = {
+                        "status": "error",
+                        "message": str(e)
+                    }
+                    logger.error(f"❌ [{coin}] Geçmiş veri hatası: {e}")
+        
+        return {
+            "status": "completed",
+            "results": results,
+            "timeframe": f"{days} days",
+            "interval": interval
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Historical import hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/signals/export")
 async def export_signals(type: str = "all", request: Request = None):
     """
