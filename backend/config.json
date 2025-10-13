@@ -12,7 +12,8 @@
     "SUI",
     "TRUMP",
     "DOGE",
-    "COAI"
+    "COAI",
+    "CDL"
   ],
   "coin_settings": [
     {
@@ -38,9 +39,9 @@
       "timeframe": "24h",
       "threshold": 2.5,
       "threshold_mode": "dynamic",
-      "active": true,
+      "active": false,
       "fetch_interval_minutes": 3,
-      "status": "active"
+      "status": "passive"
     },
     {
       "coin": "ADA",
@@ -104,6 +105,15 @@
       "active": false,
       "fetch_interval_minutes": 3,
       "status": "passive"
+    },
+    {
+      "coin": "CDL",
+      "timeframe": "24h",
+      "threshold": 5.0,
+      "threshold_mode": "manual",
+      "active": true,
+      "fetch_interval_minutes": 2,
+      "status": "active"
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
