@@ -1426,10 +1426,74 @@ function App() {
 
 
             <div className="card">
-              <h3>⚙️ Coin Başına Özel Ayarlar</h3>
-              <p className="card-description">
-                Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
-              </p>
+              {/* Header with Toggle */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <div>
+                  <h3 style={{ margin: 0 }}>⚙️ Coin Başına Özel Ayarlar</h3>
+                  <p className="card-description" style={{ margin: '0.25rem 0 0 0' }}>
+                    Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
+                  </p>
+                </div>
+                
+                {/* Toggle ve Gösterge */}
+                {coinSettings.length > 0 && (
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '1rem',
+                    padding: '0.75rem 1rem',
+                    backgroundColor: 'var(--bg-secondary)',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)'
+                  }}>
+                    {/* Renk Göstergesi */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <div style={{ 
+                          width: '10px', 
+                          height: '10px', 
+                          borderRadius: '50%', 
+                          backgroundColor: '#10b981' 
+                        }}></div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#10b981' }}>
+                          {coinSettings.filter(cs => cs.status === 'active').length}
+                        </span>
+                      </div>
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                        <div style={{ 
+                          width: '10px', 
+                          height: '10px', 
+                          borderRadius: '50%', 
+                          backgroundColor: '#6b7280' 
+                        }}></div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#6b7280' }}>
+                          {coinSettings.filter(cs => cs.status === 'passive').length}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Toggle Butonu */}
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                        Tümü
+                      </span>
+                      <button
+                        onClick={toggleAllCoins}
+                        className={`status-toggle-modern ${coinSettings.filter(cs => cs.status === 'active').length === coinSettings.length ? 'active' : ''}`}
+                        title={coinSettings.filter(cs => cs.status === 'active').length === coinSettings.length ? 'Tümünü Pasif Yap' : 'Tümünü Aktif Yap'}
+                      >
+                        <span className="toggle-slider-modern"></span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Coin Ekleme Bölümü */}
                 <div style={{ 
