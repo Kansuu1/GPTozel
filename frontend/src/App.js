@@ -1942,7 +1942,120 @@ function App() {
                   </div>
 
                   {/* Actions */}
-                  <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }}>
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {/* Sinyal Yönetimi Dropdown */}
+                    <div style={{ position: 'relative' }}>
+                      <button 
+                        className="btn btn-small"
+                        onClick={() => {
+                          const menu = document.getElementById('signal-management-menu');
+                          menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                        }}
+                        disabled={loading}
+                      >
+                        📋 Yönet ▼
+                      </button>
+                      <div 
+                        id="signal-management-menu"
+                        style={{
+                          display: 'none',
+                          position: 'absolute',
+                          top: 'calc(100% + 4px)',
+                          right: 0,
+                          minWidth: '220px',
+                          backgroundColor: 'var(--bg-primary)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                          zIndex: 1000,
+                          padding: '0.5rem'
+                        }}
+                      >
+                        <button 
+                          className="dropdown-item"
+                          onClick={() => exportSignals('all')}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            textAlign: 'left',
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            borderRadius: '4px',
+                            fontSize: '0.9rem'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--hover-color)'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                        >
+                          📥 Toplu İndir (Tümü)
+                        </button>
+                        <button 
+                          className="dropdown-item"
+                          onClick={() => exportSignals('hit_tp')}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            textAlign: 'left',
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            borderRadius: '4px',
+                            fontSize: '0.9rem'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--hover-color)'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                        >
+                          📈 Başarılı Sinyaller
+                        </button>
+                        <button 
+                          className="dropdown-item"
+                          onClick={() => document.getElementById('import-file-input').click()}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            textAlign: 'left',
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            borderRadius: '4px',
+                            fontSize: '0.9rem'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--hover-color)'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                        >
+                          📤 Sinyal Yükle
+                        </button>
+                        <hr style={{ margin: '0.5rem 0', border: 'none', borderTop: '1px solid var(--border-color)' }} />
+                        <button 
+                          className="dropdown-item"
+                          onClick={clearFailedSignals}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            textAlign: 'left',
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            borderRadius: '4px',
+                            fontSize: '0.9rem',
+                            color: '#ef4444'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--hover-color)'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                        >
+                          🗑 Başarısızları Temizle
+                        </button>
+                      </div>
+                      {/* Hidden file input for import */}
+                      <input 
+                        id="import-file-input"
+                        type="file"
+                        accept=".json"
+                        style={{ display: 'none' }}
+                        onChange={importSignals}
+                      />
+                    </div>
+                    
                     <button className="btn btn-small" onClick={trackSignals} disabled={loading}>
                       🔄 Track Signals
                     </button>
