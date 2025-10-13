@@ -1424,13 +1424,56 @@ function App() {
               <div className="signals-header">
                 <h3>📊 Son Sinyaller</h3>
                 <div className="signals-actions">
-                  <button className="btn btn-small" onClick={loadSignals}>🔄 Yenile</button>
+                  <button className="btn btn-small" onClick={() => loadSignals()}>🔄 Yenile</button>
                   <button className="btn btn-small btn-danger" onClick={clearFailedSignals} disabled={loading}>
                     🗑 Başarısızları Sil
                   </button>
                   <button className="btn btn-small btn-danger-outline" onClick={clearAllSignals} disabled={loading}>
                     ⚠️ Tümünü Sil
                   </button>
+                </div>
+              </div>
+
+              {/* Coin Filtreleme */}
+              <div className="coin-filter-section" style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <label style={{ fontWeight: '500' }}>🔍 Coin Filtrele:</label>
+                  <select 
+                    value={selectedCoinFilter} 
+                    onChange={(e) => {
+                      setSelectedCoinFilter(e.target.value);
+                      loadSignals(e.target.value);
+                    }}
+                    style={{ 
+                      padding: '0.5rem 1rem', 
+                      borderRadius: '8px', 
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: 'var(--bg-secondary)',
+                      color: 'var(--text-primary)',
+                      minWidth: '150px'
+                    }}
+                  >
+                    <option value="">Tüm Coinler</option>
+                    {coinSettings.map(cs => (
+                      <option key={cs.coin} value={cs.coin}>{cs.coin}</option>
+                    ))}
+                  </select>
+                  
+                  {selectedCoinFilter && (
+                    <>
+                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                        ({signals.length} sinyal)
+                      </span>
+                      <button 
+                        className="btn btn-small btn-danger" 
+                        onClick={clearCoinSignals}
+                        disabled={loading}
+                        style={{ marginLeft: 'auto' }}
+                      >
+                        🗑️ {selectedCoinFilter} Sinyallerini Sil
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
               
