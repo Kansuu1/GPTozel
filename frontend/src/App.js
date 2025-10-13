@@ -124,9 +124,19 @@ function App() {
       if (coinDropdownOpen && !event.target.closest('.coin-dropdown-container')) {
         setCoinDropdownOpen(false);
       }
+      
+      // Signal management menu
+      const signalMenu = document.getElementById('signal-management-menu');
+      if (signalMenu && signalMenu.style.display === 'block' && 
+          !event.target.closest('#signal-management-menu') && 
+          !event.target.textContent.includes('Yönet')) {
+        signalMenu.style.display = 'none';
+      }
     };
     
     if (coinDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
       document.addEventListener('mousedown', handleClickOutside);
     }
     
