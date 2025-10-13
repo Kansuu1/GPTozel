@@ -155,13 +155,78 @@ function App() {
 
   const loadSignals = async (coin = null) => {
     try {
-      // coin parametresi verilmişse onu kullan, yoksa selectedCoinFilter kullan
-      const coinParam = coin !== null ? coin : selectedCoinFilter;
-      const url = coinParam ? `${API}/signals?limit=50&coin=${coinParam}` : `${API}/signals?limit=50`;
+      // Filtreleri oluştur
+      let url = `${API}/signals?limit=50`;
+      
+      // Status filtresi
+      if (selectedStatus && selectedStatus !== 'all') {
+        url += `&status=${selectedStatus}`;
+      }
+      
+      // Coin filtresi
+      if (selectedCoins.length > 0) {
+        url += `&coins=${selectedCoins.join(',')}`;
+      } else if (coin) {
+        url += `&coin=${coin}`;
+      } else if (selectedCoinFilter) {
+        url += `&coin=${selectedCoinFilter}`;
+      }
+      
       const res = await axios.get(url);
       setSignals(res.data.signals || []);
     } catch (e) {
       console.error("Sinyal yükleme hatası:", e);
+    }
+  };
+  
+  const loadSignalStats = async () => {
+    try {
+      const res = await axios.get(`${API}/signals/statistics`);
+      setSignalStats(res.data);
+    } catch (e) {
+      console.error("İstatistik yükleme hatası:", e);
+    }
+  };
+  
+  const trackSignals = async () => {
+    if (!adminToken) {
+      setMessage("❌ Admin token gerekli!");
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/signals/track`, {}, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage(`✅ ${res.data.message}`);
+      await loadSignals();
+      await loadSignalStats();
+    } catch (e) {
+      setMessage("❌ Tracking hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+  
+  const deleteSingleSignal = async (signalId) => {
+    if (!adminToken) {
+      setMessage("❌ Admin token gerekli!");
+      return;
+    }
+    
+    if (!window.confirm("Bu sinyali silmek istediğinizden emin misiniz?")) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`${API}/signals/${signalId}`, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage("✅ Sinyal silindi!");
+      await loadSignals();
+      await loadSignalStats();
+    } catch (e) {
+      setMessage("❌ Silme hatası: " + (e.response?.data?.detail || e.message));
     }
   };
 
