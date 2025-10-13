@@ -1637,33 +1637,129 @@ function App() {
                         </button>
                       </div>
                       <div className="signal-body">
+                        {/* Combined Signal Strength Gauge */}
+                        {signal.signal_strength && (
+                          <div className="signal-strength-section mb-3">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">📊 Signal Strength</span>
+                              <span className="text-sm font-bold">{signal.signal_strength.score?.toFixed(0)}%</span>
+                            </div>
+                            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                              <div 
+                                className={`h-full transition-all ${
+                                  signal.signal_strength.score >= 80 ? 'bg-green-500' :
+                                  signal.signal_strength.score >= 60 ? 'bg-yellow-500' :
+                                  'bg-red-500'
+                                }`}
+                                style={{ width: `${signal.signal_strength.score}%` }}
+                              />
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              {signal.signal_strength.level} - {signal.signal_strength.direction}
+                            </div>
+                          </div>
+                        )}
+
                         <div className="signal-row">
                           <span>Güvenilirlik:</span>
                           <strong>{signal.probability?.toFixed(2)}%</strong>
                         </div>
+                        
+                        {/* Indicators Summary - Hover Tooltip */}
+                        {(signal.rsi || signal.macd_signal || signal.ema_signal) && (
+                          <div className="signal-row" title={`RSI: ${signal.rsi?.toFixed(1) || 'N/A'}, MACD: ${signal.macd_signal || 'N/A'}, EMA: ${signal.ema_signal || 'N/A'}`}>
+                            <span>🧠 Göstergeler:</span>
+                            <div className="flex gap-1">
+                              {signal.rsi && (
+                                <span className={`px-2 py-0.5 rounded text-xs ${
+                                  signal.rsi_signal === 'OVERSOLD' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  signal.rsi_signal === 'OVERBOUGHT' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                                  'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                }`}>
+                                  RSI
+                                </span>
+                              )}
+                              {signal.macd_signal && (
+                                <span className={`px-2 py-0.5 rounded text-xs ${
+                                  signal.macd_signal === 'BULLISH' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  signal.macd_signal === 'BEARISH' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                                  'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                }`}>
+                                  MACD
+                                </span>
+                              )}
+                              {signal.ema_signal && (
+                                <span className={`px-2 py-0.5 rounded text-xs ${
+                                  signal.ema_signal === 'BULLISH' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  signal.ema_signal === 'BEARISH' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                                  'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                                }`}>
+                                  EMA
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Golden/Death Cross */}
+                        {signal.ema_cross && signal.ema_cross !== 'NEUTRAL' && (
+                          <div className="signal-row">
+                            <span>📈 Trend:</span>
+                            <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                              signal.ema_cross === 'GOLDEN_CROSS' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                              'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                            }`}>
+                              {signal.ema_cross === 'GOLDEN_CROSS' ? '🌟 Golden Cross' : '💀 Death Cross'}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Adaptive Timeframe */}
                         <div className="signal-row">
-                          <span>Eşik:</span>
-                          <span>{signal.threshold_used}%</span>
+                          <span>⏱ Timeframe:</span>
+                          <div className="flex items-center gap-2">
+                            <span>{signal.timeframe}</span>
+                            {signal.adaptive_timeframe_enabled && (
+                              <span className="px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                                ⚙️ Adaptive
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="signal-row">
-                          <span>Zaman Dilimi:</span>
-                          <span>{signal.timeframe}</span>
-                        </div>
+
+                        {/* Trend Weight */}
+                        {signal.trend_weight && signal.trend_weight !== 0 && (
+                          <div className="signal-row">
+                            <span>⚖️ Trend Ağırlığı:</span>
+                            <div className="flex items-center gap-2">
+                              <span className={signal.trend_weight > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
+                                {signal.trend_weight > 0 ? '+' : ''}{signal.trend_weight.toFixed(0)}%
+                              </span>
+                              <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div 
+                                  className={signal.trend_weight > 0 ? 'bg-green-500 h-full' : 'bg-red-500 h-full'}
+                                  style={{ width: `${Math.abs(signal.trend_weight) / 15 * 100}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {signal.features?.price && (
                           <div className="signal-row">
-                            <span>Giriş Fiyatı:</span>
+                            <span>💰 Giriş:</span>
                             <strong>${signal.features.price?.toFixed(4)}</strong>
                           </div>
                         )}
                         {signal.tp && (
                           <div className="signal-row tp">
-                            <span>🎯 Take Profit:</span>
+                            <span>🎯 TP:</span>
                             <strong className="tp-value">${signal.tp?.toFixed(4)}</strong>
                           </div>
                         )}
                         {signal.stop_loss && (
                           <div className="signal-row sl">
-                            <span>🛡 Stop Loss:</span>
+                            <span>🛡 SL:</span>
                             <strong className="sl-value">${signal.stop_loss?.toFixed(4)}</strong>
                           </div>
                         )}
