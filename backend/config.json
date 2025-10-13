@@ -30,9 +30,9 @@
       "timeframe": "1h",
       "threshold": 1.2,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
+      "status": "active",
       "adaptive_timeframe_enabled": false
     },
     {
@@ -40,9 +40,9 @@
       "timeframe": "1h",
       "threshold": 1.2,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
+      "status": "active",
       "adaptive_timeframe_enabled": false
     },
     {
@@ -50,9 +50,9 @@
       "timeframe": "1h",
       "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
+      "status": "active",
       "adaptive_timeframe_enabled": false
     },
     {
