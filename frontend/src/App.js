@@ -1777,7 +1777,7 @@ function App() {
                   {/* Coin Multi-Select Dropdown */}
                   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <label style={{ fontWeight: '500', fontSize: '0.9rem' }}>🪙 Coinler:</label>
-                    <div style={{ position: 'relative' }}>
+                    <div className="coin-dropdown-container" style={{ position: 'relative' }}>
                       <button
                         onClick={() => setCoinDropdownOpen(!coinDropdownOpen)}
                         className="filter-select"
