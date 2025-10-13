@@ -95,8 +95,8 @@ async def analyze_single_coin(symbol: str, quote: dict):
             indicators = calculate_indicators(prices)
             logger.info(f"[{symbol}] Göstergeler: RSI={indicators.get('rsi')}, MACD={indicators.get('macd_signal')}")
         
-        # Sinyal tahmini
-        sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe)
+        # Sinyal tahmini (indicators ile)
+        sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe, indicators)
         prob = float(prob)
         
         # RSI ve MACD ile sinyal doğruluğunu artır
