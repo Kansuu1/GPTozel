@@ -1035,6 +1035,184 @@ async def remove_manual_price_endpoint(coin: str, request: Request):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ==================== SIGNAL MANAGEMENT ENDPOINTS ====================
+
+@app.get("/api/signals/export")
+async def export_signals(type: str = "all", request: Request = None):
+    """
+    Sinyalleri dışa aktar (JSON formatında)
+    
+    Parameters:
+    - type: "all" (tüm sinyaller), "hit_tp" (başarılı), "hit_sl" (başarısız), "active" (aktif)
+    """
+    try:
+        from db_mongodb import get_db
+        db = get_db()
+        
+        # Filtre oluştur
+        query = {}
+        if type == "hit_tp":
+            query["signal_status"] = "hit_tp"
+        elif type == "hit_sl":
+            query["signal_status"] = "hit_sl"
+        elif type == "active":
+            query["signal_status"] = "active"
+        elif type == "expired":
+            query["signal_status"] = "expired"
+        # type == "all" için filtre yok
+        
+        # Sinyalleri çek
+        signals = list(db.signal_history.find(query).sort("created_at", -1))
+        
+        # MongoDB ObjectId'leri string'e çevir
+        for signal in signals:
+            if "_id" in signal:
+                signal["_id"] = str(signal["_id"])
+            # Timestamp'leri ISO formatına çevir
+            for field in ["created_at", "timestamp", "signal_timestamp"]:
+                if field in signal and signal[field]:
+                    if hasattr(signal[field], 'isoformat'):
+                        signal[field] = signal[field].isoformat()
+        
+        # Dosya adı oluştur
+        from datetime import datetime
+        date_str = datetime.now().strftime("%Y%m%d")
+        filename = f"signals_{type}_{date_str}.json"
+        
+        # JSON response
+        return JSONResponse(
+            content={
+                "count": len(signals),
+                "export_date": datetime.now().isoformat(),
+                "filter_type": type,
+                "signals": signals
+            },
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+    
+    except Exception as e:
+        logger.error(f"Signal export hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/signals/import")
+async def import_signals(request: Request):
+    """
+    Sinyalleri içe aktar (JSON upload)
+    
+    Request body: {
+        "signals": [...signal objects...]
+    }
+    """
+    require_admin(request)
+    
+    try:
+        from db_mongodb import get_db
+        db = get_db()
+        
+        data = await request.json()
+        signals = data.get("signals", [])
+        
+        if not signals:
+            raise HTTPException(status_code=400, detail="Sinyal listesi boş")
+        
+        imported_count = 0
+        skipped_count = 0
+        error_count = 0
+        
+        for signal in signals:
+            try:
+                # _id varsa kaldır (MongoDB yeni ID oluşturacak)
+                if "_id" in signal:
+                    del signal["_id"]
+                
+                # Timestamp'leri datetime'a çevir
+                for field in ["created_at", "timestamp", "signal_timestamp"]:
+                    if field in signal and isinstance(signal[field], str):
+                        try:
+                            signal[field] = datetime.fromisoformat(signal[field].replace('Z', '+00:00'))
+                        except:
+                            pass
+                
+                # Aynı sinyal var mı kontrol et (coin + timestamp + signal_type)
+                existing = db.signal_history.find_one({
+                    "coin": signal.get("coin"),
+                    "signal_timestamp": signal.get("signal_timestamp"),
+                    "signal_type": signal.get("signal_type")
+                })
+                
+                if existing:
+                    skipped_count += 1
+                    continue
+                
+                # Yeni sinyal ekle
+                db.signal_history.insert_one(signal)
+                imported_count += 1
+                
+            except Exception as e:
+                logger.error(f"Sinyal import hatası: {e}")
+                error_count += 1
+        
+        return {
+            "status": "ok",
+            "imported": imported_count,
+            "skipped": skipped_count,
+            "errors": error_count,
+            "total": len(signals)
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Signal import hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/signals/bulk")
+async def bulk_delete_signals(request: Request, status: Optional[str] = None):
+    """
+    Toplu sinyal silme
+    
+    Parameters:
+    - status: "hit_sl" (başarısız), "expired" (süresi dolmuş), veya "hit_sl,expired" (ikisi birden)
+    """
+    require_admin(request)
+    
+    try:
+        from db_mongodb import get_db
+        db = get_db()
+        
+        # Filtre oluştur
+        if not status:
+            raise HTTPException(status_code=400, detail="Status parametresi gerekli")
+        
+        # Birden fazla status için split
+        status_list = [s.strip() for s in status.split(',')]
+        
+        # Silme query'si
+        query = {"signal_status": {"$in": status_list}}
+        
+        # Sil
+        result = db.signal_history.delete_many(query)
+        
+        return {
+            "status": "ok",
+            "deleted_count": result.deleted_count,
+            "filter": status_list
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Toplu silme hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== END SIGNAL MANAGEMENT ====================
+
+
 @app.get("/api/signals/chart")
 async def get_signals_chart(days: int = 7, coin: Optional[str] = None):
     """Signal geçmişi grafik verileri"""
