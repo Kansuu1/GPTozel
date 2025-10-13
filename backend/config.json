@@ -12,7 +12,8 @@
     "SUI",
     "TRUMP",
     "DOGE",
-    "COAI"
+    "COAI",
+    "AVAX"
   ],
   "coin_settings": [
     {
@@ -22,8 +23,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "ETH",
@@ -32,8 +32,7 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 1,
-      "status": "passive",
-      "adaptive_timeframe_enabled": false
+      "status": "passive"
     },
     {
       "coin": "XRP",
@@ -42,8 +41,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "ADA",
@@ -52,8 +50,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "SOL",
@@ -62,8 +59,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "PEPE",
@@ -72,8 +68,7 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive",
-      "adaptive_timeframe_enabled": false
+      "status": "passive"
     },
     {
       "coin": "SUI",
@@ -82,8 +77,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "TRUMP",
@@ -92,8 +86,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "DOGE",
@@ -102,8 +95,7 @@
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 1,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "status": "active"
     },
     {
       "coin": "COAI",
@@ -111,9 +103,8 @@
       "threshold": 4.0,
       "threshold_mode": "dynamic",
       "active": true,
-      "fetch_interval_minutes": 1,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "fetch_interval_minutes": 5,
+      "status": "active"
     },
     {
       "coin": "AVAX",
@@ -121,9 +112,8 @@
       "threshold": 2.8,
       "threshold_mode": "dynamic",
       "active": true,
-      "fetch_interval_minutes": 1,
-      "status": "active",
-      "adaptive_timeframe_enabled": false
+      "fetch_interval_minutes": 5,
+      "status": "active"
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
