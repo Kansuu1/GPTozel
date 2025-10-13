@@ -1858,13 +1858,13 @@ select.input {
 /* Modern Toggle Switch */
 .status-toggle-modern {
   position: relative;
-  width: 60px;
-  height: 32px;
+  width: 48px;
+  height: 24px;
   background: #e5e7eb;
-  border-radius: 16px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.2s ease;
   padding: 0;
 }
 
@@ -1874,18 +1874,18 @@ select.input {
 
 .toggle-slider-modern {
   position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 24px;
-  height: 24px;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
   background: white;
   border-radius: 50%;
-  transition: transform 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .status-toggle-modern.active .toggle-slider-modern {
-  transform: translateX(28px);
+  transform: translateX(24px);
 }
 
 /* Card Sections */
