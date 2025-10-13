@@ -34,7 +34,7 @@
       "active": true,
       "fetch_interval_minutes": 2,
       "status": "active",
-      "adaptive_timeframe_enabled": false
+      "candle_analysis_enabled": true
     },
     {
       "coin": "XRP",
