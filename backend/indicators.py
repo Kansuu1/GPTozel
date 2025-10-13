@@ -259,14 +259,38 @@ def calculate_indicators(prices: List[float]) -> dict:
         result["macd_histogram"] = histogram
         result["macd_signal"] = get_macd_signal(macd, signal, histogram)
     
-    # EMA hesapla
+    # EMA hesapla (kısa vadeli)
     ema9 = calculate_ema(prices, period=9)
     ema21 = calculate_ema(prices, period=21)
     
+    # EMA hesapla (uzun vadeli)
+    ema50 = calculate_ema(prices, period=50)
+    ema200 = calculate_ema(prices, period=200)
+    
+    current_price = prices[-1] if prices else 0
+    
+    # Kısa vadeli EMA
     if ema9 is not None and ema21 is not None:
-        current_price = prices[-1] if prices else 0
         result["ema9"] = ema9
         result["ema21"] = ema21
         result["ema_signal"] = get_ema_signal(ema9, ema21, current_price)
+    
+    # Uzun vadeli EMA
+    if ema50 is not None:
+        result["ema50"] = ema50
+    if ema200 is not None:
+        result["ema200"] = ema200
+    
+    # Golden Cross / Death Cross tespiti
+    if ema50 is not None and ema200 is not None:
+        result["ema_cross"] = get_ema_cross_signal(ema50, ema200)
+    
+    # Volatilite hesapla (son 20 fiyat için)
+    if len(prices) >= 20:
+        volatility = calculate_volatility(prices[-20:])
+        result["volatility"] = volatility
+    
+    # Combined Signal Strength (RSI + MACD + EMA)
+    result["signal_strength"] = calculate_signal_strength(result)
     
     return result
