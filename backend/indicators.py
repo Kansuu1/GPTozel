@@ -1,12 +1,51 @@
 # backend/indicators.py
 """
-Teknik göstergeler: RSI, MACD
+Teknik göstergeler: RSI, MACD, EMA ve Adaptive Timeframe
 """
 import numpy as np
 from typing import List, Tuple, Optional
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def select_adaptive_timeframe(volatility: float) -> str:
+    """
+    Volatiliteye göre optimal timeframe seç
+    
+    Args:
+        volatility: Volatilite yüzdesi (0-100)
+    
+    Returns:
+        Timeframe string ("15m", "1h", "4h", "24h", "7d", "30d")
+    """
+    # Volatilite seviyelerine göre timeframe seçimi
+    if volatility >= 10.0:
+        # Çok yüksek volatilite - Çok kısa vadeli
+        timeframe = "15m"
+        logger.info(f"📊 Adaptive Timeframe: 15 dakika seçildi (Volatilite: {volatility:.1f}% - ÇOK YÜKSEK)")
+    elif volatility >= 6.0:
+        # Yüksek volatilite - Kısa vadeli
+        timeframe = "1h"
+        logger.info(f"📊 Adaptive Timeframe: 1 saat seçildi (Volatilite: {volatility:.1f}% - YÜKSEK)")
+    elif volatility >= 3.0:
+        # Orta volatilite - Orta vadeli
+        timeframe = "4h"
+        logger.info(f"📊 Adaptive Timeframe: 4 saat seçildi (Volatilite: {volatility:.1f}% - ORTA)")
+    elif volatility >= 1.5:
+        # Düşük volatilite - Günlük
+        timeframe = "24h"
+        logger.info(f"📊 Adaptive Timeframe: 24 saat seçildi (Volatilite: {volatility:.1f}% - DÜŞÜK)")
+    elif volatility >= 0.5:
+        # Çok düşük volatilite - Haftalık
+        timeframe = "7d"
+        logger.info(f"📊 Adaptive Timeframe: 7 gün seçildi (Volatilite: {volatility:.1f}% - ÇOK DÜŞÜK)")
+    else:
+        # Minimal volatilite - Aylık
+        timeframe = "30d"
+        logger.info(f"📊 Adaptive Timeframe: 30 gün seçildi (Volatilite: {volatility:.1f}% - MİNİMAL)")
+    
+    return timeframe
 
 
 def calculate_rsi(prices: List[float], period: int = 14) -> Optional[float]:
