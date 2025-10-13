@@ -414,6 +414,19 @@ async def get_signals(limit: int = 50, coin: Optional[str] = None):
     recs = fetch_recent_signals(limit, coin=coin.upper() if coin else None)
     out = []
     for r in recs:
+        # created_at'ı Türkiye saatine çevir
+        created_at = r.get("created_at")
+        if created_at:
+            # UTC datetime ise timezone ekle
+            if created_at.tzinfo is None:
+                created_at = created_at.replace(tzinfo=timezone.utc)
+            # Türkiye saatine çevir
+            turkey_tz = timezone(timedelta(hours=3))
+            created_at = created_at.astimezone(turkey_tz)
+            created_at_str = created_at.isoformat()
+        else:
+            created_at_str = None
+        
         out.append({
             "id": r.get("id") or str(r.get("_id")),
             "coin": r.get("coin"),
@@ -421,7 +434,7 @@ async def get_signals(limit: int = 50, coin: Optional[str] = None):
             "probability": r.get("probability"),
             "threshold_used": r.get("threshold_used"),
             "timeframe": r.get("timeframe"),
-            "created_at": r.get("created_at").isoformat() if r.get("created_at") else None,
+            "created_at": created_at_str,
             "features": r.get("features"),
             "tp": r.get("tp"),
             "stop_loss": r.get("stop_loss")
