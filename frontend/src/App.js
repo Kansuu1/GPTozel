@@ -5,6 +5,34 @@ import axios from "axios";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Fiyat formatlama fonksiyonu (küçük sayılar için)
+function formatPrice(price) {
+  if (!price || price === 0) return "$0.0000";
+  
+  // Çok küçük sayılar için bilimsel notasyon
+  if (price < 0.000001) {
+    return `$${price.toExponential(4)}`;
+  }
+  
+  // 0.0001'den küçükse 8 ondalık
+  if (price < 0.0001) {
+    return `$${price.toFixed(8)}`;
+  }
+  
+  // 0.01'den küçükse 6 ondalık
+  if (price < 0.01) {
+    return `$${price.toFixed(6)}`;
+  }
+  
+  // 1'den küçükse 4 ondalık
+  if (price < 1) {
+    return `$${price.toFixed(4)}`;
+  }
+  
+  // 1'den büyükse 2 ondalık
+  return `$${price.toFixed(2)}`;
+}
+
 function App() {
   const [config, setConfig] = useState({
     threshold: 75,
