@@ -1290,6 +1290,75 @@ function App() {
               </div>
             </div>
 
+            {/* Geçmiş Veri İçe Aktarma */}
+            <div className="card">
+              <h3>📥 Geçmiş Veri İçe Aktar</h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                Golden Cross/Death Cross için 200 veri noktası gereklidir. Geçmiş verileri içe aktararak hemen kullanmaya başlayabilirsiniz.
+              </p>
+              
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                  <label>Gün Sayısı</label>
+                  <select 
+                    className="input"
+                    value={historicalDays}
+                    onChange={(e) => setHistoricalDays(parseInt(e.target.value))}
+                  >
+                    <option value="7">7 Gün (~168 veri)</option>
+                    <option value="14">14 Gün (~336 veri)</option>
+                    <option value="30">30 Gün (~720 veri) ⭐</option>
+                    <option value="60">60 Gün (~1440 veri)</option>
+                  </select>
+                </div>
+                
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                  <label>Interval</label>
+                  <select 
+                    className="input"
+                    value={historicalInterval}
+                    onChange={(e) => setHistoricalInterval(e.target.value)}
+                  >
+                    <option value="1h">1 Saat (Detaylı)</option>
+                    <option value="4h">4 Saat</option>
+                    <option value="24h">24 Saat (Günlük)</option>
+                  </select>
+                </div>
+                
+                <button 
+                  className="btn"
+                  onClick={importHistoricalData}
+                  disabled={loading}
+                  style={{ minWidth: '150px' }}
+                >
+                  {loading ? '⏳ Yükleniyor...' : '📥 Veri İçe Aktar'}
+                </button>
+              </div>
+              
+              {historicalImportResult && (
+                <div style={{ 
+                  marginTop: '1rem', 
+                  padding: '1rem', 
+                  backgroundColor: 'var(--bg-secondary)', 
+                  borderRadius: '8px',
+                  fontSize: '0.9rem'
+                }}>
+                  <strong>📊 İçe Aktarma Sonucu:</strong>
+                  <ul style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                    {Object.entries(historicalImportResult).map(([coin, result]) => (
+                      <li key={coin}>
+                        <strong>{coin}:</strong> {
+                          result.status === 'success' 
+                            ? `✅ ${result.imported} yeni, ${result.skipped} mevcut (${result.total} toplam)`
+                            : `❌ ${result.message}`
+                        }
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
             <div className="card">
               <h3>🪙 Coin Yönetimi</h3>
               
