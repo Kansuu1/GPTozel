@@ -17,22 +17,34 @@ def select_adaptive_timeframe(volatility: float) -> str:
         volatility: Volatilite yüzdesi (0-100)
     
     Returns:
-        Timeframe string ("15m", "1h", "4h", "24h", "7d", "30d")
+        Timeframe string ("15m", "30m", "1h", "4h", "6h", "12h", "24h", "7d", "30d")
     """
     # Volatilite seviyelerine göre timeframe seçimi
-    if volatility >= 10.0:
+    if volatility >= 12.0:
         # Çok yüksek volatilite - Çok kısa vadeli
         timeframe = "15m"
         logger.info(f"📊 Adaptive Timeframe: 15 dakika seçildi (Volatilite: {volatility:.1f}% - ÇOK YÜKSEK)")
-    elif volatility >= 6.0:
+    elif volatility >= 8.0:
         # Yüksek volatilite - Kısa vadeli
+        timeframe = "30m"
+        logger.info(f"📊 Adaptive Timeframe: 30 dakika seçildi (Volatilite: {volatility:.1f}% - YÜKSEK)")
+    elif volatility >= 5.0:
+        # Orta-yüksek volatilite
         timeframe = "1h"
-        logger.info(f"📊 Adaptive Timeframe: 1 saat seçildi (Volatilite: {volatility:.1f}% - YÜKSEK)")
+        logger.info(f"📊 Adaptive Timeframe: 1 saat seçildi (Volatilite: {volatility:.1f}% - ORTA-YÜKSEK)")
     elif volatility >= 3.0:
-        # Orta volatilite - Orta vadeli
+        # Orta volatilite
         timeframe = "4h"
         logger.info(f"📊 Adaptive Timeframe: 4 saat seçildi (Volatilite: {volatility:.1f}% - ORTA)")
+    elif volatility >= 2.0:
+        # Orta-düşük volatilite
+        timeframe = "6h"
+        logger.info(f"📊 Adaptive Timeframe: 6 saat seçildi (Volatilite: {volatility:.1f}% - ORTA-DÜŞÜK)")
     elif volatility >= 1.5:
+        # Düşük volatilite - Yarım gün
+        timeframe = "12h"
+        logger.info(f"📊 Adaptive Timeframe: 12 saat seçildi (Volatilite: {volatility:.1f}% - DÜŞÜK)")
+    elif volatility >= 1.0:
         # Düşük volatilite - Günlük
         timeframe = "24h"
         logger.info(f"📊 Adaptive Timeframe: 24 saat seçildi (Volatilite: {volatility:.1f}% - DÜŞÜK)")
