@@ -283,6 +283,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Sinyaller sekmesi - Coin dropdown filtresi test"
     - "Status toggle functionality test"
     - "Fetch interval değişikliği test"
     - "Son güncelleme zamanı güncelleme test"
@@ -298,3 +299,5 @@ agent_communication:
     message: "Pasif coinler hala veri çekiyor. API loglarından BTC ve ETH pasif ama sürekli çağrı yapılıyor görünüyor."
   - agent: "main"
     message: "✅ SORUN ÇÖZÜLDÜ: 3 sistem birden çalışıyordu (price_tracker, interval-based analyzer, coin-based fetch). Price tracker ve interval-based analyzer devre dışı bırakıldı. Artık sadece coin-based fetch çalışıyor. Passive coinler tamamen atlanıyor. Loglar ve API testleri doğrulandı."
+  - agent: "main"
+    message: "✅ YENİ ÖZELLİK EKLENDI: Sinyaller sekmesinde coin filtresi dropdown'a çevrildi. Artık coinler yan yana değil, 'Tümü' yazan dropdown'dan seçiliyor. Dropdown açılınca tüm coinler listelenebiliyor. Yeni coin eklendiğinde otomatik dropdown'da görünüyor. Kullanıcı talebine göre implement edildi."
