@@ -1978,30 +1978,30 @@ select.input {
 .settings-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
 }
 
 .setting-item {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .setting-item label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: #6b7280;
   font-weight: 600;
 }
 
 .select-modern {
-  padding: 10px 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.85rem;
   color: #333;
   background: white;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .select-modern:hover {
@@ -2011,7 +2011,7 @@ select.input {
 .select-modern:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
 }
 
 /* Threshold Control */
