@@ -61,15 +61,21 @@ def insert_signal_record(rec: dict):
         logger.error(f"❌ Signal insert hatası: {e}")
         raise
 
-def fetch_recent_signals(limit=100, coin=None):
-    """En son sinyalleri getir - isteğe bağlı coin filtresi"""
+def fetch_recent_signals(limit=100, coin_list=None, status=None):
+    """En son sinyalleri getir - coin_list ve status filtresi"""
     try:
         db = get_db()
         
-        # Coin filtresi varsa kullan
+        # Query oluştur
         query = {}
-        if coin:
-            query["coin"] = coin.upper()
+        
+        # Coin list filtresi
+        if coin_list:
+            query["coin"] = {"$in": [c.upper() for c in coin_list]}
+        
+        # Status filtresi
+        if status and status.lower() != "all":
+            query["signal_status"] = status.lower()
         
         cursor = db.signal_history.find(query).sort("created_at", DESCENDING).limit(limit)
         
