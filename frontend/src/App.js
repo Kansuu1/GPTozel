@@ -122,7 +122,8 @@ function App() {
 
   const loadSignals = async (coin = null) => {
     try {
-      const coinParam = coin || selectedCoinFilter;
+      // coin parametresi verilmişse onu kullan, yoksa selectedCoinFilter kullan
+      const coinParam = coin !== null ? coin : selectedCoinFilter;
       const url = coinParam ? `${API}/signals?limit=50&coin=${coinParam}` : `${API}/signals?limit=50`;
       const res = await axios.get(url);
       setSignals(res.data.signals || []);
