@@ -47,3 +47,27 @@ class CMCClient:
         data = await self._request(session, "/v1/cryptocurrency/listings/latest", params={"limit": limit})
         self._cache[key] = (now, data)
         return data
+
+    async def get_historical_quotes(self, session: aiohttp.ClientSession, symbol: str, time_start: str, time_end: str, interval: str = "1h"):
+        """
+        Geçmiş fiyat verilerini çek
+        
+        Args:
+            symbol: Coin sembolü (BTC, ETH, vb.)
+            time_start: Başlangıç tarihi (ISO format: 2025-01-01T00:00:00Z)
+            time_end: Bitiş tarihi (ISO format)
+            interval: '5m', '10m', '15m', '30m', '1h', '2h', '6h', '12h', '24h', '1d', '7d', '14d', '30d'
+        
+        Returns:
+            Historical quotes data
+        """
+        params = {
+            "symbol": symbol,
+            "time_start": time_start,
+            "time_end": time_end,
+            "interval": interval,
+            "convert": "USD"
+        }
+        
+        data = await self._request(session, "/v2/cryptocurrency/quotes/historical", params=params)
+        return data
