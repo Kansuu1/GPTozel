@@ -783,19 +783,96 @@ function App() {
   };
 
   const clearFailedSignals = async () => {
-    if (!window.confirm("Başarısız sinyalleri silmek istediğinizden emin misiniz?")) return;
+    if (!window.confirm("Başarısız ve süresi dolmuş sinyalleri silmek istediğinizden emin misiniz?")) return;
     
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/signals/clear_failed`, {}, {
+      // Yeni bulk delete endpoint'ini kullan
+      const res = await axios.delete(`${API}/signals/bulk?status=hit_sl,expired`, {
         headers: { "x-admin-token": adminToken }
       });
-      setMessage("✅ " + res.data.message);
+      setMessage(`✅ ${res.data.deleted_count} sinyal silindi`);
       loadSignals();
+      loadSignalStats();
     } catch (e) {
       setMessage("❌ Silme hatası: " + (e.response?.data?.detail || e.message));
     }
     setLoading(false);
+  };
+
+  const exportSignals = async (type = 'all') => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API}/signals/export?type=${type}`, {
+        responseType: 'json'
+      });
+      
+      // JSON'u dosya olarak indir
+      const data = response.data;
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      // Dosya adı
+      const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      a.download = `signals_${type}_${date}.json`;
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      setMessage(`✅ ${data.count} sinyal indirildi (${type})`);
+      
+      // Dropdown'u kapat
+      document.getElementById('signal-management-menu').style.display = 'none';
+    } catch (e) {
+      setMessage("❌ İndirme hatası: " + (e.response?.data?.detail || e.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const importSignals = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!window.confirm(`${file.name} dosyasını yüklemek istediğinize emin misiniz?`)) {
+      event.target.value = ''; // Reset file input
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      // Dosyayı oku
+      const text = await file.text();
+      const data = JSON.parse(text);
+      
+      // Backend'e gönder
+      const res = await axios.post(`${API}/signals/import`, data, {
+        headers: { 
+          "x-admin-token": adminToken,
+          "Content-Type": "application/json"
+        }
+      });
+      
+      setMessage(`✅ ${res.data.imported} sinyal yüklendi, ${res.data.skipped} atlandı`);
+      loadSignals();
+      loadSignalStats();
+      
+      // Dropdown'u kapat
+      document.getElementById('signal-management-menu').style.display = 'none';
+    } catch (e) {
+      if (e instanceof SyntaxError) {
+        setMessage("❌ Geçersiz JSON dosyası");
+      } else {
+        setMessage("❌ Yükleme hatası: " + (e.response?.data?.detail || e.message));
+      }
+    } finally {
+      setLoading(false);
+      event.target.value = ''; // Reset file input
+    }
   };
 
   const clearCoinSignals = async () => {
