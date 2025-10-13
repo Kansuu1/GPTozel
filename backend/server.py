@@ -214,6 +214,8 @@ async def get_coin_settings():
             cs["fetch_interval_minutes"] = 2
         if "status" not in cs:
             cs["status"] = "active" if cs.get("active", True) else "passive"
+        if "adaptive_timeframe_enabled" not in cs:
+            cs["adaptive_timeframe_enabled"] = False  # Varsayılan: Kapalı
     
     # Cache'den son fetch zamanlarını ekle
     for cs in coin_settings:
