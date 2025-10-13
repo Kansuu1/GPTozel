@@ -98,25 +98,48 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 prob = prob * 0.8  # %20 azalt
                 logger.info(f"[{symbol}] RSI+MACD negatif, prob azaltıldı: {prob:.1f}%")
         
-        # EMA filtresi (Pasif mod: %50 etkili)
+        # EMA filtresi (Dinamik mod: Volatiliteye göre %5-15 arası)
         if indicators.get('ema_signal') is not None:
             ema_signal = indicators['ema_signal']
+            volatility = indicators.get('volatility', 2.0)  # Varsayılan %2
             
-            # EMA aynı yönde ise sinyali güçlendir (%5 artır - pasif mod)
+            # Volatiliteye göre EMA ağırlığı belirle
+            # Düşük volatilite (<%2): %5 etki
+            # Orta volatilite (2-4%): %8-10 etki
+            # Yüksek volatilite (>%4): %12-15 etki
+            if volatility < 2.0:
+                ema_weight = 0.05  # %5
+            elif volatility < 4.0:
+                ema_weight = 0.05 + (volatility - 2.0) * 0.025  # %5-%10 arası
+            else:
+                ema_weight = 0.10 + min((volatility - 4.0) * 0.0125, 0.05)  # %10-%15 arası
+            
+            # EMA aynı yönde ise sinyali güçlendir
             if sig == "LONG" and ema_signal == "BULLISH":
-                prob = min(prob * 1.05, 100)  # %5 artır
-                logger.info(f"[{symbol}] EMA bullish, prob güçlendirildi: {prob:.1f}%")
+                prob = min(prob * (1 + ema_weight), 100)
+                logger.info(f"[{symbol}] EMA bullish (vol: {volatility:.1f}%), prob güçlendirildi: {prob:.1f}% (+{ema_weight*100:.1f}%)")
             elif sig == "SHORT" and ema_signal == "BEARISH":
-                prob = min(prob * 1.05, 100)  # %5 artır
-                logger.info(f"[{symbol}] EMA bearish, prob güçlendirildi: {prob:.1f}%")
+                prob = min(prob * (1 + ema_weight), 100)
+                logger.info(f"[{symbol}] EMA bearish (vol: {volatility:.1f}%), prob güçlendirildi: {prob:.1f}% (+{ema_weight*100:.1f}%)")
             
-            # EMA ters yönde ise sinyali zayıflat (%5 azalt - pasif mod)
+            # EMA ters yönde ise sinyali zayıflat
             elif sig == "LONG" and ema_signal == "BEARISH":
-                prob = prob * 0.95  # %5 azalt
-                logger.info(f"[{symbol}] EMA ters yönde, prob zayıflatıldı: {prob:.1f}%")
+                prob = prob * (1 - ema_weight)
+                logger.info(f"[{symbol}] EMA ters yönde (vol: {volatility:.1f}%), prob zayıflatıldı: {prob:.1f}% (-{ema_weight*100:.1f}%)")
             elif sig == "SHORT" and ema_signal == "BULLISH":
-                prob = prob * 0.95  # %5 azalt
-                logger.info(f"[{symbol}] EMA ters yönde, prob zayıflatıldı: {prob:.1f}%")
+                prob = prob * (1 - ema_weight)
+                logger.info(f"[{symbol}] EMA ters yönde (vol: {volatility:.1f}%), prob zayıflatıldı: {prob:.1f}% (-{ema_weight*100:.1f}%)")
+        
+        # Golden Cross / Death Cross ek etkisi
+        if indicators.get('ema_cross') is not None:
+            ema_cross = indicators['ema_cross']
+            
+            if sig == "LONG" and ema_cross == "GOLDEN_CROSS":
+                prob = min(prob * 1.10, 100)  # %10 bonus
+                logger.info(f"[{symbol}] 🌟 Golden Cross tespit edildi! Prob: {prob:.1f}%")
+            elif sig == "SHORT" and ema_cross == "DEATH_CROSS":
+                prob = min(prob * 1.10, 100)  # %10 bonus
+                logger.info(f"[{symbol}] ⚠️ Death Cross tespit edildi! Prob: {prob:.1f}%")
         
         logger.info(f"[{symbol}] Analiz: Signal={sig}, Prob={prob:.1f}%, Threshold={threshold:.1f}%")
         
