@@ -2649,6 +2649,151 @@ body.dark-mode .text-gray-600 { color: #9ca3af; }
 
 /* Hover Effects */
 .signal-row[title]:hover {
+
+
+/* ========================================
+   Signal Performance Tracking Styles
+   ======================================== */
+
+/* Signal Status Badges */
+.signal-status-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.signal-status-badge.active {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.signal-status-badge.hit_tp {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.signal-status-badge.hit_sl {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.signal-status-badge.expired {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+body.dark-mode .signal-status-badge.active {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+
+body.dark-mode .signal-status-badge.hit_tp {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+body.dark-mode .signal-status-badge.hit_sl {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+body.dark-mode .signal-status-badge.expired {
+  background: #1f2937;
+  color: #9ca3af;
+}
+
+/* Profit/Loss Badge */
+.profit-loss-badge {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+}
+
+.profit-loss-badge.profit {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.profit-loss-badge.loss {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+body.dark-mode .profit-loss-badge.profit {
+  background: #064e3b;
+  color: #6ee7b7;
+}
+
+body.dark-mode .profit-loss-badge.loss {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+
+/* Mini Delete Button */
+.signal-delete-btn-mini {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  margin-left: 0.5rem;
+}
+
+.signal-delete-btn-mini:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Stats Card */
+.signal-stats-card {
+  animation: fadeIn 0.3s ease;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  opacity: 0.7;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+}
+
+/* Signal Header Update */
+.signal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.signal-coin-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* Filter Select */
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
   background: rgba(0, 0, 0, 0.02);
   border-radius: 6px;
   cursor: help;
