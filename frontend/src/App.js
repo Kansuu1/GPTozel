@@ -1255,10 +1255,46 @@ function App() {
                           )}
                         </div>
 
-                        {/* RSI/MACD/EMA Göstergeleri */}
+                        {/* Göstergeler */}
                         {isActive && indicators[cs.coin] && (
                           <div className="coin-card-section border-t border-gray-200 dark:border-gray-700 pt-3">
-                            <div className="flex gap-2 items-center flex-wrap">
+                            {/* Combined Signal Strength */}
+                            {indicators[cs.coin].signal_strength && (
+                              <div className="mb-3 p-2 rounded" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">📊 Sinyal Gücü</span>
+                                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                                    indicators[cs.coin].signal_strength.direction === 'BULLISH' ? 'bg-green-600 text-white' :
+                                    indicators[cs.coin].signal_strength.direction === 'BEARISH' ? 'bg-red-600 text-white' :
+                                    'bg-gray-600 text-white'
+                                  }`}>
+                                    {indicators[cs.coin].signal_strength.direction}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className="flex-1 h-2 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+                                    <div 
+                                      className={`h-full ${
+                                        indicators[cs.coin].signal_strength.level === 'VERY_STRONG' ? 'bg-green-600' :
+                                        indicators[cs.coin].signal_strength.level === 'STRONG' ? 'bg-green-500' :
+                                        indicators[cs.coin].signal_strength.level === 'MODERATE' ? 'bg-yellow-500' :
+                                        indicators[cs.coin].signal_strength.level === 'WEAK' ? 'bg-orange-500' :
+                                        'bg-red-500'
+                                      }`}
+                                      style={{ width: `${indicators[cs.coin].signal_strength.score}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-xs font-bold">{indicators[cs.coin].signal_strength.score}/100</span>
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                  {indicators[cs.coin].signal_strength.level} 
+                                  ({indicators[cs.coin].signal_strength.bullish_count}📈 / {indicators[cs.coin].signal_strength.bearish_count}📉)
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Kısa Vadeli EMA */}
+                            <div className="flex gap-2 items-center flex-wrap mb-2">
                               {indicators[cs.coin].rsi && (
                                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                                   indicators[cs.coin].rsi_signal === 'OVERSOLD' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
@@ -1277,15 +1313,35 @@ function App() {
                                   MACD: {indicators[cs.coin].macd_signal}
                                 </span>
                               )}
+                              {indicators[cs.coin].volatility && (
+                                <span className="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                                  📊 Vol: {indicators[cs.coin].volatility.toFixed(1)}%
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* EMA Değerleri */}
+                            <div className="flex gap-2 items-center flex-wrap">
                               {indicators[cs.coin].ema9 && indicators[cs.coin].ema21 && (
                                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                                   indicators[cs.coin].ema_signal === 'BULLISH' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
                                   indicators[cs.coin].ema_signal === 'BEARISH' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
                                   'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
                                 }`}>
-                                  EMA: {indicators[cs.coin].ema9.toFixed(2)} / {indicators[cs.coin].ema21.toFixed(2)} 
+                                  EMA9/21: {indicators[cs.coin].ema9.toFixed(2)} / {indicators[cs.coin].ema21.toFixed(2)} 
                                   {indicators[cs.coin].ema_signal === 'BULLISH' ? ' 📈' : 
                                    indicators[cs.coin].ema_signal === 'BEARISH' ? ' 📉' : ' ➡️'}
+                                </span>
+                              )}
+                              {indicators[cs.coin].ema50 && indicators[cs.coin].ema200 && (
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                  indicators[cs.coin].ema_cross === 'GOLDEN_CROSS' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                  indicators[cs.coin].ema_cross === 'DEATH_CROSS' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
+                                  'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                                }`}>
+                                  {indicators[cs.coin].ema_cross === 'GOLDEN_CROSS' ? '🌟 Golden Cross' :
+                                   indicators[cs.coin].ema_cross === 'DEATH_CROSS' ? '💀 Death Cross' :
+                                   `EMA50/200: ${indicators[cs.coin].ema50.toFixed(0)}/${indicators[cs.coin].ema200.toFixed(0)}`}
                                 </span>
                               )}
                             </div>
