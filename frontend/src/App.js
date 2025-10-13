@@ -1315,22 +1315,24 @@ function App() {
               </div>
 
               <div className="form-group">
-                <label>⏱ Zaman Dilimi</label>
+                <label>⏱ Analiz Zaman Dilimi</label>
                 <select
                   className="input"
                   value={config.timeframe}
                   onChange={(e) => setConfig({...config, timeframe: e.target.value})}
                   disabled={config.use_coin_specific_settings}
                 >
-                  <option value="15m">15 Dakika (15m)</option>
-                  <option value="1h">1 Saat (1h)</option>
-                  <option value="4h">4 Saat (4h)</option>
-                  <option value="12h">12 Saat (12h)</option>
-                  <option value="24h">24 Saat (1 Gün)</option>
-                  <option value="7d">7 Gün (1 Hafta)</option>
-                  <option value="30d">30 Gün (1 Ay)</option>
+                  <option value="15m">15 dakika</option>
+                  <option value="30m">30 dakika</option>
+                  <option value="1h">1 saat</option>
+                  <option value="4h">4 saat</option>
+                  <option value="6h">6 saat</option>
+                  <option value="12h">12 saat</option>
+                  <option value="24h">24 saat</option>
+                  <option value="7d">7 gün</option>
+                  <option value="30d">30 gün</option>
                 </select>
-                <small>Seçilen zaman dilimine göre analiz yapılır</small>
+                <small>Seçilen zaman dilimine göre sinyal analizi yapılır (geçmiş veri çekmez)</small>
               </div>
 
               <div className="form-group">
