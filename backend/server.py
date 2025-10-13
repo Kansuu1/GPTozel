@@ -252,7 +252,7 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
     coin_list = []
     for setting in payload.coin_settings:
         coin_symbol = setting.coin.strip().upper()
-        new_settings.append({
+        coin_config = {
             "coin": coin_symbol,
             "timeframe": setting.timeframe.strip(),
             "threshold": float(setting.threshold),
@@ -260,7 +260,13 @@ async def update_coin_settings(payload: CoinSettingsUpdate, request: Request):
             "active": bool(setting.active),
             "fetch_interval_minutes": setting.fetch_interval_minutes or 2,
             "status": setting.status or "active"
-        })
+        }
+        
+        # 🆕 Candle analysis enabled field'i ekle (opsiyonel)
+        if hasattr(setting, 'candle_analysis_enabled'):
+            coin_config["candle_analysis_enabled"] = bool(setting.candle_analysis_enabled)
+        
+        new_settings.append(coin_config)
         coin_list.append(coin_symbol)
     
     # Config'i güncelle - hem coin_settings hem de selected_coins
