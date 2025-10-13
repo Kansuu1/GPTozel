@@ -37,7 +37,7 @@ function App() {
   const [config, setConfig] = useState({
     threshold: 75,
     threshold_mode: "manual",
-    use_coin_specific_settings: false,
+    use_coin_specific_settings: true, // Coin başına özel ayarlar varsayılan olarak aktif
     selected_coins: [],
     timeframe: "24h",
     max_concurrent_coins: 20,
