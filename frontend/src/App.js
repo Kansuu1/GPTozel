@@ -888,6 +888,59 @@ function App() {
     }
   };
 
+  const importHistoricalData = async () => {
+    if (!coinSettings || coinSettings.length === 0) {
+      setMessage("❌ Önce coin eklemelisiniz");
+      return;
+    }
+    
+    const activeCoins = coinSettings
+      .filter(cs => cs.status === 'active')
+      .map(cs => cs.coin);
+    
+    if (activeCoins.length === 0) {
+      setMessage("❌ Aktif coin bulunamadı");
+      return;
+    }
+    
+    if (!window.confirm(`${activeCoins.length} aktif coin için ${historicalDays} günlük geçmiş veri çekilecek. Bu işlem birkaç dakika sürebilir. Devam edilsin mi?`)) {
+      return;
+    }
+    
+    setLoading(true);
+    setHistoricalImportResult(null);
+    setMessage("⏳ Geçmiş veriler çekiliyor, lütfen bekleyin...");
+    
+    try {
+      const res = await axios.post(`${API}/historical/import`, {
+        coins: activeCoins,
+        days: historicalDays,
+        interval: historicalInterval
+      }, {
+        headers: { "x-admin-token": adminToken }
+      });
+      
+      setHistoricalImportResult(res.data.results);
+      
+      // Başarı mesajı
+      const successCount = Object.values(res.data.results).filter(r => r.status === 'success').length;
+      const totalImported = Object.values(res.data.results)
+        .filter(r => r.status === 'success')
+        .reduce((sum, r) => sum + r.imported, 0);
+      
+      setMessage(`✅ ${successCount} coin için ${totalImported} yeni veri eklendi!`);
+      
+      // Coin settings'i yenile (son güncelleme zamanı değişecek)
+      loadCoinSettings();
+      
+    } catch (e) {
+      setMessage("❌ İçe aktarma hatası: " + (e.response?.data?.detail || e.message));
+      setHistoricalImportResult(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const clearCoinSignals = async () => {
     if (!selectedCoinFilter) {
       setMessage("⚠️ Lütfen silmek için bir coin seçin");
