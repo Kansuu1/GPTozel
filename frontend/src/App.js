@@ -627,6 +627,28 @@ function App() {
     setLoading(false);
   };
 
+  const clearCoinSignals = async () => {
+    if (!selectedCoinFilter) {
+      setMessage("⚠️ Lütfen silmek için bir coin seçin");
+      return;
+    }
+
+    if (!window.confirm(`${selectedCoinFilter} coin'inin TÜM sinyallerini silmek istediğinizden emin misiniz?`)) return;
+    
+    setLoading(true);
+    try {
+      const res = await axios.post(`${API}/signals/clear_by_coin`, 
+        { coin: selectedCoinFilter },
+        { headers: { "x-admin-token": adminToken } }
+      );
+      setMessage("✅ " + res.data.message);
+      loadSignals();
+    } catch (e) {
+      setMessage("❌ Silme hatası: " + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
   const toggleCoin = (coin) => {
     const selected = config.selected_coins || [];
     const newSelected = selected.includes(coin)
