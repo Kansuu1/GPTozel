@@ -410,6 +410,40 @@ function App() {
     setMessage(allActive ? '⏸️ Tüm coinler pasif yapıldı' : '✅ Tüm coinler aktif yapıldı');
   };
 
+  const toggleGlobalFeatureFlag = async () => {
+    const newValue = !globalFeatureFlag;
+    setGlobalFeatureFlag(newValue);
+    
+    try {
+      await axios.post(`${API}/feature-flags/toggle`, {
+        flag: 'enable_candle_interval_analysis',
+        enabled: newValue
+      }, {
+        headers: { "x-admin-token": adminToken }
+      });
+      
+      setMessage(newValue ? '🔧 Candle Interval Analysis AÇILDI' : '🔧 Candle Interval Analysis KAPATILDI');
+    } catch (e) {
+      setMessage("❌ Feature flag hatası: " + (e.response?.data?.detail || e.message));
+      setGlobalFeatureFlag(!newValue); // Rollback
+    }
+  };
+
+  const toggleCoinFeatureFlag = async (coin) => {
+    setCoinSettings(prevSettings =>
+      prevSettings.map(cs =>
+        cs.coin === coin
+          ? { ...cs, candle_analysis_enabled: !cs.candle_analysis_enabled }
+          : cs
+      )
+    );
+    
+    const updated = coinSettings.find(cs => cs.coin === coin);
+    const newValue = !updated.candle_analysis_enabled;
+    
+    setMessage(newValue ? `🟢 ${coin}: Candle analizi aktif` : `🔴 ${coin}: Candle analizi pasif`);
+  };
+
   const updateDynamicThreshold = async (coin, timeframe) => {
     try {
       const res = await axios.get(`${API}/calculate-threshold`, {
