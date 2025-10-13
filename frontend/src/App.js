@@ -117,6 +117,23 @@ function App() {
     }
   }, [selectedStatus, selectedCoins, activeTab]);
 
+  // Dropdown dışına tıklanınca kapat
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (coinDropdownOpen && !event.target.closest('.coin-dropdown-container')) {
+        setCoinDropdownOpen(false);
+      }
+    };
+    
+    if (coinDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [coinDropdownOpen]);
+
   // Load admin token from localStorage on mount
   useEffect(() => {
     const loadToken = () => {
