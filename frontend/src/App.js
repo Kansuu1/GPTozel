@@ -1519,13 +1519,46 @@ function App() {
                               {isActive ? '🟢 Active' : '⚫ Passive'}
                             </span>
                           </div>
-                          <button 
-                            className={`status-toggle-modern ${isActive ? 'active' : 'passive'}`}
-                            onClick={() => updateCoinSetting(cs.coin, 'status', isActive ? 'passive' : 'active')}
-                            title={isActive ? 'Pasife al' : 'Aktif et'}
-                          >
-                            <span className="toggle-slider-modern"></span>
-                          </button>
+                          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            {/* Feature Flag Indicator */}
+                            <div style={{ 
+                              display: 'flex', 
+                              flexDirection: 'column', 
+                              alignItems: 'center',
+                              gap: '0.2rem'
+                            }}>
+                              <button
+                                onClick={() => toggleCoinFeatureFlag(cs.coin)}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  padding: '4px',
+                                  fontSize: '1.3rem',
+                                  transition: 'transform 0.2s',
+                                  opacity: isActive ? 1 : 0.3
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                title={cs.candle_analysis_enabled ? 'Candle Interval: Açık' : 'Candle Interval: Kapalı'}
+                                disabled={!isActive}
+                              >
+                                {cs.candle_analysis_enabled ? '🟢' : '🔴'}
+                              </button>
+                              <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>
+                                Candle
+                              </span>
+                            </div>
+                            
+                            {/* Status Toggle */}
+                            <button 
+                              className={`status-toggle-modern ${isActive ? 'active' : 'passive'}`}
+                              onClick={() => updateCoinSetting(cs.coin, 'status', isActive ? 'passive' : 'active')}
+                              title={isActive ? 'Pasife al' : 'Aktif et'}
+                            >
+                              <span className="toggle-slider-modern"></span>
+                            </button>
+                          </div>
                         </div>
 
                         {/* Fetch Interval Section */}
