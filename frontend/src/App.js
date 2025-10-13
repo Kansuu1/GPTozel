@@ -1540,10 +1540,16 @@ function App() {
                                 }}
                                 onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
                                 onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                                title={cs.candle_analysis_enabled ? 'Candle Interval: Açık' : 'Candle Interval: Kapalı'}
+                                title={
+                                  globalFeatureFlag 
+                                    ? 'Global: Aktif (Tüm coinler için candle analizi açık)' 
+                                    : cs.candle_analysis_enabled 
+                                      ? 'Coin: Aktif (Global kapalı olsa da bu coin için açık)' 
+                                      : 'Kapalı (Hem global hem coin kapalı)'
+                                }
                                 disabled={!isActive}
                               >
-                                {cs.candle_analysis_enabled ? '🟢' : '🔴'}
+                                {globalFeatureFlag || cs.candle_analysis_enabled ? '🟢' : '🔴'}
                               </button>
                               <span style={{ fontSize: '0.6rem', color: 'var(--text-secondary)' }}>
                                 Candle
