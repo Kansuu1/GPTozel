@@ -43,72 +43,89 @@ def calculate_tp_sl(signal_type: str, current_price: float, probability: float):
     return round(take_profit, 8), round(stop_loss, 8)
 
 
-def predict_signal_from_features(features, timeframe="24h"):
+def predict_signal_from_features(features, timeframe="24h", indicators=None):
     """
-    Seçilen timeframe'e göre sinyal üretir
+    RSI, MACD, EMA ve Combined Signal Strength ile geliştirilmiş sinyal üretimi
     
     Parametreler:
     - features: CoinMarketCap'ten gelen özellikler
-    - timeframe: Analiz zaman dilimi (15m, 1h, 4h, 12h, 24h, 7d)
+    - timeframe: Analiz zaman dilimi
+    - indicators: RSI, MACD, EMA ve signal_strength dict
     
-    Return: (signal_type, probability, tp, sl)
+    Return: (signal_type, probability, tp, sl, weight_desc)
     """
     
-    # Timeframe'e göre doğru değişim oranını seç
+    # Temel momentum skoru (eski sistem)
     timeframe_mapping = {
-        "15m": "percent_change_1h",    # 15m için 1h kullan (en yakın)
+        "15m": "percent_change_1h",
         "1h": "percent_change_1h",
-        "4h": "percent_change_24h",     # 4h için 24h kullan
-        "12h": "percent_change_24h",    # 12h için 24h kullan
+        "4h": "percent_change_24h",
+        "12h": "percent_change_24h",
         "24h": "percent_change_24h",
-        "1d": "percent_change_24h",     # Alternatif gösterim
+        "1d": "percent_change_24h",
         "7d": "percent_change_7d",
-        "1w": "percent_change_7d",      # Alternatif gösterim
+        "1w": "percent_change_7d",
         "30d": "percent_change_30d",
-        "1m": "percent_change_30d"      # 1 ay alternatif gösterim
+        "1m": "percent_change_30d"
     }
     
-    # Ana ve yardımcı timeframe'ler
     main_key = timeframe_mapping.get(timeframe, "percent_change_24h")
-    
-    # Kısa vadeli momentum için 1h her zaman kontrol edilir
     short_term = features.get("percent_change_1h") or 0.0
     main_change = features.get(main_key) or 0.0
     
-    # Timeframe'e göre ağırlıklandırma
+    # Momentum skoru
     if timeframe in ["15m", "1h"]:
-        # Kısa vade: sadece 1h önemli
-        score = main_change
-        weight_desc = "1h momentum"
+        momentum_score = main_change
     elif timeframe in ["4h", "12h"]:
-        # Orta vade: 24h ana, 1h destek
-        score = main_change * 0.7 + short_term * 0.3
-        weight_desc = "24h (70%) + 1h (30%)"
+        momentum_score = main_change * 0.7 + short_term * 0.3
     elif timeframe in ["24h", "1d"]:
-        # Günlük: 24h ana, 1h destek
-        score = main_change * 0.8 + short_term * 0.2
-        weight_desc = "24h (80%) + 1h (20%)"
+        momentum_score = main_change * 0.8 + short_term * 0.2
     elif timeframe in ["7d", "1w"]:
-        # Haftalık: sadece 7d
-        score = main_change
-        weight_desc = "7d trend"
-    else:  # 30d, 1m
-        # Aylık: sadece 30d
-        score = main_change
-        weight_desc = "30d trend"
+        momentum_score = main_change
+    else:
+        momentum_score = main_change
     
-    prob = min(max(abs(score), 0.0), 100.0)
+    # Yeni: Combined Signal Strength bazlı probability
+    if indicators and indicators.get('signal_strength'):
+        signal_strength = indicators['signal_strength']
+        strength_score = signal_strength.get('score', 0)
+        direction = signal_strength.get('direction', 'NEUTRAL')
+        
+        # Signal strength ana faktör (70%)
+        # Momentum destek faktör (30%)
+        base_prob = strength_score * 0.7 + abs(momentum_score) * 0.3
+        
+        # Yön belirleme
+        if direction == 'BULLISH':
+            signal_type = "LONG"
+            prob = base_prob
+        elif direction == 'BEARISH':
+            signal_type = "SHORT"
+            prob = base_prob
+        else:  # NEUTRAL
+            # Momentum'a göre karar ver
+            if abs(momentum_score) < 0.5:
+                return None, 0.0, None, None, "Neutral market"
+            signal_type = "LONG" if momentum_score > 0 else "SHORT"
+            prob = abs(momentum_score) * 2  # Momentum'u artır
+        
+        weight_desc = f"Signal Strength: {strength_score:.0f}%, Direction: {direction}"
+        
+    else:
+        # Indicators yoksa eski sistem
+        prob = min(max(abs(momentum_score), 0.0), 100.0)
+        
+        if prob < 0.5:
+            return None, prob, None, None, "Low momentum"
+        
+        signal_type = "LONG" if momentum_score > 0 else "SHORT"
+        weight_desc = f"Momentum only: {momentum_score:.2f}%"
     
-    if prob < 0.5:
+    # Minimum threshold
+    if prob < 0.1:
         return None, prob, None, None, weight_desc
     
     current_price = features.get("price", 0)
-    
-    if score > 0:
-        signal_type = "LONG"
-    else:
-        signal_type = "SHORT"
-    
     tp, sl = calculate_tp_sl(signal_type, current_price, prob)
     
     return signal_type, prob, tp, sl, weight_desc
