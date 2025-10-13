@@ -82,31 +82,79 @@ def get_price_history(coin: str, hours: int = 24, limit: int = 500) -> List[floa
         return []
 
 
-def get_recent_prices(coin: str, count: int = 50) -> List[float]:
+def get_recent_prices(coin: str, hours: int = 24, count: int = None) -> List[float]:
     """
-    Son N fiyat noktasını getir
+    Coin için son fiyatları getir (sadece fiyatlar)
     
     Args:
         coin: Coin sembolü
-        count: Kaç adet
+        hours: Kaç saatlik geçmiş (default: 24)
+        count: Maksimum kayıt sayısı (optional)
     
     Returns:
-        Fiyat listesi (eski → yeni)
+        Fiyat listesi (en eskiden yeniye)
     """
     try:
         db = get_db()
         
-        cursor = db.price_history.find({
-            "coin": coin
-        }).sort("timestamp", -1).limit(count)
+        # Zaman aralığı
+        if count is None:
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+            cursor = db.price_history.find({
+                "coin": coin,
+                "timestamp": {"$gte": cutoff}
+            }).sort("timestamp", 1)  # Eskiden yeniye
+        else:
+            cursor = db.price_history.find({
+                "coin": coin
+            }).sort("timestamp", -1).limit(count)  # En yeni count kadar
+            
+            # Liste halinde al ve ters çevir (eskiden yeniye)
+            records = list(cursor)
+            records.reverse()
+            return [r["price"] for r in records if "price" in r]
         
-        prices = [doc["price"] for doc in cursor]
-        prices.reverse()  # Eski → yeni sırala
-        
+        prices = [r["price"] for r in cursor if "price" in r]
         return prices
     
     except Exception as e:
-        logger.error(f"❌ Son fiyatlar hatası [{coin}]: {e}")
+        logger.error(f"Fiyat geçmişi okuma hatası [{coin}]: {e}")
+        return []
+
+
+def get_recent_prices_with_timestamps(coin: str, hours: int = 24) -> List[dict]:
+    """
+    Coin için son fiyatları timestamp ile getir
+    
+    Args:
+        coin: Coin sembolü
+        hours: Kaç saatlik geçmiş (default: 24)
+    
+    Returns:
+        [{"price": float, "timestamp": datetime}, ...] (en eskiden yeniye)
+    """
+    try:
+        db = get_db()
+        
+        # Zaman aralığı
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+        cursor = db.price_history.find({
+            "coin": coin,
+            "timestamp": {"$gte": cutoff}
+        }).sort("timestamp", 1)  # Eskiden yeniye
+        
+        price_data = []
+        for record in cursor:
+            if "price" in record and "timestamp" in record:
+                price_data.append({
+                    "price": record["price"],
+                    "timestamp": record["timestamp"]
+                })
+        
+        return price_data
+    
+    except Exception as e:
+        logger.error(f"Fiyat geçmişi (timestamp) okuma hatası [{coin}]: {e}")
         return []
 
 
