@@ -1477,14 +1477,24 @@ function App() {
                           </div>
                         </div>
 
-                        {/* Delete Button */}
-                        <button
-                          className="btn-delete-modern"
-                          onClick={() => removeCoinFromSettings(cs.coin)}
-                          title={`${cs.coin} sil`}
-                        >
-                          🗑️ Sil
-                        </button>
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 mt-3">
+                          <button
+                            className="btn-save-modern flex-1"
+                            onClick={() => saveSingleCoinSetting(cs.coin)}
+                            title={`${cs.coin} ayarlarını kaydet`}
+                            disabled={loading}
+                          >
+                            💾 Kaydet
+                          </button>
+                          <button
+                            className="btn-delete-modern"
+                            onClick={() => removeCoinFromSettings(cs.coin)}
+                            title={`${cs.coin} sil`}
+                          >
+                            🗑️ Sil
+                          </button>
+                        </div>
                       </div>
                     );
                   })}
