@@ -195,7 +195,7 @@ function App() {
     setLoading(true);
     setMessage("");
     try {
-      await axios.put(`${API}/coin-config`, coinSetting, {
+      await axios.post(`${API}/update-coin`, coinSetting, {
         headers: { "x-admin-token": adminToken }
       });
       setMessage(`✅ ${coin} ayarları kaydedildi!`);
