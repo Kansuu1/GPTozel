@@ -40,6 +40,9 @@ async def analyze_single_coin(symbol: str, quote: dict):
     Tek bir coin için analiz yap ve gerekirse sinyal üret
     Bu fonksiyon fetch loop'tan her veri çekildikinde çağrılır
     """
+    from feature_flags import feature_flags
+    from candle_aggregator import aggregate_prices_to_candles, check_sufficient_data_for_analysis
+    
     cfg = read_config()
     
     # Coin başına özel ayarlar
@@ -54,12 +57,16 @@ async def analyze_single_coin(symbol: str, quote: dict):
     
     try:
         # Coin config al
+        candle_interval = None
         if use_coin_specific and symbol in coin_settings_map:
             coin_config = coin_settings_map[symbol]
             base_timeframe = coin_config.get("timeframe", "24h")
             manual_threshold = coin_config.get("threshold", 4)
             threshold_mode = coin_config.get("threshold_mode", "dynamic")
             adaptive_enabled = coin_config.get("adaptive_timeframe_enabled", False)
+            
+            # 🆕 Candle interval al (opsiyonel)
+            candle_interval = coin_config.get("candle_interval") or coin_config.get("timeframe")
             
             # Adaptive timeframe aktifse volatiliteye göre timeframe seç
             if adaptive_enabled:
@@ -80,6 +87,7 @@ async def analyze_single_coin(symbol: str, quote: dict):
             timeframe = global_timeframe
             manual_threshold = global_threshold
             threshold_mode = global_threshold_mode
+            candle_interval = None
             logger.info(f"[{symbol}] Global ayarlarla analiz: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
         
         # Feature extraction (sadece CMC verisi ile)
@@ -88,12 +96,50 @@ async def analyze_single_coin(symbol: str, quote: dict):
         # Threshold hesapla
         threshold = get_threshold(features, threshold_mode, manual_threshold, timeframe)
         
-        # RSI ve MACD göstergelerini hesapla
-        prices = get_recent_prices(symbol, count=50)
-        indicators = {}
-        if len(prices) >= 26:  # MACD için minimum
-            indicators = calculate_indicators(prices)
-            logger.info(f"[{symbol}] Göstergeler: RSI={indicators.get('rsi')}, MACD={indicators.get('macd_signal')}")
+        # 🆕 Candle Interval Analysis
+        use_candle_analysis = feature_flags.enable_candle_interval_analysis() and candle_interval
+        
+        if use_candle_analysis:
+            # Candle bazlı analiz
+            logger.info(f"📊 [{symbol}] Candle interval analizi: {candle_interval}")
+            
+            # Ham fiyat verilerini çek (timestamp ile birlikte)
+            from price_history import get_recent_prices_with_timestamps
+            price_data = get_recent_prices_with_timestamps(symbol, hours=168)  # 7 günlük veri
+            
+            if price_data and len(price_data) >= 10:
+                # Candle'lara aggregate et
+                candle_prices = aggregate_prices_to_candles(price_data, candle_interval)
+                
+                # Yeterli candle var mı?
+                sufficient, msg = check_sufficient_data_for_analysis(len(candle_prices), require_macd=True)
+                
+                if sufficient:
+                    # Candle bazlı göstergeler
+                    indicators = calculate_indicators(candle_prices)
+                    logger.info(f"📊 [{symbol}] Candle analizi: {len(candle_prices)} candle, RSI={indicators.get('rsi')}, MACD={indicators.get('macd_signal')}")
+                else:
+                    logger.warning(f"⚠️ [{symbol}] Candle için yetersiz veri: {msg}")
+                    # Fallback: Ham veri ile analiz
+                    prices = get_recent_prices(symbol, count=50)
+                    indicators = {}
+                    if len(prices) >= 26:
+                        indicators = calculate_indicators(prices)
+            else:
+                logger.warning(f"⚠️ [{symbol}] Candle için yetersiz ham veri, fallback yapılıyor")
+                # Fallback: Ham veri ile analiz
+                prices = get_recent_prices(symbol, count=50)
+                indicators = {}
+                if len(prices) >= 26:
+                    indicators = calculate_indicators(prices)
+        else:
+            # 🔄 Eski sistem (default)
+            # RSI ve MACD göstergelerini hesapla
+            prices = get_recent_prices(symbol, count=50)
+            indicators = {}
+            if len(prices) >= 26:  # MACD için minimum
+                indicators = calculate_indicators(prices)
+                logger.info(f"[{symbol}] Göstergeler: RSI={indicators.get('rsi')}, MACD={indicators.get('macd_signal')}")
         
         # Sinyal tahmini (indicators ile)
         sig, prob, tp, sl, weight_desc = predict_signal_from_features(features, timeframe, indicators)
