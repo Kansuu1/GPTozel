@@ -85,6 +85,7 @@ class CoinSetting(BaseModel):
     fetch_interval_minutes: Optional[int] = 2  # Varsayılan 2 dakika
     status: Optional[str] = "active"  # "active" veya "passive"
     adaptive_timeframe_enabled: Optional[bool] = False  # Adaptive timeframe
+    candle_analysis_enabled: Optional[bool] = False  # 🆕 Candle interval analysis
 
 class CoinSettingsUpdate(BaseModel):
     coin_settings: List[CoinSetting]
