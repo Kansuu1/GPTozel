@@ -68,6 +68,16 @@
       "candle_analysis_enabled": true
     },
     {
+      "coin": "BNB",
+      "timeframe": "1h",
+      "threshold": 2.0,
+      "threshold_mode": "dynamic",
+      "active": true,
+      "fetch_interval_minutes": 5,
+      "status": "active",
+      "candle_analysis_enabled": true
+    },
+    {
       "coin": "PEPE",
       "timeframe": "1h",
       "threshold": 2.8,
