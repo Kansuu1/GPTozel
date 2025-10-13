@@ -37,12 +37,13 @@
     },
     {
       "coin": "XRP",
-      "timeframe": "24h",
-      "threshold": 2.5,
+      "timeframe": "1h",
+      "threshold": 1.2,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 3,
-      "status": "passive"
+      "active": true,
+      "fetch_interval_minutes": 1,
+      "status": "active",
+      "adaptive_timeframe_enabled": false
     },
     {
       "coin": "ADA",
