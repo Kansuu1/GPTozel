@@ -1774,7 +1774,7 @@ function App() {
 
                           <div className="settings-row">
                             <div className="setting-item">
-                              <label>Zaman Dilimi {cs.adaptive_timeframe_enabled && '(Manuel Ayar)'}</label>
+                              <label>📊 Analiz Zaman Dilimi {cs.adaptive_timeframe_enabled && '(Manuel Ayar)'}</label>
                               <select
                                 className="select-modern"
                                 value={cs.timeframe}
@@ -1782,8 +1782,10 @@ function App() {
                                 disabled={cs.adaptive_timeframe_enabled}
                               >
                                 <option value="15m">15 dakika</option>
+                                <option value="30m">30 dakika</option>
                                 <option value="1h">1 saat</option>
                                 <option value="4h">4 saat</option>
+                                <option value="6h">6 saat</option>
                                 <option value="12h">12 saat</option>
                                 <option value="24h">24 saat</option>
                                 <option value="7d">7 gün</option>
