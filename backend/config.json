@@ -24,7 +24,7 @@
       "active": true,
       "fetch_interval_minutes": 5,
       "status": "active",
-      "adaptive_timeframe_enabled": false
+      "candle_analysis_enabled": true
     },
     {
       "coin": "ETH",
@@ -33,7 +33,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "XRP",
@@ -42,7 +43,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "ADA",
@@ -51,7 +53,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "SOL",
@@ -60,7 +63,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "PEPE",
@@ -69,7 +73,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "SUI",
@@ -78,7 +83,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "TRUMP",
@@ -87,7 +93,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "DOGE",
@@ -96,7 +103,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 1,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "COAI",
@@ -105,7 +113,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     },
     {
       "coin": "AVAX",
@@ -114,7 +123,8 @@
       "threshold_mode": "dynamic",
       "active": false,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "passive",
+      "candle_analysis_enabled": false
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
