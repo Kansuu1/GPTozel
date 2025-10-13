@@ -2267,18 +2267,18 @@ body.dark-mode .dark-mode-toggle {
 
 .interval-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin: 24px 0;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
 }
 
 .interval-card {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  border: 1px solid #e5e7eb;
   position: relative;
   overflow: hidden;
 }
@@ -2289,8 +2289,8 @@ body.dark-mode .dark-mode-toggle {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  transition: opacity 0.3s ease;
+  height: 2px;
+  transition: opacity 0.2s ease;
 }
 
 .interval-card.interval-short::before {
@@ -2306,27 +2306,27 @@ body.dark-mode .dark-mode-toggle {
 }
 
 .interval-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .interval-card:hover::before {
-  height: 4px;
+  height: 3px;
 }
 
 .interval-card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  margin-bottom: 10px;
 }
 
 .interval-icon {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .timeframe-label {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #333;
 }
@@ -2334,36 +2334,36 @@ body.dark-mode .dark-mode-toggle {
 .interval-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .interval-input-modern {
   flex: 1;
-  padding: 10px 12px;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 1.3rem;
+  padding: 6px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: 700;
   text-align: center;
   color: #667eea;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .interval-input-modern:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
 }
 
 .interval-suffix {
   font-weight: 600;
   color: #6b7280;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
 }
 
 .interval-recommendation {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #6b7280;
   text-align: center;
   font-style: italic;
