@@ -161,6 +161,9 @@ async def analyze_single_coin(symbol: str, quote: dict):
         
         # Threshold aşıldıysa sinyal üret
         if sig and prob >= threshold:
+            from datetime import datetime, timezone
+            signal_timestamp = datetime.now(timezone.utc)
+            
             rec = {
                 "coin": symbol,
                 "symbol": symbol,
@@ -168,6 +171,11 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 "probability": prob,
                 "confidence_score": int(prob),
                 "threshold_used": threshold,
+                
+                # Performance tracking alanları
+                "signal_status": "active",  # active | hit_tp | hit_sl | expired
+                "profit_loss_percent": 0.0,
+                "signal_timestamp": signal_timestamp,
                 "timeframe": timeframe,
                 "features": features,
                 "stop_loss": sl,
