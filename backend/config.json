@@ -41,7 +41,7 @@
       "threshold": 1.2,
       "threshold_mode": "dynamic",
       "active": true,
-      "fetch_interval_minutes": 1,
+      "fetch_interval_minutes": 5,
       "status": "active",
       "adaptive_timeframe_enabled": false
     },
