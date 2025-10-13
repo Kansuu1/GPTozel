@@ -1757,27 +1757,145 @@ function App() {
                     </select>
                   </div>
 
-                  {/* Coin Multi-Select */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                  {/* Coin Multi-Select Dropdown */}
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <label style={{ fontWeight: '500', fontSize: '0.9rem' }}>🪙 Coinler:</label>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      {coinSettings.slice(0, 8).map(cs => (
-                        <label key={cs.coin} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer' }}>
-                          <input
-                            type="checkbox"
-                            checked={selectedCoins.includes(cs.coin)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedCoins([...selectedCoins, cs.coin]);
-                              } else {
-                                setSelectedCoins(selectedCoins.filter(c => c !== cs.coin));
-                              }
-                            }}
-                            style={{ cursor: 'pointer' }}
-                          />
-                          <span className="text-xs">{cs.coin}</span>
-                        </label>
-                      ))}
+                    <div style={{ position: 'relative' }}>
+                      <button
+                        onClick={() => setCoinDropdownOpen(!coinDropdownOpen)}
+                        className="filter-select"
+                        style={{ 
+                          padding: '0.4rem 2rem 0.4rem 0.8rem', 
+                          borderRadius: '6px', 
+                          border: '1px solid var(--border-color)',
+                          backgroundColor: 'var(--bg-primary)',
+                          color: 'var(--text-primary)',
+                          fontSize: '0.9rem',
+                          cursor: 'pointer',
+                          minWidth: '150px',
+                          textAlign: 'left',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        <span>
+                          {selectedCoins.length === 0 ? 'Tümü' : `${selectedCoins.length} coin seçili`}
+                        </span>
+                        <span style={{ 
+                          position: 'absolute', 
+                          right: '0.5rem',
+                          transition: 'transform 0.2s',
+                          transform: coinDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}>▼</span>
+                      </button>
+                      
+                      {coinDropdownOpen && (
+                        <div style={{
+                          position: 'absolute',
+                          top: 'calc(100% + 4px)',
+                          left: 0,
+                          minWidth: '200px',
+                          maxHeight: '300px',
+                          overflowY: 'auto',
+                          backgroundColor: 'var(--bg-primary)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                          zIndex: 1000,
+                          padding: '0.5rem'
+                        }}>
+                          {/* Tümünü Seç/Kaldır */}
+                          <div style={{
+                            padding: '0.5rem',
+                            borderBottom: '1px solid var(--border-color)',
+                            marginBottom: '0.5rem'
+                          }}>
+                            <button
+                              onClick={() => {
+                                if (selectedCoins.length === coinSettings.length) {
+                                  setSelectedCoins([]);
+                                } else {
+                                  setSelectedCoins(coinSettings.map(cs => cs.coin));
+                                }
+                              }}
+                              style={{
+                                fontSize: '0.85rem',
+                                padding: '0.3rem 0.6rem',
+                                backgroundColor: 'var(--accent-color)',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                width: '100%'
+                              }}
+                            >
+                              {selectedCoins.length === coinSettings.length ? '❌ Tümünü Kaldır' : '✅ Tümünü Seç'}
+                            </button>
+                          </div>
+                          
+                          {/* Coin Listesi */}
+                          {coinSettings.map(cs => (
+                            <label 
+                              key={cs.coin} 
+                              style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '0.5rem', 
+                                cursor: 'pointer',
+                                padding: '0.5rem',
+                                borderRadius: '4px',
+                                transition: 'background-color 0.2s',
+                                backgroundColor: selectedCoins.includes(cs.coin) ? 'var(--hover-color)' : 'transparent'
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!selectedCoins.includes(cs.coin)) {
+                                  e.currentTarget.style.backgroundColor = 'var(--hover-color-light)';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!selectedCoins.includes(cs.coin)) {
+                                  e.currentTarget.style.backgroundColor = 'transparent';
+                                }
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedCoins.includes(cs.coin)}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedCoins([...selectedCoins, cs.coin]);
+                                  } else {
+                                    setSelectedCoins(selectedCoins.filter(c => c !== cs.coin));
+                                  }
+                                }}
+                                style={{ cursor: 'pointer' }}
+                              />
+                              <span className="text-sm font-medium">{cs.coin}</span>
+                              <span className="text-xs" style={{ 
+                                marginLeft: 'auto',
+                                padding: '0.1rem 0.4rem',
+                                borderRadius: '4px',
+                                backgroundColor: cs.status === 'active' ? '#10b981' : '#6b7280',
+                                color: 'white'
+                              }}>
+                                {cs.status === 'active' ? '🟢' : '⚫'}
+                              </span>
+                            </label>
+                          ))}
+                          
+                          {coinSettings.length === 0 && (
+                            <div style={{ 
+                              padding: '1rem', 
+                              textAlign: 'center', 
+                              color: 'var(--text-secondary)',
+                              fontSize: '0.85rem'
+                            }}>
+                              Henüz coin eklenmemiş
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
