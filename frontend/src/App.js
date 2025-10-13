@@ -1694,46 +1694,106 @@ function App() {
                 </div>
               </div>
 
-              {/* Coin Filtreleme */}
-              <div className="coin-filter-section" style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <label style={{ fontWeight: '500' }}>🔍 Coin Filtrele:</label>
-                  <select 
-                    value={selectedCoinFilter} 
-                    onChange={(e) => {
-                      setSelectedCoinFilter(e.target.value);
-                      loadSignals(e.target.value);
-                    }}
-                    style={{ 
-                      padding: '0.5rem 1rem', 
-                      borderRadius: '8px', 
-                      border: '1px solid var(--border-color)',
-                      backgroundColor: 'var(--bg-secondary)',
-                      color: 'var(--text-primary)',
-                      minWidth: '150px'
-                    }}
-                  >
-                    <option value="">Tüm Coinler</option>
-                    {coinSettings.map(cs => (
-                      <option key={cs.coin} value={cs.coin}>{cs.coin}</option>
-                    ))}
-                  </select>
-                  
-                  {selectedCoinFilter && (
-                    <>
-                      <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                        ({signals.length} sinyal)
-                      </span>
-                      <button 
-                        className="btn btn-small btn-danger" 
-                        onClick={clearCoinSignals}
-                        disabled={loading}
-                        style={{ marginLeft: 'auto' }}
-                      >
-                        🗑️ {selectedCoinFilter} Sinyallerini Sil
-                      </button>
-                    </>
-                  )}
+              {/* Filtreleme ve İstatistikler */}
+              <div className="signal-filters" style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+                {/* İstatistik Kartı */}
+                {signalStats && (
+                  <div className="signal-stats-card mb-3" style={{ background: 'var(--bg-primary)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
+                      <div className="stat-item">
+                        <div className="stat-label text-xs text-gray-500">Toplam</div>
+                        <div className="stat-value text-sm font-bold">{signalStats.total}</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-label text-xs text-gray-500">Aktif</div>
+                        <div className="stat-value text-sm font-bold text-blue-600">{signalStats.active}</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-label text-xs text-gray-500">TP Hit</div>
+                        <div className="stat-value text-sm font-bold text-green-600">{signalStats.hit_tp}</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-label text-xs text-gray-500">SL Hit</div>
+                        <div className="stat-value text-sm font-bold text-red-600">{signalStats.hit_sl}</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-label text-xs text-gray-500">Win Rate</div>
+                        <div className="stat-value text-sm font-bold">{signalStats.win_rate}%</div>
+                      </div>
+                      <div className="stat-item">
+                        <div className="stat-label text-xs text-gray-500">Avg P/L</div>
+                        <div className={`stat-value text-sm font-bold ${signalStats.avg_profit_loss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {signalStats.avg_profit_loss >= 0 ? '+' : ''}{signalStats.avg_profit_loss}%
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Filtreler */}
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  {/* Status Filtresi */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label style={{ fontWeight: '500', fontSize: '0.9rem' }}>🎯 Durum:</label>
+                    <select 
+                      value={selectedStatus} 
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="filter-select"
+                      style={{ 
+                        padding: '0.4rem 0.8rem', 
+                        borderRadius: '6px', 
+                        border: '1px solid var(--border-color)',
+                        backgroundColor: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      <option value="all">Tümü</option>
+                      <option value="active">Aktif</option>
+                      <option value="hit_tp">TP Hit ✅</option>
+                      <option value="hit_sl">SL Hit 🛑</option>
+                      <option value="expired">Expired ⏰</option>
+                    </select>
+                  </div>
+
+                  {/* Coin Multi-Select */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                    <label style={{ fontWeight: '500', fontSize: '0.9rem' }}>🪙 Coinler:</label>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      {coinSettings.slice(0, 8).map(cs => (
+                        <label key={cs.coin} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedCoins.includes(cs.coin)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedCoins([...selectedCoins, cs.coin]);
+                              } else {
+                                setSelectedCoins(selectedCoins.filter(c => c !== cs.coin));
+                              }
+                            }}
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <span className="text-xs">{cs.coin}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn btn-small" onClick={trackSignals} disabled={loading}>
+                      🔄 Track Signals
+                    </button>
+                    <button className="btn btn-small btn-danger-outline" onClick={clearAllSignals} disabled={loading}>
+                      🗑 Tümünü Sil
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sonuç sayısı */}
+                <div style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  📊 {signals.length} sinyal görüntüleniyor
                 </div>
               </div>
               
