@@ -1367,6 +1367,10 @@ function App() {
                     <option value="14">14 Gün (~336 veri)</option>
                     <option value="30">30 Gün (~720 veri) ⭐</option>
                     <option value="60">60 Gün (~1440 veri)</option>
+                    <option value="90">90 Gün (~2160 veri)</option>
+                    <option value="180">180 Gün (~4320 veri)</option>
+                    <option value="365">365 Gün (~8760 veri)</option>
+                    <option value="720">720 Gün (~17280 veri)</option>
                   </select>
                 </div>
                 
@@ -1377,8 +1381,12 @@ function App() {
                     value={historicalInterval}
                     onChange={(e) => setHistoricalInterval(e.target.value)}
                   >
-                    <option value="1h">1 Saat (Detaylı)</option>
+                    <option value="15m">15 Dakika (Çok Detaylı)</option>
+                    <option value="30m">30 Dakika (Detaylı)</option>
+                    <option value="1h">1 Saat ⭐</option>
                     <option value="4h">4 Saat</option>
+                    <option value="6h">6 Saat</option>
+                    <option value="12h">12 Saat</option>
                     <option value="24h">24 Saat (Günlük)</option>
                   </select>
                 </div>
