@@ -199,7 +199,7 @@ function App() {
   const loadSignals = async (coin = null) => {
     try {
       // Filtreleri oluştur
-      let url = `${API}/signals?limit=50`;
+      let url = `${API}/signals?limit=${signalLimit}`;
       
       // Status filtresi
       if (selectedStatus && selectedStatus !== 'all') {
