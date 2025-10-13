@@ -430,37 +430,49 @@ function App() {
   };
 
   const toggleCoinFeatureFlag = async (coin) => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+    
     const currentSetting = coinSettings.find(cs => cs.coin === coin);
     const newValue = !currentSetting?.candle_analysis_enabled;
     
-    // State'i güncelle
-    setCoinSettings(prevSettings =>
-      prevSettings.map(cs =>
+    // State'i güncelle ve güncel state'i al
+    setCoinSettings(prevSettings => {
+      const updatedSettings = prevSettings.map(cs =>
         cs.coin === coin
           ? { ...cs, candle_analysis_enabled: newValue }
           : cs
-      )
-    );
-    
-    // Backend'e kaydet (tek coin için)
-    try {
-      // State güncellendikten sonra kaydet
-      setTimeout(async () => {
-        await saveSingleCoinSetting(coin);
-      }, 100);
-      
-      setMessage(newValue ? `🟢 ${coin}: Candle analizi aktif` : `🔴 ${coin}: Candle analizi pasif`);
-    } catch (e) {
-      // Rollback
-      setCoinSettings(prevSettings =>
-        prevSettings.map(cs =>
-          cs.coin === coin
-            ? { ...cs, candle_analysis_enabled: !newValue }
-            : cs
-        )
       );
-      setMessage(`❌ ${coin}: Candle ayarı kaydedilemedi`);
-    }
+      
+      // State güncellendikten hemen sonra backend'e kaydet
+      const updatedCoinSetting = updatedSettings.find(cs => cs.coin === coin);
+      
+      // Backend'e kaydet (async)
+      setLoading(true);
+      axios.post(`${API}/coin-settings`, {
+        coin_settings: [updatedCoinSetting]
+      }, {
+        headers: { "x-admin-token": adminToken }
+      }).then(() => {
+        setMessage(newValue ? `🟢 ${coin}: Candle analizi aktif` : `🔴 ${coin}: Candle analizi pasif`);
+        setLoading(false);
+      }).catch(e => {
+        setMessage(`❌ ${coin}: Kaydetme hatası - ${e.response?.data?.detail || e.message}`);
+        setLoading(false);
+        // Rollback
+        setCoinSettings(prevSettings =>
+          prevSettings.map(cs =>
+            cs.coin === coin
+              ? { ...cs, candle_analysis_enabled: !newValue }
+              : cs
+          )
+        );
+      });
+      
+      return updatedSettings;
+    });
   };
 
   const updateDynamicThreshold = async (coin, timeframe) => {
