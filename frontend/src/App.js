@@ -392,6 +392,23 @@ function App() {
     }
   };
 
+  const toggleAllCoins = async () => {
+    // Tüm coinlerin aktif mi kontrol et
+    const allActive = coinSettings.every(cs => cs.status === 'active');
+    const newStatus = allActive ? 'passive' : 'active';
+    
+    // Tüm coinleri yeni status'e çevir
+    setCoinSettings(prevSettings => 
+      prevSettings.map(cs => ({
+        ...cs,
+        status: newStatus,
+        active: newStatus === 'active'
+      }))
+    );
+    
+    setMessage(allActive ? '⏸️ Tüm coinler pasif yapıldı' : '✅ Tüm coinler aktif yapıldı');
+  };
+
   const updateDynamicThreshold = async (coin, timeframe) => {
     try {
       const res = await axios.get(`${API}/calculate-threshold`, {
