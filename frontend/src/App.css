@@ -2054,9 +2054,39 @@ select.input {
   font-size: 1rem;
 }
 
+/* Save Button */
+.btn-save-modern {
+  padding: 12px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-save-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-save-modern:active {
+  transform: translateY(0);
+}
+
+.btn-save-modern:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* Delete Button */
 .btn-delete-modern {
-  width: 100%;
   padding: 12px;
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
@@ -2065,7 +2095,7 @@ select.input {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 8px;
+  min-width: 100px;
 }
 
 .btn-delete-modern:hover {
