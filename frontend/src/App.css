@@ -2147,6 +2147,9 @@ select.input {
   --shadow: rgba(0, 0, 0, 0.1);
   --gradient-start: #667eea;
   --gradient-end: #764ba2;
+  --hover-color: #e9ecef;
+  --hover-color-light: #f8f9fa;
+  --accent-color: #667eea;
 }
 
 body.dark-mode {
@@ -2157,6 +2160,9 @@ body.dark-mode {
   --text-secondary: #b0b0b0;
   --border-color: #505050;
   --shadow: rgba(0, 0, 0, 0.5);
+  --hover-color: #3a3a3a;
+  --hover-color-light: #2d2d2d;
+  --accent-color: #667eea;
 }
 
 body.dark-mode {
