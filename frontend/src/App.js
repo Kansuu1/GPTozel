@@ -1229,7 +1229,7 @@ function App() {
                           )}
                         </div>
 
-                        {/* RSI/MACD Göstergeleri */}
+                        {/* RSI/MACD/EMA Göstergeleri */}
                         {isActive && indicators[cs.coin] && (
                           <div className="coin-card-section border-t border-gray-200 dark:border-gray-700 pt-3">
                             <div className="flex gap-2 items-center flex-wrap">
@@ -1249,6 +1249,17 @@ function App() {
                                   'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
                                 }`}>
                                   MACD: {indicators[cs.coin].macd_signal}
+                                </span>
+                              )}
+                              {indicators[cs.coin].ema9 && indicators[cs.coin].ema21 && (
+                                <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                  indicators[cs.coin].ema_signal === 'BULLISH' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  indicators[cs.coin].ema_signal === 'BEARISH' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                                  'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                                }`}>
+                                  EMA: {indicators[cs.coin].ema9.toFixed(2)} / {indicators[cs.coin].ema21.toFixed(2)} 
+                                  {indicators[cs.coin].ema_signal === 'BULLISH' ? ' 📈' : 
+                                   indicators[cs.coin].ema_signal === 'BEARISH' ? ' 📉' : ' ➡️'}
                                 </span>
                               )}
                             </div>
