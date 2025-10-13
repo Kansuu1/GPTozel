@@ -92,11 +92,15 @@ def calculate_macd(prices: List[float],
         # MACD line = Fast EMA - Slow EMA
         macd_line = fast_ema - slow_ema
         
-        # Signal line = MACD'nin EMA'sı
-        signal_line = calculate_ema(macd_line, signal_period)
-        
-        # Histogram = MACD - Signal
-        histogram = macd_line - signal_line
+        # Signal line = MACD'nin EMA'sı (yeterli veri varsa)
+        if len(macd_line) >= signal_period:
+            signal_line = calculate_ema(macd_line, signal_period)
+            # Histogram = MACD - Signal
+            histogram = macd_line - signal_line
+        else:
+            # Yeterli veri yoksa sadece MACD line kullan
+            signal_line = np.array([macd_line[-1]])
+            histogram = np.array([0.0])
         
         # En son değerleri döndür
         return (
