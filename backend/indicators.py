@@ -212,6 +212,151 @@ def get_ema_signal(ema9: float, ema21: float, current_price: float) -> str:
     return "NEUTRAL"
 
 
+def get_ema_cross_signal(ema50: float, ema200: float) -> str:
+    """
+    EMA50 ve EMA200 kesişimine göre Golden/Death Cross tespiti
+    
+    Args:
+        ema50: 50 periyotluk EMA
+        ema200: 200 periyotluk EMA
+    
+    Returns:
+        "GOLDEN_CROSS" (EMA50 > EMA200 - Güçlü yükseliş),
+        "DEATH_CROSS" (EMA50 < EMA200 - Güçlü düşüş),
+        "NEUTRAL"
+    """
+    if ema50 is None or ema200 is None:
+        return "NEUTRAL"
+    
+    diff_percent = ((ema50 - ema200) / ema200) * 100
+    
+    # EMA50 > EMA200 = Golden Cross (Yükseliş)
+    if diff_percent > 0.5:  # %0.5'ten fazla yukarıda
+        return "GOLDEN_CROSS"
+    # EMA50 < EMA200 = Death Cross (Düşüş)
+    elif diff_percent < -0.5:  # %0.5'ten fazla aşağıda
+        return "DEATH_CROSS"
+    
+    return "NEUTRAL"
+
+
+def calculate_volatility(prices: List[float]) -> float:
+    """
+    Fiyat volatilitesi hesapla (standart sapma / ortalama)
+    
+    Args:
+        prices: Fiyat listesi
+    
+    Returns:
+        Volatilite yüzdesi (0-100)
+    """
+    if len(prices) < 2:
+        return 0.0
+    
+    try:
+        prices_array = np.array(prices)
+        mean = np.mean(prices_array)
+        std = np.std(prices_array)
+        
+        # Coefficient of Variation (CV) - yüzde cinsinden
+        volatility = (std / mean) * 100 if mean > 0 else 0
+        
+        return round(float(volatility), 2)
+    
+    except Exception as e:
+        logger.error(f"Volatilite hesaplama hatası: {e}")
+        return 0.0
+
+
+def calculate_signal_strength(indicators: dict) -> dict:
+    """
+    RSI, MACD ve EMA'dan combined signal strength hesapla
+    
+    Args:
+        indicators: Tüm göstergeler dictionary
+    
+    Returns:
+        {
+            "score": float (0-100),
+            "level": str (VERY_WEAK, WEAK, MODERATE, STRONG, VERY_STRONG),
+            "direction": str (BULLISH, BEARISH, NEUTRAL)
+        }
+    """
+    score = 0
+    bullish_signals = 0
+    bearish_signals = 0
+    total_signals = 0
+    
+    # RSI sinyali (30 puan)
+    if indicators.get("rsi_signal"):
+        total_signals += 1
+        if indicators["rsi_signal"] == "OVERSOLD":
+            bullish_signals += 1
+            score += 30
+        elif indicators["rsi_signal"] == "OVERBOUGHT":
+            bearish_signals += 1
+            score += 30
+    
+    # MACD sinyali (35 puan)
+    if indicators.get("macd_signal"):
+        total_signals += 1
+        if indicators["macd_signal"] == "BULLISH":
+            bullish_signals += 1
+            score += 35
+        elif indicators["macd_signal"] == "BEARISH":
+            bearish_signals += 1
+            score += 35
+    
+    # EMA kısa vadeli sinyal (20 puan)
+    if indicators.get("ema_signal"):
+        total_signals += 1
+        if indicators["ema_signal"] == "BULLISH":
+            bullish_signals += 1
+            score += 20
+        elif indicators["ema_signal"] == "BEARISH":
+            bearish_signals += 1
+            score += 20
+    
+    # EMA uzun vadeli sinyal (Golden/Death Cross) (15 puan)
+    if indicators.get("ema_cross"):
+        total_signals += 1
+        if indicators["ema_cross"] == "GOLDEN_CROSS":
+            bullish_signals += 1
+            score += 15
+        elif indicators["ema_cross"] == "DEATH_CROSS":
+            bearish_signals += 1
+            score += 15
+    
+    # Yön belirle
+    if bullish_signals > bearish_signals:
+        direction = "BULLISH"
+    elif bearish_signals > bullish_signals:
+        direction = "BEARISH"
+    else:
+        direction = "NEUTRAL"
+    
+    # Seviye belirle
+    if score >= 80:
+        level = "VERY_STRONG"
+    elif score >= 60:
+        level = "STRONG"
+    elif score >= 40:
+        level = "MODERATE"
+    elif score >= 20:
+        level = "WEAK"
+    else:
+        level = "VERY_WEAK"
+    
+    return {
+        "score": round(score, 1),
+        "level": level,
+        "direction": direction,
+        "bullish_count": bullish_signals,
+        "bearish_count": bearish_signals,
+        "total_count": total_signals
+    }
+
+
 def calculate_indicators(prices: List[float]) -> dict:
     """
     Tüm göstergeleri hesapla ve döndür
