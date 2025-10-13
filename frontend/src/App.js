@@ -1435,12 +1435,15 @@ function App() {
                       </div>
                     </div>
                     
-                    {/* Toggle Butonu */}
+                    {/* Status Toggle Butonu */}
                     <div style={{ 
                       display: 'flex', 
                       flexDirection: 'column', 
                       alignItems: 'center',
-                      gap: '0.25rem'
+                      gap: '0.25rem',
+                      marginRight: '1rem',
+                      paddingRight: '1rem',
+                      borderRight: '1px solid var(--border-color)'
                     }}>
                       <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
                         Tümü
@@ -1449,6 +1452,25 @@ function App() {
                         onClick={toggleAllCoins}
                         className={`status-toggle-modern ${coinSettings.filter(cs => cs.status === 'active').length === coinSettings.length ? 'active' : ''}`}
                         title={coinSettings.filter(cs => cs.status === 'active').length === coinSettings.length ? 'Tümünü Pasif Yap' : 'Tümünü Aktif Yap'}
+                      >
+                        <span className="toggle-slider-modern"></span>
+                      </button>
+                    </div>
+
+                    {/* Feature Flag Toggle Butonu */}
+                    <div style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: '500' }}>
+                        🔧 Candle
+                      </span>
+                      <button
+                        onClick={toggleGlobalFeatureFlag}
+                        className={`status-toggle-modern ${globalFeatureFlag ? 'active' : ''}`}
+                        title={globalFeatureFlag ? 'Candle Interval Analysis: Açık' : 'Candle Interval Analysis: Kapalı'}
                       >
                         <span className="toggle-slider-modern"></span>
                       </button>
