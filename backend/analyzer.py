@@ -167,7 +167,12 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 rec["macd_signal"] = indicators.get("macd_signal")
                 rec["ema9"] = indicators.get("ema9")
                 rec["ema21"] = indicators.get("ema21")
+                rec["ema50"] = indicators.get("ema50")
+                rec["ema200"] = indicators.get("ema200")
                 rec["ema_signal"] = indicators.get("ema_signal")
+                rec["ema_cross"] = indicators.get("ema_cross")
+                rec["volatility"] = indicators.get("volatility")
+                rec["signal_strength"] = indicators.get("signal_strength")
             
             # DB'ye kaydet
             rec_id = insert_signal_record(rec)
