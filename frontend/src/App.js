@@ -77,6 +77,7 @@ function App() {
     return saved ? JSON.parse(saved) : false;
   });
   const [coinDropdownOpen, setCoinDropdownOpen] = useState(false); // Coin dropdown açık/kapalı
+  const [signalLimit, setSignalLimit] = useState(100); // Gösterilecek sinyal sayısı
 
   // Dark mode değiştiğinde localStorage'a kaydet ve body'ye class ekle
   useEffect(() => {
