@@ -56,10 +56,26 @@ async def analyze_single_coin(symbol: str, quote: dict):
         # Coin config al
         if use_coin_specific and symbol in coin_settings_map:
             coin_config = coin_settings_map[symbol]
-            timeframe = coin_config.get("timeframe", "24h")
+            base_timeframe = coin_config.get("timeframe", "24h")
             manual_threshold = coin_config.get("threshold", 4)
             threshold_mode = coin_config.get("threshold_mode", "dynamic")
-            logger.info(f"[{symbol}] Coin-bazlı analiz: TF={timeframe}, threshold={manual_threshold}, mode={threshold_mode}")
+            adaptive_enabled = coin_config.get("adaptive_timeframe_enabled", False)
+            
+            # Adaptive timeframe aktifse volatiliteye göre timeframe seç
+            if adaptive_enabled:
+                # Son fiyatlardan volatilite hesapla
+                prices = get_recent_prices(symbol, hours=24)
+                if len(prices) >= 20:
+                    from indicators import calculate_volatility, select_adaptive_timeframe
+                    volatility = calculate_volatility(prices[-20:])
+                    timeframe = select_adaptive_timeframe(volatility)
+                    logger.info(f"🎯 [{symbol}] Adaptive timeframe aktif: {base_timeframe} → {timeframe} (Vol: {volatility:.1f}%)")
+                else:
+                    timeframe = base_timeframe
+                    logger.info(f"⚠️ [{symbol}] Adaptive için yeterli veri yok, manuel TF kullanılıyor: {timeframe}")
+            else:
+                timeframe = base_timeframe
+                logger.info(f"[{symbol}] Manuel timeframe: {timeframe}")
         else:
             timeframe = global_timeframe
             manual_threshold = global_threshold
