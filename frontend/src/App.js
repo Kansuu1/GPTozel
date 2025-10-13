@@ -120,9 +120,11 @@ function App() {
     }
   };
 
-  const loadSignals = async () => {
+  const loadSignals = async (coin = null) => {
     try {
-      const res = await axios.get(`${API}/signals?limit=20`);
+      const coinParam = coin || selectedCoinFilter;
+      const url = coinParam ? `${API}/signals?limit=50&coin=${coinParam}` : `${API}/signals?limit=50`;
+      const res = await axios.get(url);
       setSignals(res.data.signals || []);
     } catch (e) {
       console.error("Sinyal yükleme hatası:", e);
