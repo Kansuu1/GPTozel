@@ -1804,18 +1804,32 @@ function App() {
                   {signals.map(signal => (
                     <div key={signal.id} className="signal-card">
                       <div className="signal-header">
-                        <div className="signal-header-left">
-                          <span className="signal-coin">{signal.coin}</span>
-                          <span className={`signal-type ${signal.signal_type?.toLowerCase()}`}>
-                            {signal.signal_type === 'LONG' ? '📈 LONG' : '📉 SHORT'}
-                          </span>
+                        <div className="signal-coin-name">{signal.coin}</div>
+                        <div className={`signal-type ${signal.signal_type?.toLowerCase()}`}>
+                          {signal.signal_type === 'LONG' ? '📈 LONG' : '📉 SHORT'}
                         </div>
+                        
+                        {/* Status Badge */}
+                        <div className={`signal-status-badge ${signal.signal_status || 'active'}`}>
+                          {signal.signal_status === 'hit_tp' && '✅ TP Hit'}
+                          {signal.signal_status === 'hit_sl' && '🛑 SL Hit'}
+                          {signal.signal_status === 'expired' && '⏰ Expired'}
+                          {(!signal.signal_status || signal.signal_status === 'active') && '🔵 Active'}
+                        </div>
+                        
+                        {/* Profit/Loss */}
+                        {signal.profit_loss_percent !== undefined && signal.profit_loss_percent !== 0 && (
+                          <div className={`profit-loss-badge ${signal.profit_loss_percent >= 0 ? 'profit' : 'loss'}`}>
+                            {signal.profit_loss_percent >= 0 ? '+' : ''}{signal.profit_loss_percent?.toFixed(2)}%
+                          </div>
+                        )}
+                        
                         <button 
-                          className="delete-signal-btn"
-                          onClick={() => deleteSignal(signal.id)}
+                          className="signal-delete-btn-mini" 
+                          onClick={() => deleteSingleSignal(signal.id)}
                           title="Sinyali sil"
                         >
-                          🗑
+                          🗑️
                         </button>
                       </div>
                       <div className="signal-body">
