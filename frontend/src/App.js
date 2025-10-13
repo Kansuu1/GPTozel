@@ -91,6 +91,30 @@ function App() {
   useEffect(() => {
     localStorage.setItem('alarmsActive', JSON.stringify(alarmsActive));
   }, [alarmsActive]);
+  
+  // Signal tracking - her 5 dakikada bir otomatik kontrol
+  useEffect(() => {
+    if (activeTab === 'signals' && adminToken) {
+      loadSignalStats();
+      
+      // İlk tracking
+      trackSignals();
+      
+      // 5 dakikada bir otomatik tracking
+      const interval = setInterval(() => {
+        trackSignals();
+      }, 5 * 60 * 1000); // 5 dakika
+      
+      return () => clearInterval(interval);
+    }
+  }, [activeTab, adminToken]);
+  
+  // Filtre değiştiğinde sinyalleri yeniden yükle
+  useEffect(() => {
+    if (activeTab === 'signals') {
+      loadSignals();
+    }
+  }, [selectedStatus, selectedCoins, activeTab]);
 
   // Load admin token from localStorage on mount
   useEffect(() => {
