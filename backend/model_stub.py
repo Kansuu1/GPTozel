@@ -91,9 +91,9 @@ def predict_signal_from_features(features, timeframe="24h", indicators=None):
         strength_score = signal_strength.get('score', 0)
         direction = signal_strength.get('direction', 'NEUTRAL')
         
-        # Signal strength ana faktör (70%)
-        # Momentum destek faktör (30%)
-        base_prob = strength_score * 0.7 + abs(momentum_score) * 0.3
+        # Signal strength ana faktör (80%)
+        # Momentum destek faktör (20%)
+        base_prob = strength_score * 0.8 + abs(momentum_score) * 0.2
         
         # Yön belirleme
         if direction == 'BULLISH':
