@@ -1917,6 +1917,30 @@ function App() {
                     </div>
                   </div>
 
+                  {/* Limit Seçici */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label style={{ fontWeight: '500', fontSize: '0.9rem' }}>📊 Göster:</label>
+                    <select 
+                      value={signalLimit} 
+                      onChange={(e) => setSignalLimit(parseInt(e.target.value))}
+                      className="filter-select"
+                      style={{ 
+                        padding: '0.4rem 0.8rem', 
+                        borderRadius: '6px', 
+                        border: '1px solid var(--border-color)',
+                        backgroundColor: 'var(--bg-primary)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      <option value="50">50 Sinyal</option>
+                      <option value="100">100 Sinyal</option>
+                      <option value="200">200 Sinyal</option>
+                      <option value="500">500 Sinyal</option>
+                      <option value="1000">Tümü</option>
+                    </select>
+                  </div>
+
                   {/* Actions */}
                   <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem' }}>
                     <button className="btn btn-small" onClick={trackSignals} disabled={loading}>
