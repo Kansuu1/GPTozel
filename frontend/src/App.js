@@ -1432,6 +1432,31 @@ function App() {
                   Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
                 </p>
 
+                {/* Coin Ekleme Bölümü */}
+                <div style={{ 
+                  marginBottom: '1.5rem', 
+                  padding: '1rem', 
+                  backgroundColor: 'var(--bg-secondary)', 
+                  borderRadius: '8px',
+                  border: '1px solid var(--border-color)'
+                }}>
+                  <label style={{ fontWeight: '600', marginBottom: '0.5rem', display: 'block' }}>➕ Yeni Coin Ekle</label>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input
+                      type="text"
+                      className="input"
+                      value={newCoin}
+                      onChange={(e) => setNewCoin(e.target.value)}
+                      placeholder="Örn: SHIB, PEPE, FLOKI"
+                      onKeyPress={(e) => e.key === 'Enter' && addNewCoin()}
+                      style={{ flex: 1 }}
+                    />
+                    <button className="btn btn-add" onClick={addNewCoin} style={{ whiteSpace: 'nowrap' }}>
+                      ➕ Ekle
+                    </button>
+                  </div>
+                </div>
+
                 {coinSettings.length > 0 && (
                   <div className="flex gap-4 text-sm mb-4">
                     <span className="text-green-600 dark:text-green-400">
