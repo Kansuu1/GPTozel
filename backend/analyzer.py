@@ -190,6 +190,22 @@ async def analyze_single_coin(symbol: str, quote: dict):
                 rec["volatility"] = indicators.get("volatility")
                 rec["signal_strength"] = indicators.get("signal_strength")
             
+            # Adaptive timeframe bilgisi
+            rec["adaptive_timeframe_enabled"] = adaptive_enabled if use_coin_specific and symbol in coin_settings_map else False
+            rec["base_timeframe"] = base_timeframe if use_coin_specific and symbol in coin_settings_map and adaptive_enabled else timeframe
+            
+            # Trend ağırlığı hesapla (EMA etkisi)
+            trend_weight = 0
+            if indicators and indicators.get('volatility'):
+                volatility = indicators['volatility']
+                if volatility < 2.0:
+                    trend_weight = 5
+                elif volatility < 4.0:
+                    trend_weight = 5 + (volatility - 2.0) * 2.5  # 5-10%
+                else:
+                    trend_weight = 10 + min((volatility - 4.0) * 1.25, 5)  # 10-15%
+            rec["trend_weight"] = trend_weight
+            
             # DB'ye kaydet
             rec_id = insert_signal_record(rec)
             rec["id"] = rec_id
