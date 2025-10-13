@@ -1651,6 +1651,11 @@ function App() {
                                 <option value="24h">24 saat</option>
                                 <option value="7d">7 gün</option>
                                 <option value="30d">30 gün</option>
+                                <option value="60d">60 gün</option>
+                                <option value="90d">90 gün</option>
+                                <option value="180d">180 gün</option>
+                                <option value="365d">365 gün (1 yıl)</option>
+                                <option value="720d">720 gün (2 yıl)</option>
                               </select>
                               {cs.adaptive_timeframe_enabled && (
                                 <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
