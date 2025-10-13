@@ -1037,6 +1037,45 @@ async def remove_manual_price_endpoint(coin: str, request: Request):
 
 # ==================== SIGNAL MANAGEMENT ENDPOINTS ====================
 
+@app.post("/api/feature-flags/toggle")
+async def toggle_feature_flag(request: Request):
+    """
+    Feature flag'i aç/kapat
+    
+    Request body: {
+        "flag": "enable_candle_interval_analysis",
+        "enabled": true/false
+    }
+    """
+    require_admin(request)
+    
+    try:
+        from feature_flags import feature_flags
+        
+        data = await request.json()
+        flag_name = data.get("flag")
+        enabled = data.get("enabled", False)
+        
+        if not flag_name:
+            raise HTTPException(status_code=400, detail="Flag name gerekli")
+        
+        # Feature flag'i değiştir
+        feature_flags.set_flag(flag_name, enabled)
+        
+        return {
+            "status": "ok",
+            "flag": flag_name,
+            "enabled": enabled,
+            "message": f"Feature flag '{flag_name}' {'açıldı' if enabled else 'kapatıldı'}"
+        }
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Feature flag toggle hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/historical/import")
 async def import_historical_data(request: Request):
     """
