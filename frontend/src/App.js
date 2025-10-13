@@ -78,6 +78,9 @@ function App() {
   });
   const [coinDropdownOpen, setCoinDropdownOpen] = useState(false); // Coin dropdown açık/kapalı
   const [signalLimit, setSignalLimit] = useState(100); // Gösterilecek sinyal sayısı
+  const [historicalDays, setHistoricalDays] = useState(30); // Geçmiş veri gün sayısı
+  const [historicalInterval, setHistoricalInterval] = useState('1h'); // Geçmiş veri interval
+  const [historicalImportResult, setHistoricalImportResult] = useState(null); // İçe aktarma sonucu
 
   // Dark mode değiştiğinde localStorage'a kaydet ve body'ye class ekle
   useEffect(() => {
