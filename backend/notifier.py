@@ -57,7 +57,7 @@ def format_price(price):
         return f"${price:.10f}".rstrip('0').rstrip('.')
 
 def format_signal_message(rec: dict):
-    txt = f"📊 <b>MM TRADING BOT PRO</b>\n\n"
+    txt = f"📊 <b>MM TRADING BOT PRO  v2.1</b>\n"
     txt += f"🪙 <b>{rec['coin']}</b> — "
     
     # Sinyal tipine göre emoji
@@ -69,25 +69,73 @@ def format_signal_message(rec: dict):
     # Fiyat bilgisi
     if rec.get("features") and rec['features'].get('price'):
         price = rec['features']['price']
-        txt += f"💰 Giriş Fiyatı: <code>{format_price(price)}</code>\n"
+        txt += f"💰 Giriş: <code>{format_price(price)}</code>\n"
     
-    txt += f"💯 Güvenilirlik: <b>{rec['probability']:.2f}%</b>  (Eşik: {rec['threshold_used']}%)\n"
-    txt += f"⏱ Zaman Dilimi: {rec.get('timeframe')}\n\n"
+    txt += f"💯 Güvenilirlik: <b>{rec['probability']:.2f}%</b> (Eşik: {rec['threshold_used']}%)\n"
     
-    # TP ve SL önerileri
-    txt += f"<b>🎯 Hedefler:</b>\n"
+    # Combined Signal Strength
+    signal_strength = rec.get('signal_strength')
+    if signal_strength:
+        score = signal_strength.get('score', 0)
+        fire_emoji = " 🔥" if score >= 80 else ""
+        txt += f"📈 <b>Combined Signal Strength: {score:.0f}%{fire_emoji}</b>\n"
+    
+    # Gösterge Durumu
+    txt += f"\n<b>🧠 Gösterge Durumu:</b>\n"
+    
+    # RSI
+    if rec.get('rsi') is not None:
+        rsi_signal = rec.get('rsi_signal', 'NEUTRAL')
+        rsi_emoji = "🟢" if rsi_signal == "OVERSOLD" else "🔴" if rsi_signal == "OVERBOUGHT" else "⚪"
+        txt += f"• RSI: {rec['rsi']:.2f} ({rsi_signal}) {rsi_emoji}\n"
+    
+    # MACD
+    if rec.get('macd_signal'):
+        macd_emoji = "📈" if rec['macd_signal'] == "BULLISH" else "📉" if rec['macd_signal'] == "BEARISH" else "➡️"
+        txt += f"• MACD: {rec['macd_signal']} {macd_emoji}\n"
+    
+    # EMA
+    if rec.get('ema9') and rec.get('ema21'):
+        ema_signal = rec.get('ema_signal', 'NEUTRAL')
+        ema_emoji = "🟢" if ema_signal == "BULLISH" else "🔴" if ema_signal == "BEARISH" else "⚪"
+        txt += f"• EMA(9/21): {ema_signal} {ema_emoji}\n"
+    
+    # Trend Analizi (Golden/Death Cross)
+    if rec.get('ema_cross'):
+        cross_type = rec['ema_cross']
+        if cross_type == "GOLDEN_CROSS":
+            txt += f"• Trend Analizi: 🌟 Golden Cross (EMA50 > EMA200)\n"
+        elif cross_type == "DEATH_CROSS":
+            txt += f"• Trend Analizi: 💀 Death Cross (EMA50 < EMA200)\n"
+    
+    # Adaptive Mode ve Timeframe
+    txt += f"\n<b>⚙️ Adaptive Mode:</b> "
+    if rec.get('adaptive_timeframe_enabled'):
+        txt += f"Aktif ✅\n"
+        volatility = rec.get('volatility', 0)
+        vol_text = "Yüksek" if volatility >= 6 else "Orta" if volatility >= 3 else "Düşük"
+        txt += f"⏱ Timeframe: {rec.get('base_timeframe', '24h')} → {rec.get('timeframe')} (Volatilite {vol_text})\n"
+    else:
+        txt += f"Pasif\n"
+        txt += f"⏱ Timeframe: {rec.get('timeframe')}\n"
+    
+    # Trend Ağırlığı
+    if rec.get('trend_weight'):
+        weight = rec['trend_weight']
+        txt += f"⚖️ Trend Ağırlığı: {weight:+.0f}%\n"
+    
+    # TP ve SL
+    txt += f"\n<b>🎯 Hedefler:</b>\n"
     if rec.get("tp"):
-        tp = rec.get('tp')
-        txt += f"✅ Take Profit (TP): <code>{format_price(tp)}</code>\n"
+        txt += f"🎯 TP: <code>{format_price(rec['tp'])}</code>\n"
     if rec.get("stop_loss"):
-        sl = rec.get('stop_loss')
-        txt += f"🛡 Stop Loss (SL): <code>{format_price(sl)}</code>\n"
+        txt += f"🛡 SL: <code>{format_price(rec['stop_loss'])}</code>\n"
     
-    # Risk/Reward hesaplama
+    # Risk/Reward
     if rec.get("tp") and rec.get("stop_loss") and rec.get("features") and rec['features'].get('price'):
         price = rec['features']['price']
-        tp = rec.get('tp')
-        sl = rec.get('stop_loss')
+        tp = rec['tp']
+        sl = rec['stop_loss']
         
         if rec['signal_type'] == 'LONG':
             profit_percent = ((tp - price) / price) * 100
@@ -97,9 +145,11 @@ def format_signal_message(rec: dict):
             loss_percent = ((sl - price) / price) * 100
         
         risk_reward = profit_percent / loss_percent if loss_percent > 0 else 0
-        txt += f"\n📊 Potansiyel Kazanç: <b>+{profit_percent:.2f}%</b>\n"
-        txt += f"📊 Potansiyel Kayıp: <b>-{loss_percent:.2f}%</b>\n"
-        txt += f"⚖️ Risk/Reward: <b>1:{risk_reward:.1f}</b>\n"
+        txt += f"📊 Risk/Reward: <b>1:{risk_reward:.1f}</b>\n"
     
-    txt += f"\n🕐 Zaman: {rec.get('created_at')} (TR)\n"
+    # Zaman
+    from datetime import datetime
+    now = datetime.now()
+    txt += f"🕐 Zaman: {now.strftime('%d %B %H:%M')} (TR)\n"
+    
     return txt
