@@ -17,8 +17,8 @@
   "coin_settings": [
     {
       "coin": "BTC",
-      "timeframe": "24h",
-      "threshold": 1.0,
+      "timeframe": "1h",
+      "threshold": 0.8,
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
@@ -26,8 +26,8 @@
     },
     {
       "coin": "ETH",
-      "timeframe": "30d",
-      "threshold": 1.95,
+      "timeframe": "1h",
+      "threshold": 1.2,
       "threshold_mode": "dynamic",
       "active": true,
       "fetch_interval_minutes": 5,
@@ -53,20 +53,20 @@
     },
     {
       "coin": "SOL",
-      "timeframe": "24h",
-      "threshold": 1.5,
+      "timeframe": "1h",
+      "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 3,
-      "status": "passive"
+      "active": true,
+      "fetch_interval_minutes": 5,
+      "status": "active"
     },
     {
       "coin": "PEPE",
-      "timeframe": "24h",
-      "threshold": 3.5,
+      "timeframe": "1h",
+      "threshold": 2.8,
       "threshold_mode": "dynamic",
       "active": true,
-      "fetch_interval_minutes": 3,
+      "fetch_interval_minutes": 5,
       "status": "active"
     },
     {
@@ -101,9 +101,9 @@
       "timeframe": "24h",
       "threshold": 8.0,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 3,
-      "status": "passive"
+      "active": true,
+      "fetch_interval_minutes": 5,
+      "status": "active"
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
