@@ -47,12 +47,13 @@
     },
     {
       "coin": "ADA",
-      "timeframe": "24h",
-      "threshold": 2.5,
+      "timeframe": "1h",
+      "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 3,
-      "status": "passive"
+      "active": true,
+      "fetch_interval_minutes": 1,
+      "status": "active",
+      "adaptive_timeframe_enabled": false
     },
     {
       "coin": "SOL",
@@ -79,19 +80,20 @@
       "timeframe": "1h",
       "threshold": 2.8,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 5,
-      "status": "passive",
+      "active": true,
+      "fetch_interval_minutes": 1,
+      "status": "active",
       "adaptive_timeframe_enabled": false
     },
     {
       "coin": "TRUMP",
-      "timeframe": "4h",
-      "threshold": 2.25,
+      "timeframe": "1h",
+      "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 5,
-      "status": "passive"
+      "active": true,
+      "fetch_interval_minutes": 1,
+      "status": "active",
+      "adaptive_timeframe_enabled": false
     },
     {
       "coin": "DOGE",
