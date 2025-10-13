@@ -1425,14 +1425,13 @@ function App() {
 
 
 
-            {config.use_coin_specific_settings && (
-              <div className="card">
-                <h3>⚙️ Coin Başına Özel Ayarlar</h3>
-                <p className="card-description">
-                  Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
-                </p>
+            <div className="card">
+              <h3>⚙️ Coin Başına Özel Ayarlar</h3>
+              <p className="card-description">
+                Her coin için ayrı timeframe, eşik ve mod ayarı yapabilirsiniz
+              </p>
 
-                {/* Coin Ekleme Bölümü */}
+              {/* Coin Ekleme Bölümü */}
                 <div style={{ 
                   marginBottom: '1.5rem', 
                   padding: '1rem', 
