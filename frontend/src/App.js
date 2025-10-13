@@ -1354,13 +1354,50 @@ function App() {
                             <span className="label-icon">📊</span>
                             <span>Analiz Ayarları</span>
                           </div>
+                          
+                          {/* Adaptive Timeframe Toggle */}
+                          <div className="mb-3 p-2 rounded" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium">🎯 Adaptive Timeframe</span>
+                                <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                                  cs.adaptive_timeframe_enabled ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                                  'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+                                }`}>
+                                  {cs.adaptive_timeframe_enabled ? '✅ Aktif' : '⏸️ Pasif'}
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => updateCoinSetting(cs.coin, 'adaptive_timeframe_enabled', !cs.adaptive_timeframe_enabled)}
+                                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                                  cs.adaptive_timeframe_enabled 
+                                    ? 'bg-green-600 focus:ring-green-500' 
+                                    : 'bg-gray-400 focus:ring-gray-400'
+                                }`}
+                                disabled={!isActive}
+                              >
+                                <span
+                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                    cs.adaptive_timeframe_enabled ? 'translate-x-6' : 'translate-x-1'
+                                  }`}
+                                />
+                              </button>
+                            </div>
+                            {cs.adaptive_timeframe_enabled && (
+                              <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                ℹ️ Volatiliteye göre otomatik timeframe seçimi aktif
+                              </div>
+                            )}
+                          </div>
+
                           <div className="settings-row">
                             <div className="setting-item">
-                              <label>Zaman Dilimi</label>
+                              <label>Zaman Dilimi {cs.adaptive_timeframe_enabled && '(Manuel Ayar)'}</label>
                               <select
                                 className="select-modern"
                                 value={cs.timeframe}
                                 onChange={(e) => updateCoinSetting(cs.coin, 'timeframe', e.target.value)}
+                                disabled={cs.adaptive_timeframe_enabled}
                               >
                                 <option value="15m">15 dakika</option>
                                 <option value="1h">1 saat</option>
@@ -1370,6 +1407,11 @@ function App() {
                                 <option value="7d">7 gün</option>
                                 <option value="30d">30 gün</option>
                               </select>
+                              {cs.adaptive_timeframe_enabled && (
+                                <div className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                  🤖 Otomatik seçiliyor
+                                </div>
+                              )}
                             </div>
                             <div className="setting-item">
                               <label>Eşik Modu</label>
