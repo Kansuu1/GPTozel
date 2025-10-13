@@ -30,9 +30,10 @@
       "timeframe": "1h",
       "threshold": 1.2,
       "threshold_mode": "dynamic",
-      "active": false,
-      "fetch_interval_minutes": 1,
-      "status": "passive"
+      "active": true,
+      "fetch_interval_minutes": 5,
+      "status": "active",
+      "adaptive_timeframe_enabled": false
     },
     {
       "coin": "XRP",
@@ -66,9 +67,10 @@
       "timeframe": "1h",
       "threshold": 2.8,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive"
+      "status": "active",
+      "adaptive_timeframe_enabled": false
     },
     {
       "coin": "SUI",
