@@ -442,9 +442,13 @@ function App() {
       )
     );
     
-    // Backend'e de kaydet (updateCoinSetting gibi)
+    // Backend'e kaydet (tek coin için)
     try {
-      await updateCoinSetting(coin, 'candle_analysis_enabled', newValue);
+      // State güncellendikten sonra kaydet
+      setTimeout(async () => {
+        await saveSingleCoinSetting(coin);
+      }, 100);
+      
       setMessage(newValue ? `🟢 ${coin}: Candle analizi aktif` : `🔴 ${coin}: Candle analizi pasif`);
     } catch (e) {
       // Rollback
