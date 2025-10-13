@@ -262,6 +262,18 @@ frontend:
       - working: true
         agent: "main"
         comment: "time_ago alanı ile 'X dakika önce' formatında gösterim yapılıyor. 10 saniyede bir refresh."
+  
+  - task: "Sinyaller sekmesi - Coin dropdown filtresi"
+    implemented: true
+    working: true
+    file: "frontend/src/App.js, frontend/src/App.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Coinler yan yana değil, 'Tümü' dropdown menüsünde gösteriliyor. Dropdown açılınca tüm coinler listeleniyor. Yeni coin eklendiğinde otomatik dropdown'da görünüyor. Dışarı tıklanınca kapanıyor. Dark mode uyumlu."
 
 metadata:
   created_by: "main_agent"
