@@ -70,7 +70,8 @@ def calculate_macd(prices: List[float],
     Returns:
         (MACD, Signal, Histogram) tuple veya None
     """
-    if len(prices) < slow_period + signal_period:
+    # Minimum slow_period kadar veri gerekli (signal için daha az tolere edebiliriz)
+    if len(prices) < slow_period:
         return None
     
     try:
