@@ -21,6 +21,7 @@ function App() {
   const [message, setMessage] = useState("");
   const [activeTab, setActiveTab] = useState("panel");
   const [newCoin, setNewCoin] = useState("");
+  const [selectedCoinFilter, setSelectedCoinFilter] = useState(""); // Sinyal filtreleme için
   const [coinSettings, setCoinSettings] = useState([]);
   const [fetchIntervals, setFetchIntervals] = useState({});
   const [indicators, setIndicators] = useState({});  // RSI/MACD göstergeleri
