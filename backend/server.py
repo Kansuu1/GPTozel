@@ -204,7 +204,8 @@ async def get_coin_settings():
                 "threshold_mode": default_mode,
                 "active": True,
                 "fetch_interval_minutes": 2,
-                "status": "active"
+                "status": "active",
+                "adaptive_timeframe_enabled": False  # Varsayılan: Kapalı
             })
     
     # Mevcut ayarlara yeni alanları ekle (backward compatibility)
