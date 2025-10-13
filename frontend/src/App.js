@@ -76,6 +76,7 @@ function App() {
     const saved = localStorage.getItem('darkMode');
     return saved ? JSON.parse(saved) : false;
   });
+  const [coinDropdownOpen, setCoinDropdownOpen] = useState(false); // Coin dropdown açık/kapalı
 
   // Dark mode değiştiğinde localStorage'a kaydet ve body'ye class ekle
   useEffect(() => {
