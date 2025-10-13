@@ -50,6 +50,11 @@ function App() {
   const [activeTab, setActiveTab] = useState("panel");
   const [newCoin, setNewCoin] = useState("");
   const [selectedCoinFilter, setSelectedCoinFilter] = useState(""); // Sinyal filtreleme için
+  
+  // Signal Performance Tracking
+  const [selectedStatus, setSelectedStatus] = useState("all"); // all | active | hit_tp | hit_sl | expired
+  const [selectedCoins, setSelectedCoins] = useState([]); // Multi-select coins
+  const [signalStats, setSignalStats] = useState(null);
   const [coinSettings, setCoinSettings] = useState([]);
   const [fetchIntervals, setFetchIntervals] = useState({});
   const [indicators, setIndicators] = useState({});  // RSI/MACD göstergeleri
