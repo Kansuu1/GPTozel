@@ -478,6 +478,29 @@ async def clear_failed_signals(request: Request):
     count = clear_failed()
     return {"status": "ok", "message": f"{count} başarısız sinyal silindi"}
 
+@app.post("/api/signals/clear_by_coin")
+async def clear_signals_by_coin(payload: dict, request: Request):
+    """Belirli bir coin'in tüm sinyallerini sil"""
+    require_admin(request)
+    
+    coin = payload.get("coin")
+    if not coin:
+        raise HTTPException(status_code=400, detail="Coin parametresi gerekli")
+    
+    try:
+        from db_mongodb import get_db
+        db = get_db()
+        
+        result = db.signal_history.delete_many({"coin": coin.upper()})
+        count = result.deleted_count
+        
+        logger.info(f"🗑️ {coin} için {count} sinyal silindi")
+        return {"status": "ok", "message": f"{count} {coin} sinyali silindi", "count": count}
+    
+    except Exception as e:
+        logger.error(f"Coin sinyalleri silme hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/exports/{filename}")
 async def download_export(filename: str):
     p = os.path.join(EXPORT_DIR, filename)
