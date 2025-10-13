@@ -131,5 +131,6 @@
     "7d": 30,
     "30d": 60
   },
-  "use_fetch_intervals": true
+  "use_fetch_intervals": true,
+  "alarms_enabled": false
 }
