@@ -430,18 +430,33 @@ function App() {
   };
 
   const toggleCoinFeatureFlag = async (coin) => {
+    const currentSetting = coinSettings.find(cs => cs.coin === coin);
+    const newValue = !currentSetting?.candle_analysis_enabled;
+    
+    // State'i güncelle
     setCoinSettings(prevSettings =>
       prevSettings.map(cs =>
         cs.coin === coin
-          ? { ...cs, candle_analysis_enabled: !cs.candle_analysis_enabled }
+          ? { ...cs, candle_analysis_enabled: newValue }
           : cs
       )
     );
     
-    const updated = coinSettings.find(cs => cs.coin === coin);
-    const newValue = !updated.candle_analysis_enabled;
-    
-    setMessage(newValue ? `🟢 ${coin}: Candle analizi aktif` : `🔴 ${coin}: Candle analizi pasif`);
+    // Backend'e de kaydet (updateCoinSetting gibi)
+    try {
+      await updateCoinSetting(coin, 'candle_analysis_enabled', newValue);
+      setMessage(newValue ? `🟢 ${coin}: Candle analizi aktif` : `🔴 ${coin}: Candle analizi pasif`);
+    } catch (e) {
+      // Rollback
+      setCoinSettings(prevSettings =>
+        prevSettings.map(cs =>
+          cs.coin === coin
+            ? { ...cs, candle_analysis_enabled: !newValue }
+            : cs
+        )
+      );
+      setMessage(`❌ ${coin}: Candle ayarı kaydedilemedi`);
+    }
   };
 
   const updateDynamicThreshold = async (coin, timeframe) => {
