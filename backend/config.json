@@ -51,20 +51,20 @@
       "timeframe": "1h",
       "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
-      "candle_analysis_enabled": false
+      "status": "active",
+      "candle_analysis_enabled": true
     },
     {
       "coin": "SOL",
       "timeframe": "1h",
       "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
-      "candle_analysis_enabled": false
+      "status": "active",
+      "candle_analysis_enabled": true
     },
     {
       "coin": "PEPE",
