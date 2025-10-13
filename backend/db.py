@@ -61,11 +61,17 @@ def insert_signal_record(rec: dict):
         logger.error(f"❌ Signal insert hatası: {e}")
         raise
 
-def fetch_recent_signals(limit=100):
-    """En son sinyalleri getir"""
+def fetch_recent_signals(limit=100, coin=None):
+    """En son sinyalleri getir - isteğe bağlı coin filtresi"""
     try:
         db = get_db()
-        cursor = db.signal_history.find().sort("created_at", DESCENDING).limit(limit)
+        
+        # Coin filtresi varsa kullan
+        query = {}
+        if coin:
+            query["coin"] = coin.upper()
+        
+        cursor = db.signal_history.find(query).sort("created_at", DESCENDING).limit(limit)
         
         # MongoDB dökümanlarını dict listesine çevir
         signals = []
