@@ -301,3 +301,7 @@ agent_communication:
     message: "✅ SORUN ÇÖZÜLDÜ: 3 sistem birden çalışıyordu (price_tracker, interval-based analyzer, coin-based fetch). Price tracker ve interval-based analyzer devre dışı bırakıldı. Artık sadece coin-based fetch çalışıyor. Passive coinler tamamen atlanıyor. Loglar ve API testleri doğrulandı."
   - agent: "main"
     message: "✅ YENİ ÖZELLİK EKLENDI: Sinyaller sekmesinde coin filtresi dropdown'a çevrildi. Artık coinler yan yana değil, 'Tümü' yazan dropdown'dan seçiliyor. Dropdown açılınca tüm coinler listelenebiliyor. Yeni coin eklendiğinde otomatik dropdown'da görünüyor. Kullanıcı talebine göre implement edildi."
+  - agent: "user"
+    message: "Eski panelden sinyalleri import ettim ama teknik analiz başlamadı. Neden sıfırdan veri toplanıyor?"
+  - agent: "main"
+    message: "✅ SORUN ÇÖZÜLDÜ: coin_settings eksikti, eklendi. 546 signal verisi signal_history'ye import edilmişti ama price_history boştu. Signal verilerindeki fiyat bilgilerini (features.price) kullanarak 546 adet fiyat kaydını price_history'ye aktardım. Şimdi 4/5 coin için RSI/MACD çalışıyor: BTC (108 veri), ETH (43 veri), ADA (42 veri), SOL (70 veri). BNB eski panelde yoktu, yeni toplanıyor (3 veri)."
