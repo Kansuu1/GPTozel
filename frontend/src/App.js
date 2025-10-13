@@ -180,6 +180,35 @@ function App() {
     setLoading(false);
   };
 
+  const saveSingleCoinSetting = async (coin) => {
+    if (!adminToken) {
+      setMessage("❌ Lütfen Admin Token girin!");
+      return;
+    }
+
+    const coinSetting = coinSettings.find(cs => cs.coin === coin);
+    if (!coinSetting) {
+      setMessage("❌ Coin ayarları bulunamadı!");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+    try {
+      await axios.put(`${API}/coin-config`, coinSetting, {
+        headers: { "x-admin-token": adminToken }
+      });
+      setMessage(`✅ ${coin} ayarları kaydedildi!`);
+      await loadCoinSettings();
+      
+      // 3 saniye sonra mesajı temizle
+      setTimeout(() => setMessage(""), 3000);
+    } catch (e) {
+      setMessage(`❌ ${coin} kaydetme hatası: ` + (e.response?.data?.detail || e.message));
+    }
+    setLoading(false);
+  };
+
   const updateCoinSetting = async (coin, field, value) => {
     setCoinSettings(prevSettings => 
       prevSettings.map(cs => {
