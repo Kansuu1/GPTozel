@@ -490,6 +490,36 @@ async def delete_signal_endpoint(signal_id: str, request: Request):
     else:
         raise HTTPException(status_code=500, detail="Silme işlemi başarısız")
 
+@app.post("/api/signals/track")
+async def track_signals(request: Request):
+    """Tüm aktif sinyalleri kontrol et ve status güncelle"""
+    require_admin(request)
+    
+    try:
+        from signal_tracker import update_all_signals
+        stats = update_all_signals()
+        
+        return {
+            "status": "ok",
+            "message": f"{stats['updated']} sinyal güncellendi",
+            "stats": stats
+        }
+    except Exception as e:
+        logger.error(f"Signal tracking hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/signals/statistics")
+async def get_signal_statistics():
+    """Sinyal istatistiklerini getir"""
+    try:
+        from signal_tracker import get_signal_statistics
+        stats = get_signal_statistics()
+        return stats
+    except Exception as e:
+        logger.error(f"İstatistik hatası: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/signals/clear_all")
 async def clear_all_signals(request: Request):
     """Tüm sinyalleri sil"""
