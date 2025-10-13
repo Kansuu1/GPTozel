@@ -81,6 +81,7 @@ function App() {
   const [historicalDays, setHistoricalDays] = useState(30); // Geçmiş veri gün sayısı
   const [historicalInterval, setHistoricalInterval] = useState('1h'); // Geçmiş veri interval
   const [historicalImportResult, setHistoricalImportResult] = useState(null); // İçe aktarma sonucu
+  const [globalFeatureFlag, setGlobalFeatureFlag] = useState(false); // Global feature flag (master switch)
 
   // Dark mode değiştiğinde localStorage'a kaydet ve body'ye class ekle
   useEffect(() => {
