@@ -105,6 +105,16 @@
       "active": true,
       "fetch_interval_minutes": 5,
       "status": "active"
+    },
+    {
+      "coin": "AVAX",
+      "timeframe": "1h",
+      "threshold": 2.8,
+      "threshold_mode": "dynamic",
+      "active": true,
+      "fetch_interval_minutes": 5,
+      "status": "active",
+      "adaptive_timeframe_enabled": false
     }
   ],
   "cmc_api_key": "ad7e6f5c-8ac1-4e6a-bb17-57a38522cdc8",
