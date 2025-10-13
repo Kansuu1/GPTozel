@@ -20,7 +20,7 @@ from notifier import send_telegram_message_async
 from db import init_db, fetch_recent_signals, SessionLocal, SignalHistory
 from analyzer import analyze_cycle
 from sqlalchemy import func, desc, Integer
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from price_history import save_price_point, get_recent_prices, get_price_statistics
 from indicators import calculate_indicators
 from price_alarms import check_price_alarms, get_active_alarms, delete_alarm, get_alarm_statistics
