@@ -1776,19 +1776,19 @@ function App() {
                         {signal.features?.price && (
                           <div className="signal-row">
                             <span>💰 Giriş:</span>
-                            <strong>${signal.features.price?.toFixed(4)}</strong>
+                            <strong>{formatPrice(signal.features.price)}</strong>
                           </div>
                         )}
                         {signal.tp && (
                           <div className="signal-row tp">
                             <span>🎯 TP:</span>
-                            <strong className="tp-value">${signal.tp?.toFixed(4)}</strong>
+                            <strong className="tp-value">{formatPrice(signal.tp)}</strong>
                           </div>
                         )}
                         {signal.stop_loss && (
                           <div className="signal-row sl">
                             <span>🛡 SL:</span>
-                            <strong className="sl-value">${signal.stop_loss?.toFixed(4)}</strong>
+                            <strong className="sl-value">{formatPrice(signal.stop_loss)}</strong>
                           </div>
                         )}
                         <div className="signal-time">
