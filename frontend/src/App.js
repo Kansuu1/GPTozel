@@ -116,7 +116,7 @@ function App() {
     if (activeTab === 'signals') {
       loadSignals();
     }
-  }, [selectedStatus, selectedCoins, activeTab]);
+  }, [selectedStatus, selectedCoins, signalLimit, activeTab]);
 
   // Dropdown dışına tıklanınca kapat
   useEffect(() => {
