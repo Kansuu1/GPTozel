@@ -84,6 +84,7 @@ class CoinSetting(BaseModel):
     active: bool = True
     fetch_interval_minutes: Optional[int] = 2  # Varsayılan 2 dakika
     status: Optional[str] = "active"  # "active" veya "passive"
+    adaptive_timeframe_enabled: Optional[bool] = False  # Adaptive timeframe
 
 class CoinSettingsUpdate(BaseModel):
     coin_settings: List[CoinSetting]
