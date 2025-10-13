@@ -409,8 +409,9 @@ async def restart_backend(request: Request):
 
 
 @app.get("/api/signals")
-async def get_signals(limit: int = 50):
-    recs = fetch_recent_signals(limit)
+async def get_signals(limit: int = 50, coin: Optional[str] = None):
+    """Sinyalleri getir - isteğe bağlı coin filtresi"""
+    recs = fetch_recent_signals(limit, coin=coin.upper() if coin else None)
     out = []
     for r in recs:
         out.append({
