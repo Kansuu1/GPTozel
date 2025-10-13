@@ -413,9 +413,22 @@ async def restart_backend(request: Request):
 
 
 @app.get("/api/signals")
-async def get_signals(limit: int = 50, coin: Optional[str] = None):
-    """Sinyalleri getir - isteğe bağlı coin filtresi"""
-    recs = fetch_recent_signals(limit, coin=coin.upper() if coin else None)
+async def get_signals(
+    limit: int = 50, 
+    coin: Optional[str] = None,
+    status: Optional[str] = None,
+    coins: Optional[str] = None  # Comma separated: BTC,ETH,SOL
+):
+    """Sinyalleri getir - coin, status ve coins filtresi"""
+    
+    # Coins listesini parse et
+    coin_list = None
+    if coins:
+        coin_list = [c.strip().upper() for c in coins.split(',')]
+    elif coin:
+        coin_list = [coin.upper()]
+    
+    recs = fetch_recent_signals(limit, coin_list=coin_list, status=status)
     out = []
     for r in recs:
         # created_at'ı Türkiye saatine çevir
