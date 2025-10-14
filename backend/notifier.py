@@ -147,9 +147,10 @@ def format_signal_message(rec: dict):
         risk_reward = profit_percent / loss_percent if loss_percent > 0 else 0
         txt += f"📊 Risk/Reward: <b>1:{risk_reward:.1f}</b>\n"
     
-    # Zaman
-    from datetime import datetime
-    now = datetime.now()
+    # Zaman - Türkiye UTC+3
+    from datetime import datetime, timezone, timedelta
+    turkey_tz = timezone(timedelta(hours=3))
+    now = datetime.now(timezone.utc).astimezone(turkey_tz)
     txt += f"🕐 Zaman: {now.strftime('%d %B %H:%M')} (TR)\n"
     
     return txt
