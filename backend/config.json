@@ -19,7 +19,7 @@
   "coin_settings": [
     {
       "coin": "BTC",
-      "timeframe": "1h",
+      "timeframe": "15m",
       "threshold": 0.8,
       "threshold_mode": "dynamic",
       "active": true,
