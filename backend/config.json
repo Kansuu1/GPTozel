@@ -49,22 +49,22 @@
     },
     {
       "coin": "ADA",
-      "timeframe": "1h",
+      "timeframe": "15m",
       "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
+      "status": "active",
       "candle_analysis_enabled": true
     },
     {
       "coin": "SOL",
-      "timeframe": "1h",
+      "timeframe": "15m",
       "threshold": 2.0,
       "threshold_mode": "dynamic",
-      "active": false,
+      "active": true,
       "fetch_interval_minutes": 5,
-      "status": "passive",
+      "status": "active",
       "candle_analysis_enabled": true
     },
     {
